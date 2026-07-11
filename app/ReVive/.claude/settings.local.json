@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s http://localhost:3000)",
+      "mcp__21st__get_take",
+      "mcp__21st__get_generation",
+      "Bash(npx tsx *)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "21st"
+  ],
+  "enabledPlugins": {}
+}

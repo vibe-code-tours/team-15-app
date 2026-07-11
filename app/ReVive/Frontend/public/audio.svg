@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="bg8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#18181b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#27272a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg8)"/>
+  <!-- Headphones -->
+  <path d="M250 200 Q250 120 350 120 Q450 120 450 200" stroke="#f43f5e" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <rect x="230" y="200" width="40" height="60" rx="10" fill="#27272a" stroke="#f43f5e" stroke-width="2"/>
+  <rect x="430" y="200" width="40" height="60" rx="10" fill="#27272a" stroke="#f43f5e" stroke-width="2"/>
+  <!-- Speaker -->
+  <rect x="550" y="180" width="120" height="180" rx="16" fill="#27272a" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="610" cy="250" r="35" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="610" cy="250" r="15" fill="#8b5cf6" opacity="0.5"/>
+  <circle cx="610" cy="310" r="15" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2"/>
+  <!-- Earbuds -->
+  <circle cx="150" cy="280" r="25" fill="#27272a" stroke="#06b6d4" stroke-width="2"/>
+  <circle cx="150" cy="280" r="12" fill="#083344"/>
+  <path d="M150 305 L150 350" stroke="#06b6d4" stroke-width="3"/>
+  <circle cx="220" cy="280" r="25" fill="#27272a" stroke="#06b6d4" stroke-width="2"/>
+  <circle cx="220" cy="280" r="12" fill="#083344"/>
+  <path d="M220 305 L220 350" stroke="#06b6d4" stroke-width="3"/>
+  <!-- Sound waves -->
+  <path d="M480 250 Q490 230 500 250" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M470 250 Q485 210 500 250" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.3"/>
+  <!-- Decorative elements -->
+  <circle cx="700" cy="80" r="40" fill="#f43f5e" opacity="0.1"/>
+  <circle cx="80" cy="500" r="50" fill="#06b6d4" opacity="0.1"/>
+  <!-- Title -->
+  <text x="400" y="450" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="36" font-weight="bold">AUDIO</text>
+  <text x="400" y="490" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18">Headphones, speakers, earbuds</text>
+</svg>

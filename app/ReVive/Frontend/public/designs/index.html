@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReVive — Design Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Space Grotesk', sans-serif; background: #0a0a0a; color: #fafafa; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; }
+  h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+  .sub { color: #666; margin-bottom: 48px; text-align: center; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 900px; width: 100%; }
+  .card {
+    border: 2px solid #222; border-radius: 16px; overflow: hidden;
+    transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit;
+    background: #111;
+  }
+  .card:hover { border-color: #10b981; transform: translateY(-4px); box-shadow: 0 12px 40px rgba(16,185,129,0.1); }
+  .preview {
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; position: relative; overflow: hidden;
+  }
+  .card:nth-child(1) .preview { background: linear-gradient(135deg, #040806, #0a1a10); }
+  .card:nth-child(2) .preview { background: linear-gradient(135deg, #050a08, #081812); }
+  .card:nth-child(3) .preview { background: linear-gradient(135deg, #06080a, #0a0818); }
+  .card:nth-child(4) .preview { background: linear-gradient(135deg, #0a0a0a, #111); }
+  .preview::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, #111, transparent);
+  }
+  .info { padding: 20px 24px; }
+  .info .num { font-size: 0.65rem; color: #10b981; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 600; }
+  .info h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+  .info p { font-size: 0.8rem; color: #666; line-height: 1.5; }
+  .tag {
+    display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 100px;
+    border: 1px solid #333; font-size: 0.65rem; color: #999; text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .footer-note { margin-top: 48px; color: #444; font-size: 0.8rem; text-align: center; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>ReVive Design Concepts</h1>
+<p class="sub">4 high-end futuristic directions for the homepage</p>
+
+<div class="grid">
+  <a class="card" href="concept-1-glass-noir.html">
+    <div class="preview">🌌</div>
+    <div class="info">
+      <div class="num">Concept 01</div>
+      <h2>Glass Noir</h2>
+      <p>Ultra-dark glassmorphism with frosted panels, subtle grid overlay, and emerald glow accents.</p>
+      <span class="tag">glassmorphism</span>
+    </div>
+  </a>
+  <a class="card" href="concept-2-neural.html">
+    <div class="preview">🧠</div>
+    <div class="info">
+      <div class="num">Concept 02</div>
+      <h2>Neural Network</h2>
+      <p>AI-inspired with animated neural network canvas, monospace accents, and code-block testimonials.</p>
+      <span class="tag">interactive canvas</span>
+    </div>
+  </a>
+  <a class="card" href="concept-3-holographic.html">
+    <div class="preview">🌈</div>
+    <div class="info">
+      <div class="num">Concept 03</div>
+      <h2>Holographic</h2>
+      <p>Iridescent gradient borders, prismatic color shifts, rotating conic ambient orb.</p>
+      <span class="tag">holographic</span>
+    </div>
+  </a>
+  <a class="card" href="concept-4-brutalist.html">
+    <div class="preview">⬛</div>
+    <div class="info">
+      <div class="num">Concept 04</div>
+      <h2>Brutalist Tech</h2>
+      <p>Bold typography, hard 3px borders, uppercase headings, monospace labels, raw grid structure.</p>
+      <span class="tag">brutalist</span>
+    </div>
+  </a>
+</div>
+
+<p class="footer-note">All concepts retain identical content and functionality — only layout and theme differ.</p>
+</body>
+</html>

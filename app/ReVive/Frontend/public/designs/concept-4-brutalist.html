@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReVive — Concept 4: Brutalist Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --border: #222;
+    --primary: #10b981;
+    --text: #fafafa;
+    --muted: #666;
+    --accent: #e5e5e5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  section { position: relative; z-index: 1; }
+
+  /* ===== NAVBAR — flat, brutalist ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    border-bottom: 3px solid var(--text); background: var(--bg);
+  }
+  .nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: stretch; justify-content: space-between; }
+  .nav-brand {
+    display: flex; align-items: center; gap: 12px; padding: 16px 24px;
+    text-decoration: none; color: var(--text); border-right: 3px solid var(--border);
+  }
+  .nav-brand .leaf {
+    font-size: 1.5rem; font-weight: 900;
+    background: var(--primary); color: var(--bg); padding: 4px 10px; line-height: 1;
+  }
+  .nav-brand span { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+  .nav-links { display: flex; list-style: none; }
+  .nav-links a {
+    display: flex; align-items: center; padding: 0 24px;
+    color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em; border-right: 3px solid var(--border);
+    transition: all 0.15s;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--surface); }
+  .nav-actions { display: flex; }
+  .nav-actions button {
+    padding: 0 28px; border: none; font-family: inherit; font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-signin { background: transparent; color: var(--text); border-left: 3px solid var(--border); }
+  .btn-signin:hover { background: var(--surface); }
+  .btn-schedule { background: var(--primary); color: var(--bg); }
+  .btn-schedule:hover { background: #0d9668; }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; padding: 120px 24px 80px;
+    border-bottom: 3px solid var(--border);
+  }
+  .hero-inner { max-width: 1400px; margin: 0 auto; width: 100%; }
+  .hero-tag {
+    display: inline-block; padding: 6px 16px; border: 2px solid var(--border);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem); font-weight: 900; line-height: 0.95; letter-spacing: -0.04em;
+    text-transform: uppercase; margin-bottom: 32px; max-width: 900px;
+  }
+  .hero h1 .green { color: var(--primary); }
+  .hero-desc {
+    font-size: 1.1rem; color: var(--muted); max-width: 500px; line-height: 1.7;
+    margin-bottom: 40px; border-left: 4px solid var(--primary); padding-left: 20px;
+  }
+  .hero-actions { display: flex; gap: 0; }
+  .hero-actions button {
+    padding: 18px 36px; border: 3px solid var(--text); font-family: inherit;
+    font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .hero-actions .fill { background: var(--text); color: var(--bg); }
+  .hero-actions .fill:hover { background: var(--primary); border-color: var(--primary); color: var(--bg); }
+  .hero-actions .outline { background: transparent; color: var(--text); border-left: none; }
+  .hero-actions .outline:hover { background: var(--surface); }
+
+  /* ===== SECTIONS ===== */
+  .section { padding: 100px 24px; max-width: 1400px; margin: 0 auto; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px;
+    border-bottom: 3px solid var(--border); padding-bottom: 16px;
+  }
+  .section-head h2 {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+  .section-head .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .section-desc { color: var(--muted); font-size: 1rem; max-width: 520px; line-height: 1.7; margin-bottom: 48px; border-left: 4px solid var(--primary); padding-left: 20px; }
+
+  /* Showcase — stacked brutalist */
+  .showcase-stack { display: flex; flex-direction: column; gap: 3px; }
+  .showcase-row { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .showcase-item {
+    position: relative; overflow: hidden; aspect-ratio: 16/9; border: 3px solid var(--border);
+  }
+  .showcase-item.tall { aspect-ratio: auto; grid-row: span 2; }
+  .showcase-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; filter: grayscale(30%); }
+  .showcase-item:hover img { transform: scale(1.04); filter: grayscale(0%); }
+  .showcase-item .tag {
+    position: absolute; top: 12px; left: 12px; padding: 4px 10px;
+    background: var(--text); color: var(--bg); font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  /* Categories — grid boxes */
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+  .cat-box {
+    padding: 36px 28px; border: 3px solid var(--border); text-align: center;
+    transition: all 0.2s; cursor: pointer; position: relative;
+  }
+  .cat-box:hover { border-color: var(--primary); }
+  .cat-box:hover .cat-num { color: var(--primary); }
+  .cat-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted);
+    position: absolute; top: 12px; right: 12px;
+  }
+  .cat-box .icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+  .cat-box h3 { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .cat-box p { font-size: 0.8rem; color: var(--muted); }
+
+  /* How it works — numbered blocks */
+  .hiw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .hiw-block {
+    padding: 36px 28px; border: 3px solid var(--border); position: relative;
+    background: var(--surface);
+  }
+  .hiw-block .num {
+    font-size: 5rem; font-weight: 900; line-height: 1; color: var(--border); margin-bottom: 12px;
+  }
+  .hiw-block h3 { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+  .hiw-block p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .hiw-block::after {
+    content: '→'; position: absolute; bottom: 20px; right: 20px;
+    font-size: 1.5rem; color: var(--border); transition: color 0.2s;
+  }
+  .hiw-block:hover::after { color: var(--primary); }
+
+  /* Stats — bold numbers */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+  .stat-block {
+    padding: 36px 24px; border: 3px solid var(--border); text-align: center;
+    background: var(--surface); transition: border-color 0.2s;
+  }
+  .stat-block:hover { border-color: var(--primary); }
+  .stat-block .value {
+    font-size: 3rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1;
+    color: var(--primary);
+  }
+  .stat-block .label {
+    font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin-top: 8px;
+  }
+
+  /* Testimonials — stacked rows */
+  .test-rows { display: flex; flex-direction: column; gap: 3px; }
+  .test-row {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 0;
+    border: 3px solid var(--border); padding: 28px 32px; align-items: center;
+  }
+  .test-avatar {
+    width: 48px; height: 48px; background: var(--primary); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.9rem; margin-right: 24px;
+  }
+  .test-row blockquote { font-size: 0.95rem; line-height: 1.6; color: var(--accent); }
+  .test-meta { text-align: right; padding-left: 24px; border-left: 2px solid var(--border); }
+  .test-meta .name { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+  .test-meta .role { font-size: 0.75rem; color: var(--muted); }
+  .test-meta .stars { color: var(--primary); font-size: 0.7rem; margin-top: 4px; letter-spacing: 2px; }
+
+  /* Newsletter */
+  .newsletter {
+    padding: 48px; border: 3px solid var(--border); display: flex;
+    align-items: center; justify-content: space-between; gap: 32px; margin-top: 48px;
+  }
+  .newsletter h3 { font-size: 1.3rem; font-weight: 800; text-transform: uppercase; }
+  .newsletter p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+  .nl-form { display: flex; gap: 0; }
+  .nl-input {
+    padding: 14px 18px; border: 3px solid var(--border); border-right: none;
+    background: var(--surface); color: var(--text); font-family: inherit; font-size: 0.9rem;
+    width: 280px; outline: none;
+  }
+  .nl-input::placeholder { color: var(--muted); }
+  .nl-input:focus { border-color: var(--primary); }
+  .nl-btn {
+    padding: 14px 28px; border: 3px solid var(--primary); background: var(--primary);
+    color: var(--bg); font-family: inherit; font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: background 0.2s;
+  }
+  .nl-btn:hover { background: #0d9668; border-color: #0d9668; }
+
+  /* CTA */
+  .cta {
+    padding: 100px 24px; text-align: center; border-top: 3px solid var(--border);
+    border-bottom: 3px solid var(--border);
+  }
+  .cta h2 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .cta p { color: var(--muted); margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; font-size: 1rem; }
+  .cta .big-btn {
+    display: inline-block; padding: 20px 48px; border: 3px solid var(--text);
+    background: var(--text); color: var(--bg); font-family: inherit; font-size: 1.1rem;
+    font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+  }
+  .cta .big-btn:hover { background: var(--primary); border-color: var(--primary); color: var(--bg); }
+
+  /* Footer */
+  .footer {
+    padding: 0; border-top: 3px solid var(--border); display: grid;
+    grid-template-columns: auto 1fr auto; max-width: 1400px; margin: 0 auto;
+  }
+  .footer-brand {
+    padding: 20px 24px; border-right: 3px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-brand .leaf { font-weight: 900; background: var(--primary); color: var(--bg); padding: 2px 8px; font-size: 0.85rem; }
+  .footer-brand span { font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.9rem; }
+  .footer-links { display: flex; }
+  .footer-links a {
+    padding: 20px 24px; color: var(--muted); text-decoration: none; font-size: 0.8rem;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; border-right: 3px solid var(--border);
+    transition: all 0.15s;
+  }
+  .footer-links a:hover { color: var(--text); background: var(--surface); }
+  .footer-copy {
+    padding: 20px 24px; display: flex; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted);
+  }
+
+  @media (max-width: 768px) {
+    .showcase-row, .cat-grid, .hiw-grid, .stats-row { grid-template-columns: 1fr; }
+    .showcase-item.tall { grid-row: auto; }
+    .test-row { grid-template-columns: 1fr; gap: 16px; }
+    .test-avatar { margin: 0; }
+    .test-meta { text-align: left; padding-left: 0; border-left: none; border-top: 2px solid var(--border); padding-top: 12px; }
+    .newsletter { flex-direction: column; text-align: center; }
+    .nl-form { flex-direction: column; }
+    .nl-input { width: 100%; border-right: 3px solid var(--border); }
+    .footer { grid-template-columns: 1fr; }
+    .footer-brand { border-right: none; border-bottom: 3px solid var(--border); justify-content: center; }
+    .footer-links { justify-content: center; }
+    .footer-links a { border-right: none; border-bottom: 3px solid var(--border); }
+    .footer-copy { justify-content: center; }
+    .nav-links, .nav-actions { display: none; }
+    .hero h1 { font-size: 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-inner">
+  <a href="#" class="nav-brand"><span class="leaf">🌿</span><span>ReVive</span></a>
+  <ul class="nav-links">
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#impact">Impact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-signin">Sign in</button>
+    <button class="btn-schedule">Schedule pickup</button>
+  </div>
+</div></nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">// E-Waste Recycling Platform</div>
+    <h1>Recycle<br>Your<br><span class="green">Electronics</span></h1>
+    <div class="hero-desc">Donate old devices. Schedule a free pickup. Track your impact. Join the circular economy movement — one device at a time.</div>
+    <div class="hero-actions">
+      <button class="fill">Schedule Pickup</button>
+      <button class="outline">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="section">
+  <div class="section-head"><h2>Showcase</h2><span class="tag">// Featured Work</span></div>
+  <div class="showcase-stack">
+    <div class="showcase-row">
+      <div class="showcase-item tall"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&h=800&fit=crop"><div class="tag">Collection</div></div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <div class="showcase-item"><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=300&fit=crop"><div class="tag">Sorting</div></div>
+        <div class="showcase-item"><img src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=600&h=300&fit=crop"><div class="tag">Processing</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" id="categories">
+  <div class="section-head"><h2>Categories</h2><span class="tag">// What We Accept</span></div>
+  <div class="section-desc">We accept virtually any electronic device, from smartphones to large appliances.</div>
+  <div class="cat-grid">
+    <div class="cat-box"><span class="cat-num">01</span><span class="icon">📱</span><h3>Smartphones</h3><p>Phones, tablets, watches</p></div>
+    <div class="cat-box"><span class="cat-num">02</span><span class="icon">💻</span><h3>Computers</h3><p>Laptops, desktops, monitors</p></div>
+    <div class="cat-box"><span class="cat-num">03</span><span class="icon">🔌</span><h3>Accessories</h3><p>Cables, chargers, keyboards</p></div>
+    <div class="cat-box"><span class="cat-num">04</span><span class="icon">📺</span><h3>Appliances</h3><p>TVs, printers, gaming</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="section-head"><h2>How It Works</h2><span class="tag">// Process</span></div>
+  <div class="section-desc">Three steps to responsible recycling.</div>
+  <div class="hiw-grid">
+    <div class="hiw-block"><div class="num">01</div><h3>Schedule</h3><p>Pick a date and time. Our team comes right to your doorstep.</p></div>
+    <div class="hiw-block"><div class="num">02</div><h3>Collect</h3><p>We arrive on time, carefully collect your devices professionally.</p></div>
+    <div class="hiw-block"><div class="num">03</div><h3>Impact</h3><p>Track your environmental contribution. Every device matters.</p></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section" id="impact">
+  <div class="section-head"><h2>Impact</h2><span class="tag">// By the Numbers</span></div>
+  <div class="section-desc">Measurable results from our growing community.</div>
+  <div class="stats-row">
+    <div class="stat-block"><div class="value">12K+</div><div class="label">Devices Recycled</div></div>
+    <div class="stat-block"><div class="value">8.5T</div><div class="label">CO₂ Prevented</div></div>
+    <div class="stat-block"><div class="value">3.2K</div><div class="label">Active Users</div></div>
+    <div class="stat-block"><div class="value">98%</div><div class="label">Satisfaction</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section">
+  <div class="section-head"><h2>Testimonials</h2><span class="tag">// Community</span></div>
+  <div class="test-rows">
+    <div class="test-row">
+      <div class="test-avatar">SK</div>
+      <blockquote>"Super easy process. They picked up my old laptop and three phones from my doorstep. Love the impact tracking!"</blockquote>
+      <div class="test-meta"><div class="name">Sarah Kim</div><div class="role">San Francisco, CA</div><div class="stars">★★★★★</div></div>
+    </div>
+    <div class="test-row">
+      <div class="test-avatar">MR</div>
+      <blockquote>"Finally a service that makes recycling electronics effortless. The whole process took less than 10 minutes."</blockquote>
+      <div class="test-meta"><div class="name">Marcus Rivera</div><div class="role">Austin, TX</div><div class="stars">★★★★★</div></div>
+    </div>
+    <div class="test-row">
+      <div class="test-avatar">AJ</div>
+      <blockquote>"I've recommended ReVive to everyone I know. It feels great knowing my old devices are being recycled properly."</blockquote>
+      <div class="test-meta"><div class="name">Aisha Johnson</div><div class="role">Portland, OR</div><div class="stars">★★★★★</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section">
+  <div class="newsletter">
+    <div>
+      <h3>Stay Updated</h3>
+      <p>Recycling tips, impact reports, and sustainability news.</p>
+    </div>
+    <div class="nl-form">
+      <input class="nl-input" placeholder="your@email.com" type="email">
+      <button class="nl-btn">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Start <span style="color:var(--primary);">Recycling</span> Today</h2>
+  <p>Schedule your free pickup and join thousands building a sustainable future.</p>
+  <button class="big-btn">Schedule Free Pickup →</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand"><span class="leaf">🌿</span><span>ReVive</span></div>
+  <div class="footer-links">
+    <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026</div>
+</footer>
+
+</body>
+</html>

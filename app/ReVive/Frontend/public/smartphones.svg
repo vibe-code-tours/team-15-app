@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#312e81;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg5)"/>
+  <!-- Phone 1 -->
+  <rect x="200" y="150" width="120" height="220" rx="16" fill="#27272a" stroke="#60a5fa" stroke-width="2"/>
+  <rect x="210" y="170" width="100" height="160" rx="4" fill="#1e3a5f"/>
+  <circle cx="260" cy="350" r="8" fill="#3f3f46"/>
+  <!-- Phone 2 -->
+  <rect x="350" y="180" width="100" height="180" rx="14" fill="#27272a" stroke="#c084fc" stroke-width="2"/>
+  <rect x="358" y="195" width="84" height="130" rx="4" fill="#3b1f4a"/>
+  <circle cx="400" cy="340" r="6" fill="#3f3f46"/>
+  <!-- Phone 3 -->
+  <rect x="480" y="160" width="110" height="200" rx="15" fill="#27272a" stroke="#4ade80" stroke-width="2"/>
+  <rect x="490" y="180" width="90" height="150" rx="4" fill="#1a3a2a"/>
+  <circle cx="535" cy="345" r="7" fill="#3f3f46"/>
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="50" fill="#60a5fa" opacity="0.1"/>
+  <circle cx="700" cy="500" r="70" fill="#c084fc" opacity="0.1"/>
+  <!-- Title -->
+  <text x="400" y="500" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="36" font-weight="bold">SMARTPHONES</text>
+  <text x="400" y="540" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18">Mobile devices of all brands</text>
+</svg>

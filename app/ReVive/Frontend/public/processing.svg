@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#18181b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#27272a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="fire" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg3)"/>
+  <!-- Machine -->
+  <rect x="250" y="150" width="300" height="300" rx="20" fill="#3f3f46" stroke="#71717a" stroke-width="3"/>
+  <!-- Gears -->
+  <circle cx="350" cy="300" r="60" fill="none" stroke="#a1a1aa" stroke-width="8"/>
+  <circle cx="350" cy="300" r="30" fill="#52525b"/>
+  <circle cx="450" cy="300" r="60" fill="none" stroke="#a1a1aa" stroke-width="8"/>
+  <circle cx="450" cy="300" r="30" fill="#52525b"/>
+  <!-- Sparks/Processing -->
+  <circle cx="300" cy="250" r="4" fill="#fbbf24"/>
+  <circle cx="500" cy="250" r="4" fill="#fbbf24"/>
+  <circle cx="350" cy="200" r="3" fill="#fb923c"/>
+  <circle cx="450" cy="200" r="3" fill="#fb923c"/>
+  <!-- Input/Output -->
+  <rect x="100" y="280" width="120" height="40" rx="8" fill="#374151" stroke="#60a5fa" stroke-width="2"/>
+  <text x="160" y="305" text-anchor="middle" fill="#60a5fa" font-family="sans-serif" font-size="12">INPUT</text>
+  <rect x="580" y="280" width="120" height="40" rx="8" fill="#374151" stroke="#4ade80" stroke-width="2"/>
+  <text x="640" y="305" text-anchor="middle" fill="#4ade80" font-family="sans-serif" font-size="12">OUTPUT</text>
+  <!-- Title -->
+  <text x="400" y="100" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="32" font-weight="bold">PROCESSING</text>
+  <text x="400" y="130" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18">Advanced material recovery</text>
+</svg>

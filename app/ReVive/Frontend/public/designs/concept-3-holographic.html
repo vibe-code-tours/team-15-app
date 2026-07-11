@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReVive — Concept 3: Holographic</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06080a;
+    --text: #f0f9ff;
+    --muted: #64748b;
+    --holo-1: #10b981;
+    --holo-2: #06b6d4;
+    --holo-3: #8b5cf6;
+    --holo-4: #ec4899;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  /* Iridescent ambient glow */
+  .ambient {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 800px 600px at 20% 20%, rgba(16,185,129,0.06), transparent),
+      radial-gradient(ellipse 600px 800px at 80% 60%, rgba(139,92,246,0.05), transparent),
+      radial-gradient(ellipse 700px 500px at 50% 90%, rgba(6,182,212,0.04), transparent);
+  }
+
+  section { position: relative; z-index: 1; }
+
+  /* Holographic gradient mixin */
+  .holo-gradient {
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4));
+    background-size: 300% 300%;
+    animation: holoShift 8s ease infinite;
+  }
+  @keyframes holoShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .holo-text {
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4));
+    background-size: 300% 300%;
+    animation: holoShift 6s ease infinite;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== NAVBAR ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 24px;
+    background: rgba(6,8,10,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .nav-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3));
+    background-size: 200% 200%; animation: holoShift 4s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-icon svg { width: 20px; height: 20px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .nav-brand span { font-size: 1.15rem; font-weight: 700; }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .btn-ghost {
+    padding: 8px 16px; border-radius: 10px; border: none; background: transparent; color: var(--text);
+    font-family: inherit; font-size: 0.875rem; font-weight: 500; cursor: pointer;
+  }
+  .btn-holo {
+    padding: 8px 20px; border-radius: 10px; border: none;
+    color: white; font-family: inherit; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3));
+    background-size: 200% 200%; animation: holoShift 4s ease infinite;
+    box-shadow: 0 0 20px rgba(16,185,129,0.2); transition: all 0.3s;
+  }
+  .btn-holo:hover { box-shadow: 0 0 32px rgba(16,185,129,0.35); transform: translateY(-1px); }
+  .btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 14px; }
+  .btn-outline {
+    padding: 14px 32px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04); color: var(--text); font-family: inherit; font-size: 1rem;
+    font-weight: 500; cursor: pointer; transition: all 0.3s; backdrop-filter: blur(8px);
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: 120px 24px 80px; position: relative;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 100px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.8rem; color: var(--muted); margin-bottom: 32px; backdrop-filter: blur(10px);
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2));
+    box-shadow: 0 0 12px rgba(16,185,129,0.4);
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
+    max-width: 800px; margin: 0 auto 24px;
+  }
+  .hero p { font-size: 1.15rem; color: var(--muted); max-width: 520px; margin: 0 auto 40px; line-height: 1.7; }
+  .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* Holographic orb behind hero */
+  .hero-orb {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 500px; height: 500px; border-radius: 50%; pointer-events: none;
+    background: conic-gradient(from 0deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06), rgba(139,92,246,0.06), rgba(236,72,153,0.04), rgba(16,185,129,0.08));
+    filter: blur(80px); animation: orbRotate 20s linear infinite;
+  }
+  @keyframes orbRotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  /* ===== SECTIONS ===== */
+  .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
+  .section-badge {
+    display: inline-flex; padding: 5px 14px; border-radius: 100px;
+    font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); margin-bottom: 16px;
+  }
+  .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .section-desc { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; }
+
+  /* Holographic card */
+  .holo-card {
+    position: relative; border-radius: 20px; padding: 32px; overflow: hidden;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+    background-clip: padding-box;
+  }
+  .holo-card::before {
+    content: ''; position: absolute; inset: -1px; border-radius: 21px; padding: 1px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.15), rgba(139,92,246,0.15), rgba(236,72,153,0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+
+  /* Showcase — masonry */
+  .showcase-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 240px 200px; gap: 16px; margin-top: 48px; }
+  .showcase-item { border-radius: 16px; overflow: hidden; position: relative; }
+  .showcase-item:nth-child(1) { grid-column: span 2; }
+  .showcase-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+  .showcase-item:hover img { transform: scale(1.04); }
+  .showcase-item .holo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(139,92,246,0.08));
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .showcase-item:hover .holo-overlay { opacity: 1; }
+  .showcase-item .label {
+    position: absolute; bottom: 16px; left: 16px; padding: 6px 14px; border-radius: 10px;
+    background: rgba(6,8,10,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.8rem; font-weight: 500;
+  }
+
+  /* Categories — holographic glass cards */
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+  .cat-card {
+    padding: 32px 24px; border-radius: 20px; text-align: center; cursor: pointer; transition: transform 0.3s;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+  }
+  .cat-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: 20px; opacity: 0; transition: opacity 0.4s;
+    background: conic-gradient(from 180deg at 50% 50%, rgba(16,185,129,0.1), rgba(6,182,212,0.08), rgba(139,92,246,0.08), rgba(236,72,153,0.06), rgba(16,185,129,0.1));
+    filter: blur(40px);
+  }
+  .cat-card:hover { transform: translateY(-6px); }
+  .cat-card:hover::after { opacity: 1; }
+  .cat-icon { font-size: 2.2rem; margin-bottom: 16px; position: relative; z-index: 1; }
+  .cat-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; position: relative; z-index: 1; }
+  .cat-card p { font-size: 0.8rem; color: var(--muted); position: relative; z-index: 1; }
+
+  /* How it works */
+  .hiw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
+  .hiw-card {
+    padding: 36px 28px; border-radius: 20px; position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .hiw-num {
+    font-size: 4rem; font-weight: 700; line-height: 1;
+    background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.1));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hiw-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; }
+  .hiw-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* Stats — iridescent ring cards */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 48px; }
+  .stat-card {
+    padding: 32px 24px; border-radius: 20px; text-align: center; position: relative;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .stat-ring {
+    width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; position: relative;
+    background: conic-gradient(var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-1));
+    animation: holoShift 4s ease infinite; padding: 3px;
+  }
+  .stat-ring-inner {
+    width: 100%; height: 100%; border-radius: 50%; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; color: var(--muted);
+  }
+  .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+  .stat-label { font-size: 0.85rem; color: var(--muted); }
+
+  /* Testimonials */
+  .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
+  .test-card {
+    padding: 28px; border-radius: 20px; position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .test-card::before {
+    content: '"'; position: absolute; top: -10px; right: 16px;
+    font-size: 6rem; font-weight: 700; line-height: 1;
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(139,92,246,0.08));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .test-stars { color: #fbbf24; font-size: 0.85rem; margin-bottom: 14px; letter-spacing: 3px; }
+  .test-card blockquote { font-size: 0.9rem; line-height: 1.7; color: rgba(255,255,255,0.8); margin-bottom: 18px; position: relative; z-index: 1; }
+  .test-author { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .test-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3));
+    background-size: 200% 200%; animation: holoShift 5s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; color: white;
+  }
+  .test-name { font-size: 0.85rem; font-weight: 600; }
+  .test-role { font-size: 0.75rem; color: var(--muted); }
+
+  /* Newsletter */
+  .newsletter {
+    padding: 56px; border-radius: 24px; text-align: center; position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); margin-top: 48px;
+  }
+  .newsletter::before {
+    content: ''; position: absolute; inset: -1px; border-radius: 25px; padding: 1px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.15), rgba(139,92,246,0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .newsletter h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+  .newsletter p { color: var(--muted); margin-bottom: 28px; position: relative; z-index: 1; }
+  .nl-form { display: flex; gap: 12px; justify-content: center; max-width: 440px; margin: 0 auto; position: relative; z-index: 1; }
+  .nl-input {
+    flex: 1; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04); color: var(--text); font-family: inherit; font-size: 0.95rem;
+    outline: none; backdrop-filter: blur(10px);
+  }
+  .nl-input::placeholder { color: var(--muted); }
+  .nl-input:focus { border-color: rgba(16,185,129,0.4); box-shadow: 0 0 0 3px rgba(16,185,129,0.08); }
+
+  /* CTA */
+  .cta { padding: 100px 24px; text-align: center; position: relative; }
+  .cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 16px; }
+  .cta p { color: var(--muted); margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  /* Footer */
+  .footer {
+    padding: 48px 24px; border-top: 1px solid rgba(255,255,255,0.06);
+    max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-brand { display: flex; align-items: center; gap: 8px; }
+  .footer-brand .dot {
+    width: 24px; height: 24px; border-radius: 7px;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3));
+    background-size: 200% 200%; animation: holoShift 4s ease infinite;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .footer-brand .dot svg { width: 14px; height: 14px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; }
+  .footer-brand span { font-size: 0.9rem; font-weight: 600; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy { color: var(--muted); font-size: 0.75rem; }
+
+  @media (max-width: 768px) {
+    .showcase-grid, .cat-grid, .hiw-grid, .stats-row, .test-grid { grid-template-columns: 1fr; }
+    .showcase-item:nth-child(1) { grid-column: auto; }
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.5rem; }
+    .footer { flex-direction: column; gap: 20px; text-align: center; }
+    .newsletter { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+
+<!-- NAV -->
+<nav class="nav"><div class="nav-inner">
+  <a href="#" class="nav-brand">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+    <span>ReVive</span>
+  </a>
+  <ul class="nav-links"><li><a href="#categories">Categories</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#impact">Impact</a></li></ul>
+  <div class="nav-actions"><button class="btn-ghost">Sign in</button><button class="btn-holo">Schedule pickup</button></div>
+</div></nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb"></div>
+  <div>
+    <div class="hero-badge"><span class="dot"></span> Free E-Waste Pickup</div>
+    <h1>Recycle Your Electronics <span class="holo-text">The Beautiful Way</span></h1>
+    <p>Donate old devices, schedule a free doorstep pickup, and track your positive impact on the planet.</p>
+    <div class="hero-actions">
+      <button class="btn-holo btn-lg">Schedule Pickup</button>
+      <button class="btn-outline">See How It Works</button>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="section">
+  <div class="section-badge">● Showcase</div>
+  <div class="section-title">Premium Showcase</div>
+  <div class="section-desc">Every recycled device is a step toward a sustainable future.</div>
+  <div class="showcase-grid">
+    <div class="showcase-item"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=900&h=500&fit=crop"><div class="holo-overlay"></div><div class="label">📱 Device Collection</div></div>
+    <div class="showcase-item"><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&h=300&fit=crop"><div class="holo-overlay"></div><div class="label">⚙️ Smart Sorting</div></div>
+    <div class="showcase-item"><img src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=500&h=300&fit=crop"><div class="holo-overlay"></div><div class="label">♻️ Recovery</div></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" id="categories">
+  <div class="section-badge">● What We Accept</div>
+  <div class="section-title">Recycle Any Device</div>
+  <div class="section-desc">From smartphones to home appliances — we handle it all.</div>
+  <div class="cat-grid">
+    <div class="cat-card"><div class="cat-icon">📱</div><h3>Smartphones</h3><p>Phones, tablets, watches</p></div>
+    <div class="cat-card"><div class="cat-icon">💻</div><h3>Computers</h3><p>Laptops, desktops, monitors</p></div>
+    <div class="cat-card"><div class="cat-icon">🔌</div><h3>Accessories</h3><p>Cables, chargers, keyboards</p></div>
+    <div class="cat-card"><div class="cat-icon">📺</div><h3>Appliances</h3><p>TVs, printers, gaming</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="section-badge">● How It Works</div>
+  <div class="section-title">Three Simple Steps</div>
+  <div class="section-desc">Recycling your electronics has never been easier.</div>
+  <div class="hiw-grid">
+    <div class="hiw-card"><div class="hiw-num">01</div><h3>Schedule</h3><p>Pick a date and time. Our team comes right to your doorstep.</p></div>
+    <div class="hiw-card"><div class="hiw-num">02</div><h3>Collect</h3><p>We carefully collect your devices with professional handling.</p></div>
+    <div class="hiw-card"><div class="hiw-num">03</div><h3>Impact</h3><p>Track your environmental contribution in real-time.</p></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="section" id="impact">
+  <div class="section-badge">● Impact</div>
+  <div class="section-title">Our Global Impact</div>
+  <div class="section-desc">Numbers that reflect our mission in action.</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-ring"><div class="stat-ring-inner">♻️</div></div><div class="stat-value holo-text">12K+</div><div class="stat-label">Devices Recycled</div></div>
+    <div class="stat-card"><div class="stat-ring"><div class="stat-ring-inner">🌿</div></div><div class="stat-value holo-text">8.5T</div><div class="stat-label">CO₂ Prevented</div></div>
+    <div class="stat-card"><div class="stat-ring"><div class="stat-ring-inner">👥</div></div><div class="stat-value holo-text">3.2K</div><div class="stat-label">Active Users</div></div>
+    <div class="stat-card"><div class="stat-ring"><div class="stat-ring-inner">⭐</div></div><div class="stat-value holo-text">98%</div><div class="stat-label">Satisfaction</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section">
+  <div class="section-badge">● Testimonials</div>
+  <div class="section-title">What People Say</div>
+  <div class="section-desc">Stories from our growing community.</div>
+  <div class="test-grid">
+    <div class="test-card"><div class="test-stars">★★★★★</div><blockquote>"Super easy process. They picked up my old laptop and three phones from my doorstep. Love the impact tracking!"</blockquote><div class="test-author"><div class="test-avatar">SK</div><div><div class="test-name">Sarah Kim</div><div class="test-role">San Francisco, CA</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><blockquote>"Finally a service that makes recycling electronics effortless. The whole process took less than 10 minutes."</blockquote><div class="test-author"><div class="test-avatar">MR</div><div><div class="test-name">Marcus Rivera</div><div class="test-role">Austin, TX</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><blockquote>"I've recommended ReVive to everyone I know. It feels great knowing my old devices are being recycled properly."</blockquote><div class="test-author"><div class="test-avatar">AJ</div><div><div class="test-name">Aisha Johnson</div><div class="test-role">Portland, OR</div></div></div></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section">
+  <div class="newsletter">
+    <h3>Stay in the Loop</h3>
+    <p>Get recycling tips, impact reports, and sustainability news.</p>
+    <div class="nl-form">
+      <input class="nl-input" placeholder="Enter your email" type="email">
+      <button class="btn-holo">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Ready to Make a <span class="holo-text">Difference</span>?</h2>
+  <p>Schedule your free pickup today and join thousands building a sustainable future.</p>
+  <button class="btn-holo btn-lg">Schedule Free Pickup</button>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">
+    <div class="dot"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+    <span>ReVive</span>
+  </div>
+  <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+  <div class="footer-copy">© 2026 ReVive. All rights reserved.</div>
+</footer>
+</body>
+</html>

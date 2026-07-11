@@ -1,0 +1,9 @@
+{
+  "$schema": "https://drizzle.team/schema.json",
+  "out": "./drizzle",
+  "schema": "./lib/db/schema.ts",
+  "dialect": "sqlite",
+  "dbCredentials": {
+    "url": "./revive.db"
+  }
+}

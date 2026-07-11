@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg1)"/>
+  <!-- Door/Entry -->
+  <rect x="350" y="150" width="100" height="200" rx="8" fill="#2d3748" stroke="#4ade80" stroke-width="2"/>
+  <circle cx="430" cy="250" r="8" fill="#4ade80"/>
+  <!-- Person silhouette -->
+  <circle cx="400" cy="120" r="25" fill="#4ade80"/>
+  <rect x="385" y="145" width="30" height="60" rx="10" fill="#4ade80"/>
+  <!-- Electronics being collected -->
+  <rect x="200" y="350" width="80" height="50" rx="6" fill="#374151" stroke="#60a5fa" stroke-width="2"/>
+  <rect x="210" y="360" width="60" height="30" rx="4" fill="#1e3a5f"/>
+  <rect x="500" y="350" width="80" height="50" rx="6" fill="#374151" stroke="#f472b6" stroke-width="2"/>
+  <rect x="510" y="360" width="60" height="30" rx="4" fill="#4a1942"/>
+  <!-- Box -->
+  <rect x="330" y="380" width="140" height="100" rx="8" fill="#374151" stroke="url(#accent1)" stroke-width="3"/>
+  <text x="400" y="440" text-anchor="middle" fill="#4ade80" font-family="sans-serif" font-size="14" font-weight="bold">COLLECT</text>
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="40" fill="#4ade80" opacity="0.1"/>
+  <circle cx="700" cy="500" r="60" fill="#22c55e" opacity="0.1"/>
+  <!-- Arrows -->
+  <path d="M280 375 L330 420" stroke="#4ade80" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M520 375 L470 420" stroke="#4ade80" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4ade80"/>
+    </marker>
+  </defs>
+</svg>

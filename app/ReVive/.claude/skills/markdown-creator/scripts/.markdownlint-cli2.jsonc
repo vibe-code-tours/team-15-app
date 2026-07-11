@@ -1,0 +1,16 @@
+{
+  // House-style lint config for markdown-creator.
+  // Rule reference: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+  // Note: no top-level "globs" here on purpose — files come from CLI args only,
+  // so lint.sh checks exactly what you pass it, not the whole tree.
+  "config": {
+    "default": true,
+    "MD013": false,      // line-length: we soft-wrap prose, don't enforce
+    "MD024": { "siblings_only": true }, // allow repeated headings (e.g. CHANGELOG "Added")
+    "MD033": false,      // allow inline HTML (<details>, comments)
+    "MD041": true,       // first line must be a top-level heading
+    "MD040": true,       // fenced code blocks must have a language
+    "MD060": false       // table pipe spacing/alignment: source may be ragged
+  },
+  "ignores": ["**/node_modules/**"]
+}

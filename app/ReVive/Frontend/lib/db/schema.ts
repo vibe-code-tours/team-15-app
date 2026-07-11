@@ -97,6 +97,7 @@ export const userPoints = sqliteTable("user_points", {
   doublePointsEarned: integer("double_points_earned").notNull().default(0),
   referralsMade: integer("referrals_made").notNull().default(0),
   co2SavedFromReferrals: real("co2_saved_from_referrals").notNull().default(0),
+  createdAt: text("created_at").notNull().default(""),
   updatedAt: text("updated_at").notNull().default(""),
 })
 

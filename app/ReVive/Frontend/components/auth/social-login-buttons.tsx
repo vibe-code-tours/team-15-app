@@ -16,7 +16,7 @@ export function SocialLoginButtons() {
         callbackURL: "/dashboard",
       })
     } catch (error) {
-      console.error(`${provider} login failed:`, error)
+      console.error("login failed:", { provider, error })
       setLoading(null)
     }
   }

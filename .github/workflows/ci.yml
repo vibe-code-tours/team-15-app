@@ -30,7 +30,7 @@ jobs:
       # ---------- Node / TypeScript (runs only if package.json exists) ----------
       - name: Setup Node
         if: ${{ hashFiles('package.json') != '' }}
-        uses: actions/setup-node@1d0ff469b62b6d0ad9b0af0fb3b1e40be53ce9b9 # v4.2.0
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.2.0
         with:
           node-version: "20"
           cache: "npm"

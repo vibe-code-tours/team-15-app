@@ -4,3 +4,5 @@ paths = [
     '''app/ReVive/\.mcp\.json''',
     '''app/ReVive/Frontend/components/referral-stats\.tsx'''
 ]
+e96423594222fb5f73558c9bfba13618fb9fc7ea:app/ReVive/.mcp.json:generic-api-key:7
+e96423594222fb5f73558c9bfba13618fb9fc7ea:app/ReVive/Frontend/components/referral-stats.tsx:generic-api-key:75

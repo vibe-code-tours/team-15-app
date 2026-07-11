@@ -1,0 +1,6 @@
+[allowlist]
+description = "Ignore known false positives and local config"
+fingerprints = [
+    "9e248c5a27f19e0bab97d0c8a2969c0aa2636a35:app/ReVive/.mcp.json:generic-api-key:7",
+    "9e248c5a27f19e0bab97d0c8a2969c0aa2636a35:app/ReVive/Frontend/components/referral-stats.tsx:generic-api-key:75"
+]

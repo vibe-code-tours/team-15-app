@@ -179,10 +179,24 @@ export async function getSearchStats(userId: string) {
 export function highlightText(text: string, query: string): string {
   if (!query) return text
 
-  const regex = new RegExp(`(${escapeRegex(query)})`, "gi")
-  return text.replace(regex, "<mark>$1</mark>")
-}
+  const lowerText = text.toLowerCase()
+  const lowerQuery = query.toLowerCase()
+  let result = ""
+  let startIndex = 0
 
-function escapeRegex(string: string): string {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  while (true) {
+    const index = lowerText.indexOf(lowerQuery, startIndex)
+    if (index === -1) {
+      result += text.substring(startIndex)
+      break
+    }
+    if (index > startIndex) {
+      result += text.substring(startIndex, index)
+    }
+    const match = text.substring(index, index + query.length)
+    result += `<mark>${match}</mark>`
+    startIndex = index + query.length
+  }
+
+  return result
 }

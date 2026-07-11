@@ -55,17 +55,33 @@ export function SearchResults({
 
   const highlightMatch = (text: string, isMatch?: boolean) => {
     if (!isMatch || !query) return text
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
-    const parts = text.split(regex)
+    const lowerText = text.toLowerCase()
+    const lowerQuery = query.toLowerCase()
+    const parts: { text: string; isMatch: boolean }[] = []
+    
+    let startIndex = 0
+    while (true) {
+      const index = lowerText.indexOf(lowerQuery, startIndex)
+      if (index === -1) {
+        parts.push({ text: text.substring(startIndex), isMatch: false })
+        break
+      }
+      if (index > startIndex) {
+        parts.push({ text: text.substring(startIndex, index), isMatch: false })
+      }
+      parts.push({ text: text.substring(index, index + query.length), isMatch: true })
+      startIndex = index + query.length
+    }
+    
     return (
       <>
         {parts.map((part, i) =>
-          regex.test(part) ? (
+          part.isMatch ? (
             <mark key={i} className="bg-yellow-200 dark:bg-yellow-800">
-              {part}
+              {part.text}
             </mark>
           ) : (
-            part
+            part.text
           )
         )}
       </>

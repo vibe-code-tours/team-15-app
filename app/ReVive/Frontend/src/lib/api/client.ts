@@ -1,4 +1,4 @@
-import { cookies } from "next/headers"
+// import { cookies } from "next/headers"
 import { getToken } from "./cookies"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
@@ -25,10 +25,10 @@ async function getTokenForRequest(): Promise<string | null> {
   if (typeof document !== "undefined") {
     return getToken()
   }
-
-  // Server-side: use next/headers cookies
+  // Server-side: use dynamic import so it doesn't crash the Client bundler!
   try {
-    const cookieStore = await cookies()
+    const nextHeaders = await import("next/headers")
+    const cookieStore = await nextHeaders.cookies()
     return cookieStore.get("revive_backend_token")?.value || null
   } catch {
     return null

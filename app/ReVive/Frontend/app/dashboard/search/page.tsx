@@ -1,9 +1,6 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { SearchBar } from "@/components/search/search-bar"
 import { FilterPanel } from "@/components/search/filter-panel"

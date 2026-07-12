@@ -84,6 +84,81 @@ def request_pickup(db: Session, pickup_id: int, requester_id: str) -> models.Pic
     if pickup.status != "available":
         return None
     pickup.status = "requested"
+    pickup.requested_by = requester_id
+    db.commit()
+    db.refresh(pickup)
+    return pickup
+
+
+def get_requested_pickups(db: Session, requester_id: str) -> list[models.Pickup]:
+    """Get pickups that the user has requested from other donors."""
+    return (
+        db.query(models.Pickup)
+        .filter(models.Pickup.requested_by == requester_id)
+        .order_by(models.Pickup.created_at.desc())
+        .all()
+    )
+
+
+def get_donor_requests(db: Session, donor_id: str) -> list[dict]:
+    """Get pickups where other users have made requests."""
+    pickups = (
+        db.query(models.Pickup)
+        .filter(
+            models.Pickup.user_id == donor_id,
+            models.Pickup.status == "requested",
+            models.Pickup.requested_by.isnot(None),
+        )
+        .order_by(models.Pickup.created_at.desc())
+        .all()
+    )
+
+    # Get requester info for each pickup
+    results = []
+    for pickup in pickups:
+        requester = db.query(models.User).filter(models.User.id == pickup.requested_by).first()
+        results.append({
+            "pickup": pickup,
+            "requester": requester,
+        })
+
+    return results
+
+
+def accept_request(db: Session, pickup_id: int, donor_id: str) -> models.Pickup | None:
+    """Donor accepts a request on their item."""
+    pickup = (
+        db.query(models.Pickup)
+        .filter(
+            models.Pickup.id == pickup_id,
+            models.Pickup.user_id == donor_id,
+            models.Pickup.status == "requested",
+        )
+        .first()
+    )
+    if not pickup:
+        return None
+    pickup.status = "accepted"
+    db.commit()
+    db.refresh(pickup)
+    return pickup
+
+
+def reject_request(db: Session, pickup_id: int, donor_id: str) -> models.Pickup | None:
+    """Donor rejects a request, making item available again."""
+    pickup = (
+        db.query(models.Pickup)
+        .filter(
+            models.Pickup.id == pickup_id,
+            models.Pickup.user_id == donor_id,
+            models.Pickup.status == "requested",
+        )
+        .first()
+    )
+    if not pickup:
+        return None
+    pickup.status = "available"
+    pickup.requested_by = None
     db.commit()
     db.refresh(pickup)
     return pickup

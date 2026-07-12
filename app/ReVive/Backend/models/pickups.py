@@ -27,6 +27,7 @@ class Pickup(Base):
     address = Column(String, nullable=False)
     notes = Column(Text)
     status = Column(String, nullable=False, default="available")
+    requested_by = Column(String, nullable=True, comment="user_id of person who requested this item")
     created_at = Column(String, nullable=False)
 
     __table_args__ = (

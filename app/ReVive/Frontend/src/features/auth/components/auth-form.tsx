@@ -67,7 +67,7 @@ function AuthFormInner({ mode }: { mode: "sign-in" | "sign-up" }) {
         await applyReferralCode(referralInput, user.id)
       }
 
-      router.push("/donate")
+      router.push("/browse")
       router.refresh()
     } catch (err: any) {
       setLoading(false)

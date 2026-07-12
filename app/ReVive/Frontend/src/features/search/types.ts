@@ -72,6 +72,7 @@ export type BrowseFilters = {
   query: string
   categories: string[]
   condition: string[]
+  location: string
   sortBy: "newest" | "oldest"
 }
 
@@ -99,5 +100,6 @@ export const DEFAULT_BROWSE_FILTERS: BrowseFilters = {
   query: "",
   categories: [],
   condition: [],
+  location: "",
   sortBy: "newest",
 }

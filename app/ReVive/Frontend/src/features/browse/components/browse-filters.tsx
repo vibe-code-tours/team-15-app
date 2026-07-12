@@ -1,6 +1,8 @@
 "use client"
 
+import { MapPin } from "lucide-react"
 import { PICKUP_CATEGORIES, CONDITIONS } from "@/lib/categories"
+import { Input } from "@/components/ui/input"
 import type { BrowseFilters as BrowseFiltersType } from "@/features/search/types"
 
 interface BrowseFiltersProps {
@@ -23,8 +25,30 @@ export function BrowseFilters({ filters, onFiltersChange }: BrowseFiltersProps) 
     onFiltersChange({ ...filters, condition: next })
   }
 
+  const hasActiveFilters =
+    filters.categories.length > 0 ||
+    filters.condition.length > 0 ||
+    filters.location.length > 0
+
   return (
     <div className="space-y-4">
+      {/* Location */}
+      <div>
+        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Location
+        </p>
+        <div className="relative">
+          <MapPin className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search by city or address..."
+            value={filters.location}
+            onChange={(e) => onFiltersChange({ ...filters, location: e.target.value })}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
       {/* Categories */}
       <div>
         <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -84,11 +108,11 @@ export function BrowseFilters({ filters, onFiltersChange }: BrowseFiltersProps) 
           <option value="oldest">Oldest first</option>
         </select>
 
-        {(filters.categories.length > 0 || filters.condition.length > 0) && (
+        {hasActiveFilters && (
           <button
             type="button"
             onClick={() =>
-              onFiltersChange({ ...filters, categories: [], condition: [] })
+              onFiltersChange({ ...filters, categories: [], condition: [], location: "" })
             }
             className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >

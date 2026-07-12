@@ -1,6 +1,6 @@
 "use server"
 
-import { apiPost } from "@/lib/api/client"
+import { apiPost, apiPatch } from "@/lib/api/client"
 import type { BrowseFilters, BrowseResponse } from "@/features/search/types"
 
 /** Get available items from OTHER users (public browse) */
@@ -10,27 +10,24 @@ export async function getAvailableItems(
   limit: number = 12
 ): Promise<BrowseResponse> {
   const data = await apiPost<{
-    results: BrowseResponse["results"]
+    items: BrowseResponse["results"]
     total: number
     page: number
     totalPages: number
-  }>("/api/search/", {
+  }>("/api/browse/", {
     filters: {
       query: filters.query || "",
-      status: ["available"],
       categories: filters.categories || [],
-      dateFrom: null,
-      dateTo: null,
       condition: filters.condition || [],
-      sortBy: filters.sortBy === "oldest" ? "date" : "date",
-      sortOrder: filters.sortBy === "oldest" ? "asc" : "desc",
+      location: filters.location || "",
+      sortBy: filters.sortBy || "newest",
     },
     page,
     limit,
   })
 
   return {
-    results: data.results,
+    results: data.items,
     total: data.total,
     page: data.page,
     totalPages: data.totalPages,
@@ -39,7 +36,9 @@ export async function getAvailableItems(
 
 /** Request an item from another user */
 export async function requestItem(listingId: number) {
-  // Backend does not have a pickup request endpoint yet
-  // This would need a new Backend endpoint
-  return { error: "Item request not yet supported via Backend API" }
+  const result = await apiPatch<{ success: boolean }, { action: string }>(
+    `/api/pickups/${listingId}`,
+    { action: "request" }
+  )
+  return { success: true }
 }

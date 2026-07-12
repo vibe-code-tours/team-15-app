@@ -24,11 +24,10 @@ async function getTokenForRequest(): Promise<string | null> {
   if (typeof document !== "undefined") {
     return getToken()
   }
-
-  // Server-side: dynamically import next/headers
   try {
     const { cookies } = await import("next/headers")
     const cookieStore = await cookies()
+
     return cookieStore.get("revive_backend_token")?.value || null
   } catch {
     return null

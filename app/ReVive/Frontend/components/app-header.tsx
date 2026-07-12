@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Leaf, LogOut, Share2 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
+import { backendLogout } from "@/lib/api/auth"
 import { Button } from "@/components/ui/button"
 
 export function AppHeader({ userName }: { userName?: string }) {
@@ -12,6 +13,7 @@ export function AppHeader({ userName }: { userName?: string }) {
 
   const handleSignOut = async () => {
     await authClient.signOut()
+    backendLogout()
     router.push("/")
     router.refresh()
   }

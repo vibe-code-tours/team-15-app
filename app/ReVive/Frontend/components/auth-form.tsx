@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Leaf, Gift, Loader2 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
+import { backendLogin, backendRegister } from "@/lib/api/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -65,6 +66,17 @@ function AuthFormInner({ mode }: { mode: "sign-in" | "sign-up" }) {
       if (result.error) {
         setError(result.error.message ?? "Something went wrong")
         return
+      }
+
+      // Sync JWT with Backend
+      try {
+        if (isSignUp) {
+          await backendRegister(name, email, password)
+        } else {
+          await backendLogin(email, password)
+        }
+      } catch {
+        // Backend auth is optional -- continue even if it fails
       }
 
       // Apply referral code if provided during sign up

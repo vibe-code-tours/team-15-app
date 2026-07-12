@@ -1,15 +1,12 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { AppHeader } from "@/components/app-header"
 import { SearchBar } from "@/components/search/search-bar"
 import { FilterPanel } from "@/components/search/filter-panel"
 import { FilterChips } from "@/components/search/filter-chips"
 import { SearchResults } from "@/components/search/search-results"
-import { searchPickups, getSearchStats } from "@/lib/search/query-builder"
+import { apiPost, apiGet } from "@/lib/api/client"
 import { DEFAULT_FILTERS } from "@/lib/search/types"
 import type { SearchFilters, SearchResult, SearchStats } from "@/lib/search/types"
 
@@ -30,20 +27,28 @@ export default function SearchPage() {
   const performSearch = useCallback(async (currentFilters: SearchFilters, currentPage: number) => {
     setLoading(true)
     try {
-      // Note: In a real app, you'd get the userId from the session
-      // For now, we'll use a placeholder
-      const response = await fetch("/api/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filters: currentFilters, page: currentPage, limit: 10 }),
+      const data = await apiPost<{
+        results: SearchResult[]
+        total: number
+        page: number
+        totalPages: number
+      }>("/api/search/", {
+        filters: {
+          query: currentFilters.query,
+          status: currentFilters.status,
+          categories: currentFilters.categories,
+          dateFrom: currentFilters.dateFrom,
+          dateTo: currentFilters.dateTo,
+          condition: currentFilters.condition,
+          sortBy: currentFilters.sortBy,
+          sortOrder: currentFilters.sortOrder,
+        },
+        page: currentPage,
+        limit: 10,
       })
-
-      if (response.ok) {
-        const data = await response.json()
-        setResults(data.results)
-        setTotal(data.total)
-        setTotalPages(data.totalPages)
-      }
+      setResults(data.results)
+      setTotal(data.total)
+      setTotalPages(data.totalPages)
     } catch (error) {
       console.error("Search failed:", error)
     } finally {
@@ -53,11 +58,13 @@ export default function SearchPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch("/api/search/stats")
-      if (response.ok) {
-        const data = await response.json()
-        setSearchStats(data)
-      }
+      const data = await apiGet<{
+        byStatus: Record<string, number>
+        byCategory: Record<string, number>
+        byCondition: Record<string, number>
+        totalPickups: number
+      }>("/api/search/stats")
+      setSearchStats(data)
     } catch (error) {
       console.error("Failed to fetch stats:", error)
     }
@@ -119,11 +126,10 @@ export default function SearchPage() {
   const handleClearAllFilters = () => {
     setFilters({
       ...DEFAULT_FILTERS,
-      query: filters.query, // Keep the search query
+      query: filters.query,
     })
   }
 
-  // Build active filter chips
   const activeFilters = [
     ...filters.status.map((s) => ({
       id: s,
@@ -150,9 +156,8 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-svh bg-background">
-      <AppHeader userName="User" /> {/* Replace with actual user name */}
+      <AppHeader userName="User" />
       <main className="mx-auto max-w-4xl px-4 py-10">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Search Listings</h1>
           <p className="mt-2 text-muted-foreground">
@@ -160,7 +165,6 @@ export default function SearchPage() {
           </p>
         </div>
 
-        {/* Search Bar */}
         <div className="mb-6">
           <SearchBar
             value={filters.query}
@@ -171,7 +175,6 @@ export default function SearchPage() {
           />
         </div>
 
-        {/* Active Filters */}
         <div className="mb-6">
           <FilterChips
             filters={activeFilters}
@@ -180,7 +183,6 @@ export default function SearchPage() {
           />
         </div>
 
-        {/* Filter Panel */}
         <div className="mb-6">
           <FilterPanel
             filters={filters}
@@ -189,7 +191,6 @@ export default function SearchPage() {
           />
         </div>
 
-        {/* Search Results */}
         <SearchResults
           results={results}
           query={filters.query}

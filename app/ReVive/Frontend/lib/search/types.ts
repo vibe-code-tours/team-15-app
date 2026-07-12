@@ -1,4 +1,4 @@
-export interface SearchFilters {
+export type SearchFilters = {
   query: string
   status: string[]
   categories: string[]
@@ -9,8 +9,9 @@ export interface SearchFilters {
   sortOrder: "asc" | "desc"
 }
 
-export interface SearchResult {
+export type SearchResult = {
   id: number
+  userId: string
   category: string
   deviceName: string
   quantity: number
@@ -21,67 +22,19 @@ export interface SearchResult {
   notes: string | null
   status: string
   createdAt: string
-  // Computed fields for highlighting
   matchHighlights?: {
     deviceName?: boolean
     category?: boolean
     address?: boolean
+    notes?: boolean
   }
 }
 
-export interface SearchOptions {
-  page: number
-  limit: number
-  includeStats: boolean
-}
-
-export interface SearchResponse {
-  results: SearchResult[]
-  total: number
-  page: number
-  totalPages: number
-  stats?: SearchStats
-}
-
-export interface SearchStats {
-  totalResults: number
+export type SearchStats = {
   byStatus: Record<string, number>
   byCategory: Record<string, number>
-}
-
-// Browse page — items from other users
-export interface BrowseItem {
-  id: number
-  category: string
-  deviceName: string
-  quantity: number
-  condition: string
-  address: string
-  notes: string | null
-  status: string
-  createdAt: string
-  donorName: string
-}
-
-export interface BrowseFilters {
-  query: string
-  categories: string[]
-  condition: string[]
-  sortBy: "newest" | "oldest"
-}
-
-export const DEFAULT_BROWSE_FILTERS: BrowseFilters = {
-  query: "",
-  categories: [],
-  condition: [],
-  sortBy: "newest",
-}
-
-export interface BrowseResponse {
-  results: BrowseItem[]
-  total: number
-  page: number
-  totalPages: number
+  byCondition: Record<string, number>
+  totalPickups: number
 }
 
 export const DEFAULT_FILTERS: SearchFilters = {
@@ -105,12 +58,46 @@ export const STATUS_OPTIONS = [
 
 export const CONDITION_OPTIONS = [
   { value: "working", label: "Working" },
-  { value: "partial", label: "Partially Working" },
-  { value: "broken", label: "Not Working" },
+  { value: "partial", label: "Partial" },
+  { value: "broken", label: "Broken" },
 ]
 
 export const SORT_OPTIONS = [
   { value: "date", label: "Date" },
-  { value: "name", label: "Device Name" },
+  { value: "name", label: "Name" },
   { value: "status", label: "Status" },
 ]
+
+export type BrowseFilters = {
+  query: string
+  categories: string[]
+  condition: string[]
+  sortBy: "newest" | "oldest"
+}
+
+export type BrowseItem = {
+  id: number
+  category: string
+  deviceName: string
+  quantity: number
+  condition: string
+  address: string
+  notes: string | null
+  status: string
+  createdAt: string
+  donorName: string
+}
+
+export type BrowseResponse = {
+  results: BrowseItem[]
+  total: number
+  page: number
+  totalPages: number
+}
+
+export const DEFAULT_BROWSE_FILTERS: BrowseFilters = {
+  query: "",
+  categories: [],
+  condition: [],
+  sortBy: "newest",
+}

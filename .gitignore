@@ -33,4 +33,4 @@ Thumbs.db
 *.swp
 *.tsbuildinfo
 
-app/ReVive/Frontend/tsconfig.tsbuildinfo
+frontend/tsconfig.tsbuildinfo

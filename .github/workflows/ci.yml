@@ -29,27 +29,27 @@ jobs:
 
       # ---------- Node / TypeScript (runs only if package.json exists) ----------
       - name: Setup Node
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.2.0
         with:
           node-version: "20"
           cache: "npm"
       - name: Install (Node)
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         # npm ci is reproducible but needs a lockfile; fall back to npm install so a
         # first-push repo without package-lock.json still goes green.
         run: npm ci || npm install
       - name: Lint
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         run: npm run lint --if-present
       - name: Typecheck
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         run: npm run typecheck --if-present
       - name: Test
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         run: npm test --if-present
       - name: Build
-        if: ${{ hashFiles('package.json') != '' }}
+        if: ${{ hashFiles('frontend/package.json') != '' }}
         run: npm run build --if-present
 
       # ---------- Python (runs only if requirements/pyproject exists) ----------

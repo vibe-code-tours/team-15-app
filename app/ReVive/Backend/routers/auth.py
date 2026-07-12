@@ -37,10 +37,21 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
     db.refresh(user)
 
     token = create_access_token(str(user.id))
-    return success_response(data={
-        "accessToken": token,
-        "tokenType": "bearer",
-    })
+    response = JSONResponse(
+        content=success_response(
+            data={"accessToken": token, "tokenType": "bearer"},
+            message=None,
+        )
+    )
+    response.set_cookie(
+        key="revive_backend_token",
+        value=token,
+        httponly=True,
+        secure=False,  # Set to True in production
+        samesite="lax",
+        max_age=60 * 60 * 24 * 7,  # 7 days
+    )
+    return response
 
 
 @router.post("/login")
@@ -52,10 +63,21 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
             content=error_response("Invalid email or password"),
         )
     token = create_access_token(str(user.id))
-    return success_response(data={
-        "accessToken": token,
-        "tokenType": "bearer",
-    })
+    response = JSONResponse(
+        content=success_response(
+            data={"accessToken": token, "tokenType": "bearer"},
+            message=None,
+        )
+    )
+    response.set_cookie(
+        key="revive_backend_token",
+        value=token,
+        httponly=True,
+        secure=False,  # Set to True in production
+        samesite="lax",
+        max_age=60 * 60 * 24 * 7,  # 7 days
+    )
+    return response
 
 
 @router.get("/me")

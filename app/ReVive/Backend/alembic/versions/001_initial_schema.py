@@ -17,39 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Enums
-    user_status = sa.Enum("active", "suspended", "banned", name="userstatus")
-    user_status.create(op.get_bind(), checkfirst=True)
-
-    auth_provider = sa.Enum("email", "google", "facebook", "apple", name="authprovider")
-    auth_provider.create(op.get_bind(), checkfirst=True)
-
-    item_condition = sa.Enum("working", "minor_repair_needed", "for_parts_scrap", name="itemcondition")
-    item_condition.create(op.get_bind(), checkfirst=True)
-
-    listing_status = sa.Enum("available", "reserved", "donated", "archived", name="listingstatus")
-    listing_status.create(op.get_bind(), checkfirst=True)
-
-    pickup_preference = sa.Enum("self_pickup_only", "needs_truck", "weekends_only", "flexible", name="pickuppreference")
-    pickup_preference.create(op.get_bind(), checkfirst=True)
-
-    request_status = sa.Enum("pending", "accepted", "declined", "withdrawn", name="requeststatus")
-    request_status.create(op.get_bind(), checkfirst=True)
-
-    report_target_type = sa.Enum("listing", "user", name="reporttargettype")
-    report_target_type.create(op.get_bind(), checkfirst=True)
-
-    report_status = sa.Enum("open", "reviewing", "resolved", "dismissed", name="reportstatus")
-    report_status.create(op.get_bind(), checkfirst=True)
-
-    admin_action_type = sa.Enum("dismiss", "warning", "takedown", "suspend", "ban", name="adminactiontype")
-    admin_action_type.create(op.get_bind(), checkfirst=True)
-
-    notification_channel = sa.Enum("email", "sms", "push", name="notificationchannel")
-    notification_channel.create(op.get_bind(), checkfirst=True)
-
-    notification_type = sa.Enum("otp", "new_request", "new_message", "request_accepted", "item_claimed", "moderation_warning", "report_update", name="notificationtype")
-    notification_type.create(op.get_bind(), checkfirst=True)
+    # Enums are created by SQLAlchemy models - no need to create them here
 
     # Regions
     op.create_table(
@@ -70,10 +38,10 @@ def upgrade() -> None:
         sa.Column("email", sa.String, unique=True, nullable=False),
         sa.Column("phone", sa.String, unique=True),
         sa.Column("password_hash", sa.String),
-        sa.Column("auth_provider", auth_provider, nullable=False, server_default="email"),
+        sa.Column("auth_provider", sa.String, nullable=False, server_default="email"),
         sa.Column("profile_picture_url", sa.String),
         sa.Column("region_id", UUID(as_uuid=True), sa.ForeignKey("regions.id")),
-        sa.Column("status", user_status, nullable=False, server_default="active"),
+        sa.Column("status", sa.String, nullable=False, server_default="active"),
         sa.Column("notification_prefs", sa.JSON),
         sa.Column("items_donated_count", sa.Integer, nullable=False, server_default="0"),
         sa.Column("items_received_count", sa.Integer, nullable=False, server_default="0"),
@@ -119,9 +87,9 @@ def upgrade() -> None:
         sa.Column("description", sa.Text),
         sa.Column("brand", sa.String),
         sa.Column("model", sa.String),
-        sa.Column("condition", item_condition, nullable=False),
-        sa.Column("pickup_preference", pickup_preference, nullable=False, server_default="flexible"),
-        sa.Column("status", listing_status, nullable=False, server_default="available"),
+        sa.Column("condition", sa.String, nullable=False),
+        sa.Column("pickup_preference", sa.String, nullable=False, server_default="flexible"),
+        sa.Column("status", sa.String, nullable=False, server_default="available"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("archived_at", sa.DateTime(timezone=True)),
@@ -159,7 +127,7 @@ def upgrade() -> None:
         sa.Column("listing_id", UUID(as_uuid=True), sa.ForeignKey("listings.id"), nullable=False),
         sa.Column("requester_id", UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
         sa.Column("note", sa.Text),
-        sa.Column("status", request_status, nullable=False, server_default="pending"),
+        sa.Column("status", sa.String, nullable=False, server_default="pending"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("responded_at", sa.DateTime(timezone=True)),
         sa.Column("confirmed_at", sa.DateTime(timezone=True)),
@@ -185,12 +153,12 @@ def upgrade() -> None:
         "reports",
         sa.Column("id", UUID(as_uuid=True), primary_key=True),
         sa.Column("reporter_id", UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
-        sa.Column("target_type", report_target_type, nullable=False),
+        sa.Column("target_type", sa.String, nullable=False),
         sa.Column("target_listing_id", UUID(as_uuid=True), sa.ForeignKey("listings.id")),
         sa.Column("target_user_id", UUID(as_uuid=True), sa.ForeignKey("users.id")),
         sa.Column("reason", sa.String, nullable=False),
         sa.Column("details", sa.Text),
-        sa.Column("status", report_status, nullable=False, server_default="open"),
+        sa.Column("status", sa.String, nullable=False, server_default="open"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
     op.create_index("ix_reports_target_listing_id", "reports", ["target_listing_id"])
@@ -203,7 +171,7 @@ def upgrade() -> None:
         sa.Column("id", UUID(as_uuid=True), primary_key=True),
         sa.Column("admin_id", UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
         sa.Column("report_id", UUID(as_uuid=True), sa.ForeignKey("reports.id")),
-        sa.Column("action", admin_action_type, nullable=False),
+        sa.Column("action", sa.String, nullable=False),
         sa.Column("target_user_id", UUID(as_uuid=True), sa.ForeignKey("users.id")),
         sa.Column("target_listing_id", UUID(as_uuid=True), sa.ForeignKey("listings.id")),
         sa.Column("reason", sa.Text),
@@ -218,8 +186,8 @@ def upgrade() -> None:
         "notifications",
         sa.Column("id", UUID(as_uuid=True), primary_key=True),
         sa.Column("user_id", UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
-        sa.Column("type", notification_type, nullable=False),
-        sa.Column("channel", notification_channel, nullable=False),
+        sa.Column("type", sa.String, nullable=False),
+        sa.Column("channel", sa.String, nullable=False),
         sa.Column("payload", sa.JSON),
         sa.Column("sent_at", sa.DateTime(timezone=True)),
         sa.Column("read_at", sa.DateTime(timezone=True)),
@@ -320,15 +288,3 @@ def downgrade() -> None:
     op.drop_table("otp_codes")
     op.drop_table("users")
     op.drop_table("regions")
-
-    sa.Enum(name="notificationtype").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="notificationchannel").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="adminactiontype").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="reportstatus").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="reporttargettype").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="requeststatus").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="pickuppreference").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="listingstatus").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="itemcondition").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="authprovider").drop(op.get_bind(), checkfirst=True)
-    sa.Enum(name="userstatus").drop(op.get_bind(), checkfirst=True)

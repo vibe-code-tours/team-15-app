@@ -72,6 +72,23 @@ def delete_pickup(db: Session, pickup_id: int, user_id: str) -> bool:
     return True
 
 
+def request_pickup(db: Session, pickup_id: int, requester_id: str) -> models.Pickup | None:
+    """Request an item from another user."""
+    pickup = db.query(models.Pickup).filter(models.Pickup.id == pickup_id).first()
+    if not pickup:
+        return None
+    # Can't request your own item
+    if pickup.user_id == requester_id:
+        return None
+    # Can only request available items
+    if pickup.status != "available":
+        return None
+    pickup.status = "requested"
+    db.commit()
+    db.refresh(pickup)
+    return pickup
+
+
 def search_pickups(
     db: Session,
     user_id: str,
@@ -126,6 +143,59 @@ def search_pickups(
         query = query.order_by(order_col.asc())
     else:
         query = query.order_by(order_col.desc())
+
+    # Paginate
+    offset = (page - 1) * limit
+    items = query.offset(offset).limit(limit).all()
+
+    return items, total
+
+
+def browse_pickups(
+    db: Session,
+    current_user_id: str,
+    filters: dict,
+    page: int = 1,
+    limit: int = 12,
+) -> tuple[list[models.Pickup], int]:
+    """Browse available pickups from OTHER users."""
+    query = db.query(models.Pickup).filter(
+        models.Pickup.user_id != current_user_id,
+        models.Pickup.status == "available",
+    )
+
+    # Text search
+    if filters.get("query"):
+        term = f"%{filters['query']}%"
+        query = query.filter(
+            models.Pickup.device_name.ilike(term)
+            | models.Pickup.category.ilike(term)
+            | models.Pickup.address.ilike(term)
+            | models.Pickup.notes.ilike(term)
+        )
+
+    # Category filter
+    if filters.get("categories"):
+        query = query.filter(models.Pickup.category.in_(filters["categories"]))
+
+    # Condition filter
+    if filters.get("condition"):
+        query = query.filter(models.Pickup.condition.in_(filters["condition"]))
+
+    # Location filter (address search)
+    if filters.get("location"):
+        location_term = f"%{filters['location']}%"
+        query = query.filter(models.Pickup.address.ilike(location_term))
+
+    # Count before pagination
+    total = query.count()
+
+    # Sorting
+    sort_by = filters.get("sort_by", "newest")
+    if sort_by == "oldest":
+        query = query.order_by(models.Pickup.created_at.asc())
+    else:
+        query = query.order_by(models.Pickup.created_at.desc())
 
     # Paginate
     offset = (page - 1) * limit

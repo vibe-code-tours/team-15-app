@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import get_settings
 from routers import (
     auth, users, listings, categories, requests, messages,
-    notifications, reports, admin, pickups, referrals, search,
+    notifications, reports, admin, pickups, referrals, search, browse,
 )
 
 settings = get_settings()
@@ -33,6 +33,7 @@ app.include_router(admin.router)
 app.include_router(pickups.router)
 app.include_router(referrals.router)
 app.include_router(search.router)
+app.include_router(browse.router)
 
 
 @app.get("/")

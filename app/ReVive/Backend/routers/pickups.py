@@ -94,10 +94,15 @@ def update_pickup(
         if not success:
             return JSONResponse(status_code=404, content=error_response("Pickup not found"))
         return success_response(data={"success": True}, message="Listing cancelled")
+    elif body.action == "request":
+        pickup = pickup_service.request_pickup(db, pickup_id, str(current_user.id))
+        if not pickup:
+            return JSONResponse(status_code=404, content=error_response("Pickup not found or already requested"))
+        return success_response(data={"success": True}, message="Request sent successfully")
     else:
         return JSONResponse(
             status_code=400,
-            content=error_response("Invalid action. Use 'complete' or 'cancel'"),
+            content=error_response("Invalid action. Use 'complete', 'cancel', or 'request'"),
         )
 
 

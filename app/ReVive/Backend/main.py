@@ -1,7 +1,11 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from config import get_settings
+from database import get_db
 from routers import (
     auth, users, listings, categories, requests, messages,
     notifications, reports, admin, pickups, referrals, search, browse,
@@ -42,5 +46,13 @@ def read_root():
 
 
 @app.get("/health")
-def health_check():
-    return {"status": "ok"}
+def health_check(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+    except SQLAlchemyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database unavailable",
+        ) from exc
+
+    return {"status": "ok", "database": "connected"}

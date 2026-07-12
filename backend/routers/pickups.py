@@ -52,6 +52,38 @@ def list_my_pickups(
     )
 
 
+@router.get("/requested")
+def list_requested_pickups(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get pickups that the user has requested from other donors."""
+    pickups = pickup_service.get_requested_pickups(db, str(current_user.id))
+    return success_response(
+        data=[_pickup_to_dict(p) for p in pickups],
+    )
+
+
+@router.get("/donor-requests")
+def list_donor_requests(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get pickups where other users have made requests (donor view)."""
+    results = pickup_service.get_donor_requests(db, str(current_user.id))
+    data = []
+    for item in results:
+        pickup_dict = _pickup_to_dict(item["pickup"])
+        requester = item["requester"]
+        pickup_dict["requester"] = {
+            "id": str(requester.id) if requester else None,
+            "name": requester.name if requester else "Unknown",
+            "email": requester.email if requester else "",
+        } if requester else None
+        data.append(pickup_dict)
+    return success_response(data=data)
+
+
 @router.post("/")
 def create_pickup(
     body: PickupCreate,
@@ -99,10 +131,20 @@ def update_pickup(
         if not pickup:
             return JSONResponse(status_code=404, content=error_response("Pickup not found or already requested"))
         return success_response(data={"success": True}, message="Request sent successfully")
+    elif body.action == "accept":
+        pickup = pickup_service.accept_request(db, pickup_id, str(current_user.id))
+        if not pickup:
+            return JSONResponse(status_code=404, content=error_response("Pickup not found or not in requested state"))
+        return success_response(data={"success": True}, message="Request accepted")
+    elif body.action == "reject":
+        pickup = pickup_service.reject_request(db, pickup_id, str(current_user.id))
+        if not pickup:
+            return JSONResponse(status_code=404, content=error_response("Pickup not found or not in requested state"))
+        return success_response(data={"success": True}, message="Request rejected")
     else:
         return JSONResponse(
             status_code=400,
-            content=error_response("Invalid action. Use 'complete', 'cancel', or 'request'"),
+            content=error_response("Invalid action. Use 'complete', 'cancel', 'request', 'accept', or 'reject'"),
         )
 
 

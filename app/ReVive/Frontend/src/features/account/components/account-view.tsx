@@ -1,5 +1,7 @@
 import { ProfileSummary } from "@/features/account/components/profile-summary"
 import { QuickStats } from "@/features/account/components/quick-stats"
+import { RequestedItems } from "@/features/account/components/requested-items"
+import { DonorRequests } from "@/features/account/components/donor-requests"
 import { AccountMenu } from "@/features/account/components/account-menu"
 import type { UserStats } from "@/features/settings/types"
 
@@ -39,6 +41,14 @@ export function AccountView({ user, userStats, achievementStats }: AccountViewPr
             achievementsUnlocked: achievementStats.unlocked,
           }}
         />
+      </section>
+
+      <section className="mb-8">
+        <DonorRequests />
+      </section>
+
+      <section className="mb-8">
+        <RequestedItems />
       </section>
 
       <section>

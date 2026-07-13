@@ -68,6 +68,8 @@ def delete_pickup(db: Session, pickup_id: int, user_id: str) -> bool:
     )
     if not pickup:
         return False
+    # Delete related impact_events first (foreign key constraint)
+    db.query(models.ImpactEvent).filter(models.ImpactEvent.pickup_id == pickup_id).delete()
     db.delete(pickup)
     db.commit()
     return True

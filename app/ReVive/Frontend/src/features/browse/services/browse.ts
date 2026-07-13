@@ -35,10 +35,13 @@ export async function getAvailableItems(
 }
 
 /** Request an item from another user */
-export async function requestItem(listingId: number) {
-  const result = await apiPatch<{ success: boolean }, { action: string }>(
-    `/api/pickups/${listingId}`,
-    { action: "request" }
-  )
+export async function requestItem(
+  listingId: number,
+  preferences?: { pickupFrom?: string; pickupTo?: string; timeSlot?: string }
+) {
+  await apiPatch<{ success: boolean }>(`/api/pickups/${listingId}`, {
+    action: "request",
+    ...preferences,
+  })
   return { success: true }
 }

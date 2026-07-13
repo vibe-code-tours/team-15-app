@@ -29,6 +29,9 @@ class Pickup(Base):
     notes = Column(Text)
     status = Column(String, nullable=False, default="available")
     requested_by = Column(String, nullable=True, comment="user_id of person who requested this item")
+    requested_pickup_from = Column(String, nullable=True, comment="Requester preferred pickup start date")
+    requested_pickup_to = Column(String, nullable=True, comment="Requester preferred pickup end date")
+    requested_time_slot = Column(String, nullable=True, comment="Requester preferred pickup time slot")
     created_at = Column(String, nullable=False)
 
     __table_args__ = (

@@ -12,8 +12,8 @@ from services import pickup_service, referral_service
 router = APIRouter(prefix="/api/pickups", tags=["pickups"])
 
 
-def _pickup_to_dict(p) -> dict:
-    return {
+def _pickup_to_dict(p, requester=None) -> dict:
+    result = {
         "id": p.id,
         "userId": p.user_id,
         "category": p.category,
@@ -26,8 +26,19 @@ def _pickup_to_dict(p) -> dict:
         "address": p.address,
         "notes": p.notes,
         "status": p.status,
+        "requestedBy": p.requested_by,
+        "requestedPickupFrom": p.requested_pickup_from,
+        "requestedPickupTo": p.requested_pickup_to,
+        "requestedTimeSlot": p.requested_time_slot,
         "createdAt": p.created_at,
     }
+    if requester:
+        result["requester"] = {
+            "id": str(requester.id),
+            "name": requester.name,
+            "email": requester.email,
+        }
+    return result
 
 
 @router.get("/")
@@ -44,9 +55,18 @@ def list_my_pickups(
     total = len(pickups)
     offset = (page - 1) * limit
     paginated = pickups[offset: offset + limit]
+
+    # Fetch requester info for pickups that have been requested
+    items = []
+    for p in paginated:
+        requester = None
+        if p.requested_by:
+            requester = db.query(models.User).filter(models.User.id == p.requested_by).first()
+        items.append(_pickup_to_dict(p, requester=requester))
+
     total_pages = (total + limit - 1) // limit if limit > 0 else 1
     return paginated_response(
-        items=[_pickup_to_dict(p) for p in paginated],
+        items=items,
         total=total,
         page=page,
         total_pages=total_pages,
@@ -128,7 +148,14 @@ def update_pickup(
             return JSONResponse(status_code=404, content=error_response("Pickup not found"))
         return success_response(data={"success": True}, message="Listing cancelled")
     elif body.action == "request":
-        pickup = pickup_service.request_pickup(db, pickup_id, str(current_user.id))
+        pickup = pickup_service.request_pickup(
+            db,
+            pickup_id,
+            str(current_user.id),
+            pickup_from=body.pickup_from,
+            pickup_to=body.pickup_to,
+            time_slot=body.time_slot,
+        )
         if not pickup:
             return JSONResponse(status_code=404, content=error_response("Pickup not found or already requested"))
         return success_response(data={"success": True}, message="Request sent successfully")

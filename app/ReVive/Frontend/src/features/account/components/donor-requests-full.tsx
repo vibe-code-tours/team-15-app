@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Package, Clock, MapPin, User, Loader2, Check, X, ArrowLeft } from "lucide-react"
+import { Package, Clock, MapPin, User, Loader2, Check, X, ArrowLeft, Calendar, BadgeCheck } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getDonorRequests, acceptRequest, rejectRequest } from "@/features/account/services/account"
+import { timeSlotLabel } from "@/lib/categories"
 import type { DonorRequest } from "@/features/account/services/account"
 
 export function DonorRequestsFull() {
@@ -32,7 +33,11 @@ export function DonorRequestsFull() {
     setProcessingId(pickupId)
     try {
       await acceptRequest(pickupId)
-      setRequests(requests.filter((r) => r.id !== pickupId))
+      setRequests(
+        requests.map((r) =>
+          r.id === pickupId ? { ...r, status: "accepted" } : r
+        )
+      )
     } catch (error) {
       console.error("Failed to accept request:", error)
     } finally {
@@ -117,36 +122,66 @@ export function DonorRequestsFull() {
                       </div>
                     </div>
                   )}
+
+                  {/* Requester's Preferred Pickup Details */}
+                  {(item.requestedPickupFrom || item.requestedTimeSlot) && (
+                    <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+                      <p className="text-xs font-medium text-primary mb-1">Requested Pick-up</p>
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        {item.requestedPickupFrom && item.requestedPickupTo && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="size-3" />
+                            {item.requestedPickupFrom} – {item.requestedPickupTo}
+                          </span>
+                        )}
+                        {item.requestedTimeSlot && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="size-3" />
+                            {timeSlotLabel(item.requestedTimeSlot)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleReject(item.id)}
-                    disabled={processingId === item.id}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    {processingId === item.id ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <X className="size-4" />
-                    )}
-                    Reject
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleAccept(item.id)}
-                    disabled={processingId === item.id}
-                  >
-                    {processingId === item.id ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Check className="size-4" />
-                    )}
-                    Accept
-                  </Button>
+                  {item.status === "accepted" ? (
+                    <span className="flex items-center gap-1.5 rounded-full bg-green-500/15 px-3 py-1 text-xs font-medium text-green-600 dark:text-green-400">
+                      <BadgeCheck className="size-3.5" />
+                      Accepted
+                    </span>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleReject(item.id)}
+                        disabled={processingId === item.id}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        {processingId === item.id ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <X className="size-4" />
+                        )}
+                        Reject
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleAccept(item.id)}
+                        disabled={processingId === item.id}
+                      >
+                        {processingId === item.id ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Check className="size-4" />
+                        )}
+                        Accept
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </Card>

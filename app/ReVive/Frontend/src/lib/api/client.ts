@@ -54,6 +54,11 @@ async function request<T>(
     body: body ? JSON.stringify(body) : undefined,
   })
 
+  const contentType = res.headers.get("content-type") || ""
+  if (!contentType.includes("application/json")) {
+    throw new ApiError(res.status, `Server error (${res.status})`)
+  }
+
   const json: ApiResponse<T> = await res.json()
 
   if (!json.success || json.error) {

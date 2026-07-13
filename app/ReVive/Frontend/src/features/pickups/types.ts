@@ -23,5 +23,9 @@ export type Pickup = {
   address: string
   notes: string | null
   status: string
+  requestedBy: string | null
+  requestedPickupFrom: string | null
+  requestedPickupTo: string | null
+  requestedTimeSlot: string | null
   createdAt: string
 }

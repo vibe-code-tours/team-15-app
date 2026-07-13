@@ -14,16 +14,37 @@ export default async function DashboardPage() {
   const user = await getServerUser()
   if (!user) redirect("/sign-in")
 
-  const pickups = await getPickups()
-  const { code, stats: referralStats } = await getReferralDashboard()
-  const impactTimeline = await getImpactTimeline(user.id)
+  let pickups: Awaited<ReturnType<typeof getPickups>> = []
+  let referralCode = ""
+  let referralStats = { totalPoints: 0, doublePointsEarned: 0, referralsMade: 0, co2SavedFromReferrals: 0, pendingReferrals: 0 }
+  let impactTimeline: Awaited<ReturnType<typeof getImpactTimeline>> = []
+
+  try {
+    pickups = await getPickups()
+  } catch {
+    // keep empty array
+  }
+
+  try {
+    const dashboard = await getReferralDashboard()
+    referralCode = dashboard.code
+    referralStats = dashboard.stats
+  } catch {
+    // keep defaults
+  }
+
+  try {
+    impactTimeline = await getImpactTimeline(user.id)
+  } catch {
+    // keep empty array
+  }
 
   return (
     <div className="min-h-svh bg-background">
       <AppHeader userName={user.name} />
       <DashboardView
         pickups={pickups}
-        referralCode={code}
+        referralCode={referralCode}
         referralStats={referralStats}
         impactTimeline={impactTimeline}
         userName={user.name}

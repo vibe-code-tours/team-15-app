@@ -88,7 +88,7 @@ export function BrowseView() {
         )}
       </div>
 
-      <BrowseGrid items={items} />
+      <BrowseGrid items={items} onRequestSuccess={() => fetchItems(filters, page)} />
 
       {totalPages > 1 && (
         <div className="mt-8 flex items-center justify-center gap-2">

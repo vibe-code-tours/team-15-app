@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User } from "lucide-react"
 import {
@@ -54,6 +55,7 @@ function formatDate(value: string) {
 }
 
 export function PickupList({ pickups }: { pickups: Pickup[] }) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [busyId, setBusyId] = useState<number | null>(null)
 
@@ -79,6 +81,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
     startTransition(async () => {
       await action()
       setBusyId(null)
+      router.refresh()
     })
   }
 

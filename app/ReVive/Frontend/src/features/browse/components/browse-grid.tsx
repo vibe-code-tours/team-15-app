@@ -30,9 +30,10 @@ function formatDateRange(from: string, to: string): string {
 
 interface BrowseGridProps {
   items: BrowseItem[]
+  onRequestSuccess?: () => void
 }
 
-export function BrowseGrid({ items }: BrowseGridProps) {
+export function BrowseGrid({ items, onRequestSuccess }: BrowseGridProps) {
   const [requestedIds, setRequestedIds] = useState<Set<number>>(new Set())
 
   if (items.length === 0) {
@@ -49,6 +50,7 @@ export function BrowseGrid({ items }: BrowseGridProps) {
 
   const handleRequestSuccess = (itemId: number) => {
     setRequestedIds((prev) => new Set(prev).add(itemId))
+    onRequestSuccess?.()
   }
 
   return (

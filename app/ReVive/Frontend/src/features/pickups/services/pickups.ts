@@ -7,7 +7,8 @@ export type PickupInput = {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes?: string
@@ -20,7 +21,8 @@ export type Pickup = {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes: string | null
@@ -43,7 +45,8 @@ export async function createPickup(input: PickupInput) {
       deviceName: input.deviceName,
       quantity: input.quantity || 1,
       condition: input.condition || "working",
-      pickupDate: input.pickupDate,
+      availableFrom: input.availableFrom,
+      availableTo: input.availableTo,
       timeSlot: input.timeSlot,
       address: input.address,
       notes: input.notes,

@@ -20,7 +20,8 @@ type Pickup = {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes: string | null
@@ -110,7 +111,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                 <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="size-4 shrink-0 text-primary" />
-                    <span>{formatDate(p.pickupDate)}</span>
+                    <span>{formatDate(p.availableFrom)} – {formatDate(p.availableTo)}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="size-4 shrink-0 text-primary" />

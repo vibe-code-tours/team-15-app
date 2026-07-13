@@ -12,7 +12,8 @@ interface Pickup {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes: string | null
@@ -72,7 +73,12 @@ export function PickupDetailModal({
             <Calendar className="size-4 text-muted-foreground" />
             <div>
               <p className="font-medium">
-                {new Date(pickup.pickupDate).toLocaleDateString("en-US", {
+                {new Date(pickup.availableFrom).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })} – {new Date(pickup.availableTo).toLocaleDateString("en-US", {
                   weekday: "long",
                   year: "numeric",
                   month: "long",

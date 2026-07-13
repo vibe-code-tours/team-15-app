@@ -4,7 +4,7 @@ def test_create_pickup(client, auth_headers):
         "device_name": "Old Dell Laptop",
         "quantity": 1,
         "condition": "working",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "123 Main St",
     }, headers=auth_headers)
@@ -20,7 +20,7 @@ def test_create_pickup_unauthorized(client):
     response = client.post("/api/pickups/", json={
         "category": "Laptops",
         "device_name": "Old Dell Laptop",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "123 Main St",
     })
@@ -32,7 +32,7 @@ def test_list_pickups(client, auth_headers):
     client.post("/api/pickups/", json={
         "category": "Phones",
         "device_name": "Old iPhone",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "456 Oak Ave",
     }, headers=auth_headers)
@@ -49,7 +49,7 @@ def test_list_pickups_with_status_filter(client, auth_headers):
     client.post("/api/pickups/", json={
         "category": "Tablets",
         "device_name": "iPad",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "789 Elm St",
     }, headers=auth_headers)
@@ -70,7 +70,7 @@ def test_get_pickup_by_id(client, auth_headers):
     create_resp = client.post("/api/pickups/", json={
         "category": "Monitors",
         "device_name": "Dell Monitor",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "321 Pine Rd",
     }, headers=auth_headers)
@@ -86,7 +86,7 @@ def test_complete_pickup(client, auth_headers):
     create_resp = client.post("/api/pickups/", json={
         "category": "Keyboards",
         "device_name": "Mechanical Keyboard",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "555 Maple Dr",
     }, headers=auth_headers)
@@ -105,7 +105,7 @@ def test_cancel_pickup(client, auth_headers):
     create_resp = client.post("/api/pickups/", json={
         "category": "Printers",
         "device_name": "HP Printer",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "888 Cedar Ln",
     }, headers=auth_headers)
@@ -124,7 +124,7 @@ def test_delete_pickup(client, auth_headers):
     create_resp = client.post("/api/pickups/", json={
         "category": "Speakers",
         "device_name": "JBL Speaker",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "999 Birch Way",
     }, headers=auth_headers)
@@ -141,7 +141,7 @@ def test_search_pickups(client, auth_headers):
     client.post("/api/pickups/", json={
         "category": "Laptops",
         "device_name": "MacBook Pro",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "123 Tech St",
     }, headers=auth_headers)
@@ -162,7 +162,7 @@ def test_search_stats(client, auth_headers):
     client.post("/api/pickups/", json={
         "category": "Phones",
         "device_name": "Samsung Galaxy",
-        "pickup_date": "2026-07-15",
+        "available_from": "2026-07-15", "available_to": "2026-07-20",
         "time_slot": "10:00-12:00",
         "address": "456 Mobile Ave",
     }, headers=auth_headers)

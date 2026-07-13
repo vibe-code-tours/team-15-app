@@ -60,14 +60,15 @@ export async function notifyPickupScheduled(
   userId: string,
   pickupId: number,
   deviceName: string,
-  pickupDate: string
+  availableFrom: string,
+  availableTo: string
 ) {
   return createNotification({
     userId,
     type: "pickup_scheduled",
     title: "",
     message: "",
-    metadata: { pickupId, deviceName, pickupDate },
+    metadata: { pickupId, deviceName, availableFrom, availableTo },
   })
 }
 

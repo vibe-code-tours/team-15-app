@@ -3,7 +3,8 @@ export type PickupInput = {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes?: string
@@ -16,7 +17,8 @@ export type Pickup = {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes: string | null

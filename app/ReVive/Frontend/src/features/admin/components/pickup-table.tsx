@@ -14,7 +14,8 @@ interface Pickup {
   deviceName: string
   quantity: number
   condition: string
-  pickupDate: string
+  availableFrom: string
+  availableTo: string
   timeSlot: string
   address: string
   notes: string | null
@@ -103,7 +104,7 @@ export function PickupTable({ pickups }: { pickups: Pickup[] }) {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
-                      {new Date(pickup.pickupDate).toLocaleDateString()}
+                      {new Date(pickup.availableFrom).toLocaleDateString()} – {new Date(pickup.availableTo).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
                       <PickupStatusBadge status={pickup.status} />

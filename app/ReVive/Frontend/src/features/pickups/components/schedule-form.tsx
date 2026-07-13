@@ -26,7 +26,8 @@ export function ScheduleForm() {
   const [deviceName, setDeviceName] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [condition, setCondition] = useState("working")
-  const [pickupDate, setPickupDate] = useState("")
+  const [availableFrom, setAvailableFrom] = useState("")
+  const [availableTo, setAvailableTo] = useState("")
   const [timeSlot, setTimeSlot] = useState("")
   const [address, setAddress] = useState("")
   const [notes, setNotes] = useState("")
@@ -36,7 +37,7 @@ export function ScheduleForm() {
 
   const canNext =
     (step === 0 && category && deviceName.trim()) ||
-    (step === 1 && pickupDate && timeSlot) ||
+    (step === 1 && availableFrom && availableTo && availableTo >= availableFrom && timeSlot) ||
     step === 2
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,7 +53,8 @@ export function ScheduleForm() {
       deviceName,
       quantity,
       condition,
-      pickupDate,
+      availableFrom,
+      availableTo,
       timeSlot,
       address,
       notes,
@@ -193,15 +195,32 @@ export function ScheduleForm() {
 
             {step === 1 && (
               <>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="pickupDate">Available from</Label>
-                  <Input
-                    id="pickupDate"
-                    type="date"
-                    min={today}
-                    value={pickupDate}
-                    onChange={(e) => setPickupDate(e.target.value)}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="availableFrom">Available from</Label>
+                    <Input
+                      id="availableFrom"
+                      type="date"
+                      min={today}
+                      value={availableFrom}
+                      onChange={(e) => {
+                        setAvailableFrom(e.target.value)
+                        if (availableTo && e.target.value > availableTo) {
+                          setAvailableTo("")
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="availableTo">Available to</Label>
+                    <Input
+                      id="availableTo"
+                      type="date"
+                      min={availableFrom || today}
+                      value={availableTo}
+                      onChange={(e) => setAvailableTo(e.target.value)}
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label>Time slot</Label>

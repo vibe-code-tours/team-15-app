@@ -140,7 +140,11 @@ export function SearchResults({
                   <div className="flex items-center gap-1.5">
                     <Calendar className="size-4" />
                     <span>
-                      {new Date(result.pickupDate).toLocaleDateString("en-US", {
+                      {new Date(result.availableFrom).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })} – {new Date(result.availableTo).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",

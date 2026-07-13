@@ -73,7 +73,14 @@ def delete_pickup(db: Session, pickup_id: int, user_id: str) -> bool:
     return True
 
 
-def request_pickup(db: Session, pickup_id: int, requester_id: str) -> models.Pickup | None:
+def request_pickup(
+    db: Session,
+    pickup_id: int,
+    requester_id: str,
+    pickup_from: str | None = None,
+    pickup_to: str | None = None,
+    time_slot: str | None = None,
+) -> models.Pickup | None:
     """Request an item from another user."""
     pickup = db.query(models.Pickup).filter(models.Pickup.id == pickup_id).first()
     if not pickup:
@@ -86,6 +93,12 @@ def request_pickup(db: Session, pickup_id: int, requester_id: str) -> models.Pic
         return None
     pickup.status = "requested"
     pickup.requested_by = requester_id
+    if pickup_from:
+        pickup.requested_pickup_from = pickup_from
+    if pickup_to:
+        pickup.requested_pickup_to = pickup_to
+    if time_slot:
+        pickup.requested_time_slot = time_slot
     db.commit()
     db.refresh(pickup)
     return pickup

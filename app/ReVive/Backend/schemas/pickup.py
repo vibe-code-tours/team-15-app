@@ -49,4 +49,9 @@ class PickupResponse(BaseModel):
 
 
 class PickupAction(BaseModel):
-    action: str  # complete, cancel
+    model_config = ConfigDict(populate_by_name=True)
+
+    action: str  # complete, cancel, request, accept, reject
+    pickup_from: str | None = Field(None, alias="pickupFrom")
+    pickup_to: str | None = Field(None, alias="pickupTo")
+    time_slot: str | None = Field(None, alias="timeSlot")

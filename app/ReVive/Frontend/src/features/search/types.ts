@@ -88,6 +88,9 @@ export type BrowseItem = {
   status: string
   createdAt: string
   donorName: string
+  availableFrom: string
+  availableTo: string
+  timeSlot: string
 }
 
 export type BrowseResponse = {

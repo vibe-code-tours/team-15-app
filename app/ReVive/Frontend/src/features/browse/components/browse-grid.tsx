@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Clock, Package, User, Loader2 } from "lucide-react"
-import { categoryLabel, conditionLabel } from "@/lib/categories"
-import { requestItem } from "@/features/browse/services/browse"
+import { MapPin, Clock, Package, User, Calendar } from "lucide-react"
+import { categoryLabel, conditionLabel, timeSlotLabel } from "@/lib/categories"
+import { RequestDialog } from "@/features/browse/components/request-dialog"
 import type { BrowseItem } from "@/features/search/types"
 
 function timeAgo(dateString: string): string {
@@ -21,14 +21,19 @@ function timeAgo(dateString: string): string {
   return date.toLocaleDateString()
 }
 
+function formatDateRange(from: string, to: string): string {
+  const fmt = { month: "short", day: "numeric" } as const
+  const startDate = new Date(from + "T00:00:00")
+  const endDate = new Date(to + "T00:00:00")
+  return `${startDate.toLocaleDateString("en-US", fmt)} – ${endDate.toLocaleDateString("en-US", fmt)}`
+}
+
 interface BrowseGridProps {
   items: BrowseItem[]
 }
 
 export function BrowseGrid({ items }: BrowseGridProps) {
-  const [requestingId, setRequestingId] = useState<number | null>(null)
   const [requestedIds, setRequestedIds] = useState<Set<number>>(new Set())
-  const [errorId, setErrorId] = useState<number | null>(null)
 
   if (items.length === 0) {
     return (
@@ -42,25 +47,14 @@ export function BrowseGrid({ items }: BrowseGridProps) {
     )
   }
 
-  const handleRequest = async (itemId: number) => {
-    setRequestingId(itemId)
-    setErrorId(null)
-    const result = await requestItem(itemId)
-    if (result?.error) {
-      setErrorId(itemId)
-      setRequestingId(null)
-      return
-    }
+  const handleRequestSuccess = (itemId: number) => {
     setRequestedIds((prev) => new Set(prev).add(itemId))
-    setRequestingId(null)
   }
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => {
         const isRequested = requestedIds.has(item.id)
-        const isRequesting = requestingId === item.id
-        const hasError = errorId === item.id
 
         return (
           <div
@@ -88,6 +82,18 @@ export function BrowseGrid({ items }: BrowseGridProps) {
                 Qty: {item.quantity}
               </p>
             )}
+
+            {/* Date range & time slot */}
+            <div className="mt-3 flex flex-col gap-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="size-3.5 shrink-0" />
+                <span>{formatDateRange(item.availableFrom, item.availableTo)}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="size-3.5 shrink-0" />
+                <span>{timeSlotLabel(item.timeSlot)}</span>
+              </div>
+            </div>
 
             {/* Meta */}
             <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
@@ -119,25 +125,17 @@ export function BrowseGrid({ items }: BrowseGridProps) {
                   Request sent!
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => handleRequest(item.id)}
-                  disabled={isRequesting}
-                  className="w-full rounded-lg bg-primary py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+                <RequestDialog
+                  itemId={item.id}
+                  availableFrom={item.availableFrom}
+                  availableTo={item.availableTo}
+                  timeSlot={item.timeSlot}
+                  onRequestSuccess={handleRequestSuccess}
                 >
-                  {isRequesting ? (
-                    <span className="inline-flex items-center gap-1.5">
-                      <Loader2 className="size-3.5 animate-spin" /> Requesting...
-                    </span>
-                  ) : (
-                    "Request Item"
-                  )}
-                </button>
-              )}
-              {hasError && (
-                <p className="mt-1.5 text-center text-xs text-destructive">
-                  Could not request — item may no longer be available.
-                </p>
+                  <div className="w-full rounded-lg bg-primary py-2 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                    Request Item
+                  </div>
+                </RequestDialog>
               )}
             </div>
           </div>

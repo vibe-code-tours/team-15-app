@@ -26,6 +26,10 @@ def _pickup_to_dict(p) -> dict:
         "address": p.address,
         "notes": p.notes,
         "status": p.status,
+        "requestedBy": p.requested_by,
+        "requestedPickupFrom": p.requested_pickup_from,
+        "requestedPickupTo": p.requested_pickup_to,
+        "requestedTimeSlot": p.requested_time_slot,
         "createdAt": p.created_at,
     }
 
@@ -128,7 +132,14 @@ def update_pickup(
             return JSONResponse(status_code=404, content=error_response("Pickup not found"))
         return success_response(data={"success": True}, message="Listing cancelled")
     elif body.action == "request":
-        pickup = pickup_service.request_pickup(db, pickup_id, str(current_user.id))
+        pickup = pickup_service.request_pickup(
+            db,
+            pickup_id,
+            str(current_user.id),
+            pickup_from=body.pickup_from,
+            pickup_to=body.pickup_to,
+            time_slot=body.time_slot,
+        )
         if not pickup:
             return JSONResponse(status_code=404, content=error_response("Pickup not found or already requested"))
         return success_response(data={"success": True}, message="Request sent successfully")

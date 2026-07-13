@@ -34,3 +34,5 @@ Thumbs.db
 *.tsbuildinfo
 
 app/ReVive/Frontend/tsconfig.tsbuildinfo
+
+postgres_db

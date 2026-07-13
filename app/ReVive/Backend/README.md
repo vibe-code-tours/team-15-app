@@ -105,6 +105,44 @@ The server starts at `http://localhost:8000`.
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
+## Deploy with Render and Neon
+
+The repository root contains `render.yaml`, which configures the backend as a
+Render Web Service. During each deployment, Render installs the Python
+dependencies, applies the Alembic migrations, starts Uvicorn, and checks
+`/health` for database connectivity.
+
+1. Create a Neon project and copy its PostgreSQL connection string. Keep all
+   SSL query parameters included by Neon.
+2. In Render, create a Blueprint from this repository. When prompted, provide:
+
+   ```env
+   DATABASE_URL=<complete Neon connection string>
+   CORS_ORIGINS=["https://your-frontend-domain.example"]
+   ```
+
+   Also provide a long random `SECRET_KEY`. If the service already exists, add
+   these variables in its Environment settings and use the commands from
+   `render.yaml`. The Blueprint pins Python 3.13 because the current dependency
+   versions do not support Python 3.14.
+3. In the frontend hosting service, set:
+
+   ```env
+   NEXT_PUBLIC_API_URL=https://your-render-service.onrender.com
+   JWT_SECRET=<same value as the backend SECRET_KEY>
+   ```
+
+   Do not add a trailing slash to `NEXT_PUBLIC_API_URL`. Redeploy the frontend
+   after changing public environment variables.
+4. Confirm that `GET https://your-render-service.onrender.com/health` returns:
+
+   ```json
+   {"status":"ok","database":"connected"}
+   ```
+
+Use the exact frontend origin in `CORS_ORIGINS`, including `https://` and
+without a trailing slash. Never commit the Neon URL or production secrets.
+
 ## How to Run Tests
 
 Tests use SQLite (no PostgreSQL needed):

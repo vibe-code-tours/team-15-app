@@ -10,7 +10,7 @@ const templates: Record<NotificationType, NotificationTemplate> = {
   pickup_scheduled: {
     title: "Pickup Scheduled",
     message: (m) =>
-      `Your ${m.deviceName || "e-waste"} pickup has been scheduled for ${m.pickupDate || "a future date"}.`,
+      `Your ${m.deviceName || "e-waste"} pickup is available from ${m.availableFrom || "a future date"} to ${m.availableTo || "a future date"}.`,
     actionUrl: () => "/dashboard",
   },
   pickup_completed: {

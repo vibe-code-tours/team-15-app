@@ -90,7 +90,7 @@ export function RequestedItemsFull() {
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="size-3" />
-                      {item.pickupDate}
+                      {item.availableFrom} – {item.availableTo}
                     </span>
                   </div>
                 </div>

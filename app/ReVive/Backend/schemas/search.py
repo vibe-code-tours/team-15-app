@@ -25,7 +25,8 @@ class SearchResult(BaseModel):
     device_name: str
     quantity: int
     condition: str
-    pickup_date: str
+    available_from: str
+    available_to: str
     time_slot: str
     address: str
     notes: str | None

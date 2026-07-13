@@ -101,7 +101,7 @@ export function validateDate(value: unknown, fieldName: string): ValidationError
 export function validatePickupInput(data: Record<string, unknown>): ValidationError[] {
   const errors: ValidationError[] = []
 
-  const requiredFields = ["category", "deviceName", "pickupDate", "timeSlot", "address"]
+  const requiredFields = ["category", "deviceName", "availableFrom", "availableTo", "timeSlot", "address"]
   for (const field of requiredFields) {
     const error = validateRequired(data[field], field)
     if (error) errors.push(error)
@@ -122,9 +122,20 @@ export function validatePickupInput(data: Record<string, unknown>): ValidationEr
     if (error) errors.push(error)
   }
 
-  if (data.pickupDate) {
-    const error = validateDate(data.pickupDate, "pickupDate")
+  if (data.availableFrom) {
+    const error = validateDate(data.availableFrom, "availableFrom")
     if (error) errors.push(error)
+  }
+
+  if (data.availableTo) {
+    const error = validateDate(data.availableTo, "availableTo")
+    if (error) errors.push(error)
+  }
+
+  if (data.availableFrom && data.availableTo && typeof data.availableFrom === "string" && typeof data.availableTo === "string") {
+    if (data.availableTo < data.availableFrom) {
+      errors.push({ field: "availableTo", message: "availableTo must be on or after availableFrom" })
+    }
   }
 
   if (data.address) {

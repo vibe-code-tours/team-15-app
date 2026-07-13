@@ -19,7 +19,8 @@ def create_pickup(db: Session, user_id: str, data: dict) -> models.Pickup:
         device_name=data["device_name"].strip(),
         quantity=max(1, data.get("quantity", 1)),
         condition=data.get("condition", "working"),
-        pickup_date=data["pickup_date"],
+        available_from=data["available_from"],
+        available_to=data["available_to"],
         time_slot=data["time_slot"],
         address=data["address"].strip(),
         notes=data.get("notes", "").strip() if data.get("notes") else None,
@@ -197,9 +198,9 @@ def search_pickups(
 
     # Date range
     if filters.get("date_from"):
-        query = query.filter(models.Pickup.pickup_date >= filters["date_from"])
+        query = query.filter(models.Pickup.available_from >= filters["date_from"])
     if filters.get("date_to"):
-        query = query.filter(models.Pickup.pickup_date <= filters["date_to"])
+        query = query.filter(models.Pickup.available_to <= filters["date_to"])
 
     # Count before pagination
     total = query.count()

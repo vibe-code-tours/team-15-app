@@ -8,7 +8,8 @@ class PickupCreate(BaseModel):
     device_name: str = Field(min_length=1, max_length=200, alias="deviceName")
     quantity: int = Field(default=1, ge=1, le=100)
     condition: str = "working"
-    pickup_date: str = Field(alias="pickupDate")
+    available_from: str = Field(alias="availableFrom")
+    available_to: str = Field(alias="availableTo")
     time_slot: str = Field(alias="timeSlot")
     address: str = Field(min_length=1, max_length=500)
     notes: str | None = None
@@ -21,7 +22,8 @@ class PickupUpdate(BaseModel):
     device_name: str | None = Field(None, alias="deviceName")
     quantity: int | None = None
     condition: str | None = None
-    pickup_date: str | None = Field(None, alias="pickupDate")
+    available_from: str | None = Field(None, alias="availableFrom")
+    available_to: str | None = Field(None, alias="availableTo")
     time_slot: str | None = Field(None, alias="timeSlot")
     address: str | None = None
     notes: str | None = None
@@ -37,7 +39,8 @@ class PickupResponse(BaseModel):
     device_name: str = Field(alias="deviceName")
     quantity: int
     condition: str
-    pickup_date: str = Field(alias="pickupDate")
+    available_from: str = Field(alias="availableFrom")
+    available_to: str = Field(alias="availableTo")
     time_slot: str = Field(alias="timeSlot")
     address: str
     notes: str | None

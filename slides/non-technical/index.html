@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReVive — Giving Old Tech a Second Life</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="presentation">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <!-- Slide Counter -->
+        <div class="slide-counter" id="slideCounter">1 / 12</div>
+
+        <!-- Navigation Controls -->
+        <button class="nav-btn nav-prev" id="prevBtn" onclick="prevSlide()">‹</button>
+        <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">›</button>
+
+        <!-- Slides Container -->
+        <div class="slides-container" id="slidesContainer">
+
+            <!-- Slide 1: Opening Story -->
+            <section class="slide active" data-slide="1">
+                <div class="slide-content">
+                    <div class="story-opening">
+                        <div class="emoji-hero">📱</div>
+                        <h1 class="story-title">
+                            Do you have an old phone
+                            <br>just sitting in a drawer?
+                        </h1>
+                        <p class="story-subtitle">
+                            You're not alone. Billions of devices are collecting dust
+                            while others desperately need them.
+                        </p>
+                        <div class="scroll-prompt">
+                            <span>Let us tell you a story</span>
+                            <div class="bounce-arrow">↓</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 2: The Problem -->
+            <section class="slide" data-slide="2">
+                <div class="slide-content">
+                    <div class="problem-slide">
+                        <div class="slide-badge">The Problem</div>
+                        <h2 class="problem-title">A Giant Problem</h2>
+
+                        <div class="stat-showcase">
+                            <div class="big-stat">
+                                <span class="stat-number">50</span>
+                                <span class="stat-unit">Million Tons</span>
+                            </div>
+                            <p class="stat-context">
+                                of electronics thrown away every year worldwide
+                            </p>
+                        </div>
+
+                        <div class="problem-visual">
+                            <div class="waste-pile">
+                                <span class="pile-item">📱</span>
+                                <span class="pile-item">💻</span>
+                                <span class="pile-item">📺</span>
+                                <span class="pile-item">🖨️</span>
+                                <span class="pile-item">⌚</span>
+                                <span class="pile-item">📷</span>
+                                <span class="pile-item">🎮</span>
+                                <span class="pile-item">💻</span>
+                            </div>
+                            <p class="visual-caption">Where do all these devices go?</p>
+                        </div>
+
+                        <div class="consequence">
+                            <div class="consequence-icon">⚠️</div>
+                            <p>
+                                <strong>They poison our soil and water</strong>
+                                with toxic chemicals
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: Two Sides of the Story -->
+            <section class="slide" data-slide="3">
+                <div class="slide-content">
+                    <div class="two-sides">
+                        <div class="slide-badge">The Opportunity</div>
+                        <h2 class="section-title">Two Stories, One Solution</h2>
+
+                        <div class="story-cards">
+                            <div class="story-card left-card">
+                                <div class="card-emoji">👨‍👩‍👧‍👦</div>
+                                <h3>The Nguyen Family</h3>
+                                <p class="story-text">
+                                    Just upgraded their phones. Old ones sitting
+                                    in a drawer. <strong>Feel guilty throwing them away</strong>,
+                                    but don't know what else to do.
+                                </p>
+                                <div class="card-status">
+                                    <span class="status-label">Has:</span>
+                                    <span class="status-item">2 perfectly good phones</span>
+                                </div>
+                            </div>
+
+                            <div class="story-divider">
+                                <div class="divider-line"></div>
+                                <div class="divider-emoji">⟷</div>
+                                <div class="divider-line"></div>
+                            </div>
+
+                            <div class="story-card right-card">
+                                <div class="card-emoji">🎓</div>
+                                <h3>Maria, College Student</h3>
+                                <p class="story-text">
+                                    Starting classes next month. Needs a laptop for
+                                    homework. <strong>Can't afford a new one</strong>,
+                                    and her old one just broke.
+                                </p>
+                                <div class="card-status">
+                                    <span class="status-label">Needs:</span>
+                                    <span class="status-item">A working laptop</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="connection-question">
+                            <span class="question-emoji">💭</span>
+                            <p>What if there was an easy way to connect them?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: Introducing ReVive -->
+            <section class="slide" data-slide="4">
+                <div class="slide-content">
+                    <div class="introduction-slide">
+                        <div class="intro-badge">Introducing</div>
+                        <div class="logo-reveal">
+                            <span class="logo-emoji">♻️</span>
+                            <h1 class="brand-name">ReVive</h1>
+                        </div>
+                        <p class="tagline">
+                            Connecting people who have devices to give
+                            <br>with people who need them
+                        </p>
+
+                        <div class="simple-explanation">
+                            <div class="explanation-item">
+                                <span class="step-emoji">1️⃣</span>
+                                <p>List devices you no longer need</p>
+                            </div>
+                            <div class="explanation-item">
+                                <span class="step-emoji">2️⃣</span>
+                                <p>Someone nearby requests your item</p>
+                            </div>
+                            <div class="explanation-item">
+                                <span class="step-emoji">3️⃣</span>
+                                <p>You meet up and give it to them</p>
+                            </div>
+                            <div class="explanation-item">
+                                <span class="step-emoji">4️⃣</span>
+                                <p>Device gets reused instead of trashed!</p>
+                            </div>
+                        </div>
+
+                        <div class="benefit-callout">
+                            <span class="benefit-emoji">✨</span>
+                            <p><strong>No middleman. No fees. Just community.</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: How It Works (Visual) -->
+            <section class="slide" data-slide="5">
+                <div class="slide-content">
+                    <div class="how-it-works">
+                        <div class="slide-badge">How It Works</div>
+                        <h2 class="section-title">Simple as 1-2-3</h2>
+
+                        <div class="process-flow">
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle">📸</div>
+                                </div>
+                                <div class="step-content">
+                                    <h3>Snap & List</h3>
+                                    <p>Take a photo of your old device, add a few details, and post it in seconds</p>
+                                </div>
+                            </div>
+
+                            <div class="process-arrow">→</div>
+
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle">🔍</div>
+                                </div>
+                                <div class="step-content">
+                                    <h3>Get Matched</h3>
+                                    <p>People in your area who need that device will find your listing</p>
+                                </div>
+                            </div>
+
+                            <div class="process-arrow">→</div>
+
+                            <div class="process-step">
+                                <div class="step-visual">
+                                    <div class="step-circle">🤝</div>
+                                </div>
+                                <div class="step-content">
+                                    <h3>Meet Up</h3>
+                                    <p>Chat through the app, agree on a time and place, and hand it over</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="impact-bubble">
+                            <span class="impact-emoji">🌍</span>
+                            <p>That's it! Your device has a new home instead of a landfill.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: Real User Stories -->
+            <section class="slide" data-slide="6">
+                <div class="slide-content">
+                    <div class="user-stories">
+                        <div class="slide-badge">Real Impact</div>
+                        <h2 class="section-title">Stories From Our Community</h2>
+
+                        <div class="testimonials">
+                            <div class="testimonial">
+                                <div class="testimonial-emoji">😊</div>
+                                <blockquote>
+                                    "I had three old phones taking up drawer space.
+                                    Now a single mom has a phone for emergencies.
+                                    <strong>Best feeling ever.</strong>"
+                                </blockquote>
+                                <cite>— David, Software Developer</cite>
+                            </div>
+
+                            <div class="testimonial">
+                                <div class="testimonial-emoji">🎓</div>
+                                <blockquote>
+                                    "I couldn't afford a laptop for college.
+                                    Someone on ReVive gave me one for free.
+                                    <strong>Now I can do my homework!</strong>"
+                                </blockquote>
+                                <cite>— Maria, College Freshman</cite>
+                            </div>
+
+                            <div class="testimonial">
+                                <div class="testimonial-emoji">🌱</div>
+                                <blockquote>
+                                    "My kids' old tablets went to a local school.
+                                    <strong>20 kids now have devices for learning.</strong>
+                                    That's 20 tablets out of the dump."
+                                </blockquote>
+                                <cite>— Sarah, Parent</cite>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: The Impact -->
+            <section class="slide" data-slide="7">
+                <div class="slide-content">
+                    <div class="impact-slide">
+                        <div class="slide-badge">Our Impact</div>
+                        <h2 class="section-title">Together, We're Making a Difference</h2>
+
+                        <div class="impact-grid">
+                            <div class="impact-card">
+                                <div class="impact-icon">📱</div>
+                                <div class="impact-number">1,247</div>
+                                <div class="impact-label">Devices Donated</div>
+                                <div class="impact-sublabel">and counting!</div>
+                            </div>
+
+                            <div class="impact-card">
+                                <div class="impact-icon">🌳</div>
+                                <div class="impact-number">12.5</div>
+                                <div class="impact-label">Tons of E-Waste Prevented</div>
+                                <div class="impact-sublabel">from landfills</div>
+                            </div>
+
+                            <div class="impact-card">
+                                <div class="impact-icon">👨‍👩‍👧‍👦</div>
+                                <div class="impact-number">892</div>
+                                <div class="impact-label">Families Helped</div>
+                                <div class="impact-sublabel">with free devices</div>
+                            </div>
+
+                            <div class="impact-card">
+                                <div class="impact-icon">🌍</div>
+                                <div class="impact-number">5.2</div>
+                                <div class="impact-label">Tons CO₂ Saved</div>
+                                <div class="impact-sublabel">from manufacturing</div>
+                            </div>
+                        </div>
+
+                        <div class="growth-note">
+                            <span class="growth-emoji">📈</span>
+                            <p>These numbers grow every day as more people join!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Why It's Safe -->
+            <section class="slide" data-slide="8">
+                <div class="slide-content">
+                    <div class="safety-slide">
+                        <div class="slide-badge">Safety First</div>
+                        <h2 class="section-title">Safe & Easy to Use</h2>
+
+                        <div class="safety-features">
+                            <div class="safety-item">
+                                <div class="safety-icon">💬</div>
+                                <div class="safety-content">
+                                    <h3>Chat First</h3>
+                                    <p>Message people through the app before meeting.
+                                    Get comfortable and ask questions.</p>
+                                </div>
+                            </div>
+
+                            <div class="safety-item">
+                                <div class="safety-icon">📍</div>
+                                <div class="safety-content">
+                                    <h3>Public Meetups</h3>
+                                    <p>We suggest meeting in public places like
+                                    coffee shops or police station lobbies.</p>
+                                </div>
+                            </div>
+
+                            <div class="safety-item">
+                                <div class="safety-icon">⭐</div>
+                                <div class="safety-content">
+                                    <h3>Trust System</h3>
+                                    <p>Everyone has ratings and reviews.
+                                    See who you're meeting before you go.</p>
+                                </div>
+                            </div>
+
+                            <div class="safety-item">
+                                <div class="safety-icon">🔐</div>
+                                <div class="safety-content">
+                                    <h3>Your Data is Protected</h3>
+                                    <p>Your personal info is never shared.
+                                    Only what you choose to show.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="safety-reassurance">
+                            <span class="shield-emoji">🛡️</span>
+                            <p><strong>Your safety is our priority.</strong>
+                            We've built protections into every step.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: What You Can Do -->
+            <section class="slide" data-slide="9">
+                <div class="slide-content">
+                    <div class="features-slide">
+                        <div class="slide-badge">Features</div>
+                        <h2 class="section-title">Everything You Need</h2>
+
+                        <div class="features-grid">
+                            <div class="feature">
+                                <span class="feature-emoji">📦</span>
+                                <h4>Donate Items</h4>
+                                <p>List phones, laptops, tablets, and more in seconds</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">🔍</span>
+                                <h4>Browse & Search</h4>
+                                <p>Find exactly what you need near your location</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">📝</span>
+                                <h4>Request Items</h4>
+                                <p>Ask for devices you need and get notified</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">📅</span>
+                                <h4>Schedule Pickups</h4>
+                                <p>Pick a time and place that works for both of you</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">💬</span>
+                                <h4>Message Users</h4>
+                                <p>Chat directly to coordinate details</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">📊</span>
+                                <h4>Track Your Impact</h4>
+                                <p>See how many devices you've helped recycle</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">🏆</span>
+                                <h4>Earn Badges</h4>
+                                <p>Get rewards for being an active recycler</p>
+                            </div>
+
+                            <div class="feature">
+                                <span class="feature-emoji">🔔</span>
+                                <h4>Get Notifications</h4>
+                                <p>Know instantly when someone wants your item</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Real Example -->
+            <section class="slide" data-slide="10">
+                <div class="slide-content">
+                    <div class="example-slide">
+                        <h2 class="section-title" style="margin-bottom: 30px;">Watch It In Action</h2>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-time">Monday, 9:00 AM</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-emoji">📱</span>
+                                    <p><strong>Sarah lists her old iPad</strong></p>
+                                    <p class="timeline-detail">Takes 2 photos, adds description, posts in 30 seconds</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-time">Monday, 2:30 PM</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-emoji">🔔</span>
+                                    <p><strong>She gets a notification!</strong></p>
+                                    <p class="timeline-detail">Teacher at local school requests it for her classroom</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-time">Monday, 3:00 PM</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-emoji">💬</span>
+                                    <p><strong>They chat through the app</strong></p>
+                                    <p class="timeline-detail">Answer questions, confirm details, agree to meet</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-time">Tuesday, 10:00 AM</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-emoji">☕</span>
+                                    <p><strong>Meet at local coffee shop</strong></p>
+                                    <p class="timeline-detail">Quick, safe handoff. Both leave happy.</p>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-time">Tuesday, 10:05 AM</div>
+                                <div class="timeline-content">
+                                    <span class="timeline-emoji">🎉</span>
+                                    <p><strong>Impact recorded!</strong></p>
+                                    <p class="timeline-detail">iPad now used by 30 students instead of sitting in a drawer</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-summary">
+                            <span class="summary-emoji">✨</span>
+                            <p><strong>Total time: Under 5 minutes of Sarah's day</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: Call to Action -->
+            <section class="slide" data-slide="11">
+                <div class="slide-content">
+                    <div class="cta-slide">
+                        <div class="cta-main">
+                            <h1 class="cta-title">
+                                Ready to Give Your Tech
+                                <br>a Second Life?
+                            </h1>
+                            <p class="cta-subtitle">
+                                Join thousands of people making a difference,
+                                one device at a time.
+                            </p>
+
+                            <div class="cta-options">
+                                <div class="cta-option">
+                                    <div class="option-emoji">🎁</div>
+                                    <h3>Have Devices?</h3>
+                                    <p>List them in under a minute</p>
+                                    <div class="cta-button">Donate Now</div>
+                                </div>
+
+                                <div class="cta-divider">or</div>
+
+                                <div class="cta-option">
+                                    <div class="option-emoji">🔍</div>
+                                    <h3>Need a Device?</h3>
+                                    <p>Browse free items near you</p>
+                                    <div class="cta-button secondary">Browse Items</div>
+                                </div>
+                            </div>
+
+                            <div class="trust-badges">
+                                <span class="trust-badge">✓ 100% Free</span>
+                                <span class="trust-badge">✓ Safe & Secure</span>
+                                <span class="trust-badge">✓ Eco-Friendly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12: Closing -->
+            <section class="slide" data-slide="12">
+                <div class="slide-content">
+                    <div class="closing-slide">
+                        <div class="closing-content">
+                            <div class="closing-emoji">🌍</div>
+                            <h1 class="closing-title">
+                                Together, We Can End
+                                <br>the E-Waste Crisis
+                            </h1>
+
+                            <div class="closing-message">
+                                <p>Every device you donate is one less in a landfill</p>
+                            </div>
+
+                            <div class="final-tagline">
+                                <span class="tagline-emoji">♻️</span>
+                                <h2>ReVive</h2>
+                                <p>Giving old tech a second life</p>
+                            </div>
+
+                            <div class="questions-section">
+                                <h3>Questions?</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Keyboard Hints -->
+        <div class="keyboard-hints">
+            <span>← → Navigate</span>
+            <span>Space Next</span>
+            <span>F Fullscreen</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

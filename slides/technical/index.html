@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReVive — Codebase Architecture Presentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="presentation">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <!-- Slide Counter -->
+        <div class="slide-counter" id="slideCounter">1 / 15</div>
+
+        <!-- Navigation Controls -->
+        <button class="nav-btn nav-prev" id="prevBtn" onclick="prevSlide()">‹</button>
+        <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">›</button>
+
+        <!-- Slides Container -->
+        <div class="slides-container" id="slidesContainer">
+
+            <!-- Slide 1: Title -->
+            <section class="slide active" data-slide="1">
+                <div class="slide-content title-slide">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <span class="logo-icon">♻️</span>
+                            <span class="logo-text">ReVive</span>
+                        </div>
+                    </div>
+                    <h1 class="main-title">
+                        <span class="gradient-text">Peer-to-Peer</span>
+                        <br>E-Waste Platform
+                    </h1>
+                    <p class="subtitle">Full-Stack Architecture & Code Deep Dive</p>
+                    <div class="meta-info">
+                        <span class="badge">Team 15</span>
+                        <span class="date">July 2026</span>
+                    </div>
+                    <div class="scroll-hint">
+                        <span>Press → or click Next to begin</span>
+                        <div class="scroll-arrow">↓</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 2: Problem Statement -->
+            <section class="slide" data-slide="2">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">01</span>
+                        <h2>The Problem</h2>
+                    </div>
+                    <div class="two-column">
+                        <div class="column problem-column">
+                            <div class="problem-icon">🌍</div>
+                            <h3>E-Waste Crisis</h3>
+                            <ul class="problem-list">
+                                <li><strong>50M+ tons</strong> of e-waste generated annually</li>
+                                <li>Only <strong>20%</strong> properly recycled</li>
+                                <li>Toxic materials leach into soil & water</li>
+                                <li>Valuable resources wasted</li>
+                            </ul>
+                        </div>
+                        <div class="column solution-column">
+                            <div class="solution-icon">💡</div>
+                            <h3>Our Solution</h3>
+                            <ul class="solution-list">
+                                <li>Direct peer-to-peer donations</li>
+                                <li>No middleman, no fees</li>
+                                <li>Community-driven recycling</li>
+                                <li>Track environmental impact</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: System Architecture -->
+            <section class="slide" data-slide="3">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">02</span>
+                        <h2>System Architecture</h2>
+                    </div>
+                    <div class="architecture-diagram">
+                        <div class="arch-box client-box">
+                            <div class="arch-icon">🖥️</div>
+                            <h4>Client</h4>
+                            <p>React 19 SPA</p>
+                            <p class="arch-detail">Browser</p>
+                        </div>
+                        <div class="arch-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-label">HTTP/REST</div>
+                            <div class="arrow-line"></div>
+                        </div>
+                        <div class="arch-box frontend-box">
+                            <div class="arch-icon">⚡</div>
+                            <h4>Frontend</h4>
+                            <p>Next.js 16</p>
+                            <p class="arch-detail">SSR + Server Components</p>
+                        </div>
+                        <div class="arch-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-label">API Calls</div>
+                            <div class="arrow-line"></div>
+                        </div>
+                        <div class="arch-box backend-box">
+                            <div class="arch-icon">🔧</div>
+                            <h4>Backend</h4>
+                            <p>FastAPI</p>
+                            <p class="arch-detail">Python REST API</p>
+                        </div>
+                        <div class="arch-arrow">
+                            <div class="arrow-line"></div>
+                            <div class="arrow-label">ORM</div>
+                            <div class="arrow-line"></div>
+                        </div>
+                        <div class="arch-box database-box">
+                            <div class="arch-icon">🗄️</div>
+                            <h4>Database</h4>
+                            <p>PostgreSQL</p>
+                            <p class="arch-detail">SQLAlchemy ORM</p>
+                        </div>
+                    </div>
+                    <div class="arch-note">
+                        <strong>Key Insight:</strong> Separation of concerns allows independent scaling and maintenance
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: Tech Stack -->
+            <section class="slide" data-slide="4">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">03</span>
+                        <h2>Tech Stack Overview</h2>
+                    </div>
+                    <div class="tech-grid">
+                        <div class="tech-category">
+                            <h3 class="category-title backend-title">Backend</h3>
+                            <div class="tech-items">
+                                <div class="tech-item">
+                                    <span class="tech-icon">🚀</span>
+                                    <div class="tech-info">
+                                        <strong>FastAPI</strong>
+                                        <span>REST API Framework</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">🗄️</span>
+                                    <div class="tech-info">
+                                        <strong>SQLAlchemy</strong>
+                                        <span>ORM & Migrations</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">🐘</span>
+                                    <div class="tech-info">
+                                        <strong>PostgreSQL</strong>
+                                        <span>Relational DB</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">✅</span>
+                                    <div class="tech-info">
+                                        <strong>Pydantic</strong>
+                                        <span>Data Validation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tech-category">
+                            <h3 class="category-title frontend-title">Frontend</h3>
+                            <div class="tech-items">
+                                <div class="tech-item">
+                                    <span class="tech-icon">⚛️</span>
+                                    <div class="tech-info">
+                                        <strong>Next.js 16</strong>
+                                        <span>React Framework</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">🎨</span>
+                                    <div class="tech-info">
+                                        <strong>Tailwind CSS 4</strong>
+                                        <span>Utility-First Styling</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">🎭</span>
+                                    <div class="tech-info">
+                                        <strong>Framer Motion</strong>
+                                        <span>Animations</span>
+                                    </div>
+                                </div>
+                                <div class="tech-item">
+                                    <span class="tech-icon">🧩</span>
+                                    <div class="tech-info">
+                                        <strong>shadcn/ui</strong>
+                                        <span>UI Components</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: Backend Architecture -->
+            <section class="slide" data-slide="5">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">04</span>
+                        <h2>Backend Architecture</h2>
+                    </div>
+                    <div class="code-diagram">
+                        <div class="diagram-title">Modular Router Architecture</div>
+                        <div class="router-grid">
+                            <div class="router-box main-router">
+                                <code>main.py</code>
+                                <span class="router-desc">FastAPI App</span>
+                            </div>
+                            <div class="router-connectors">
+                                <div class="connector-line"></div>
+                                <div class="connector-line"></div>
+                                <div class="connector-line"></div>
+                            </div>
+                            <div class="router-modules">
+                                <div class="router-module">auth.router</div>
+                                <div class="router-module">listings.router</div>
+                                <div class="router-module">users.router</div>
+                                <div class="router-module">categories.router</div>
+                                <div class="router-module">requests.router</div>
+                                <div class="router-module">+ 8 more</div>
+                            </div>
+                        </div>
+                        <pre class="code-block"><code>from fastapi import FastAPI
+from routers import auth, listings, users, ...
+
+app = FastAPI(title="ReVive API")
+
+# Modular routers for each feature
+app.include_router(auth.router)
+app.include_router(listings.router)
+app.include_router(users.router)
+# ... 10+ routers</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: Data Models -->
+            <section class="slide" data-slide="6">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">05</span>
+                        <h2>Data Models (SQLAlchemy)</h2>
+                    </div>
+                    <div class="model-showcase">
+                        <div class="model-card">
+                            <div class="model-header">
+                                <span class="model-icon">📦</span>
+                                <h4>Listing Model</h4>
+                            </div>
+                            <pre class="code-block small"><code>class Listing(Base):
+    __tablename__ = "listings"
+
+    id: UUID (PK)
+    owner_id: UUID → users.id
+    category_id: UUID → categories.id
+    region_id: UUID → regions.id
+    title: String
+    description: Text
+    condition: Enum
+    status: Enum
+    created_at: DateTime</code></pre>
+                        </div>
+                        <div class="model-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">🔑</span>
+                                <div>
+                                    <strong>UUID Keys</strong>
+                                    <p>Globally unique,分布式friendly</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔗</span>
+                                <div>
+                                    <strong>Foreign Keys</strong>
+                                    <p>Automatic JOINs via relationships</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">📊</span>
+                                <div>
+                                    <strong>Enums</strong>
+                                    <p>Type-safe status values</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">⏱️</span>
+                                <div>
+                                    <strong>Timestamps</strong>
+                                    <p>Auto-managed created_at, updated_at</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: Dependency Injection -->
+            <section class="slide" data-slide="7">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">06</span>
+                        <h2>Dependency Injection Pattern</h2>
+                    </div>
+                    <div class="di-flow">
+                        <div class="flow-step">
+                            <div class="flow-number">1</div>
+                            <div class="flow-content">
+                                <h4>Request Arrives</h4>
+                                <p>POST /api/listings with JWT token</p>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-number">2</div>
+                            <div class="flow-content">
+                                <h4>FastAPI Resolves Dependencies</h4>
+                                <p>Automatically injects get_current_user()</p>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="flow-number">3</div>
+                            <div class="flow-content">
+                                <h4>Validated User Available</h4>
+                                <p>current_user passed to route handler</p>
+                            </div>
+                        </div>
+                    </div>
+                    <pre class="code-block"><code>@router.post("/listings")
+def create_listing(
+    body: ListingCreate,
+    current_user: User = Depends(get_current_user),  # Auto-injected!
+    db: Session = Depends(get_db)                      # Auto-injected!
+):
+    # current_user is already validated
+    listing = Listing(owner_id=current_user.id, **body.model_dump())
+    return listing</code></pre>
+                    <div class="benefit-callout">
+                        <strong>Benefits:</strong> Reusable • Testable • Separation of Concerns
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Frontend Architecture -->
+            <section class="slide" data-slide="8">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">07</span>
+                        <h2>Frontend Architecture</h2>
+                    </div>
+                    <div class="frontend-arch">
+                        <div class="arch-section">
+                            <h3 class="section-title">📁 File-Based Routing</h3>
+                            <div class="file-tree">
+                                <div class="tree-item root">app/</div>
+                                <div class="tree-item indent">├── layout.tsx</div>
+                                <div class="tree-item indent">├── page.tsx</div>
+                                <div class="tree-item indent">├── globals.css</div>
+                                <div class="tree-item indent">├── sign-in/</div>
+                                <div class="tree-item indent-2">└── page.tsx → /sign-in</div>
+                                <div class="tree-item indent">├── dashboard/</div>
+                                <div class="tree-item indent-2">└── page.tsx → /dashboard</div>
+                                <div class="tree-item indent">└── donate/</div>
+                                <div class="tree-item indent-2">└── new/page.tsx → /donate/new</div>
+                            </div>
+                        </div>
+                        <div class="arch-section">
+                            <h3 class="section-title">📦 Feature Modules</h3>
+                            <div class="feature-modules">
+                                <div class="module">marketing/</div>
+                                <div class="module">browse/</div>
+                                <div class="module">donate/</div>
+                                <div class="module">dashboard/</div>
+                                <div class="module">auth/</div>
+                                <div class="module">messages/</div>
+                                <div class="module">notifications/</div>
+                                <div class="module">+ 8 more</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: Server vs Client Components -->
+            <section class="slide" data-slide="9">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">08</span>
+                        <h2>Server vs Client Components</h2>
+                    </div>
+                    <div class="comparison-grid">
+                        <div class="comparison-card server-card">
+                            <div class="card-header server-header">
+                                <span class="card-icon">🖥️</span>
+                                <h3>Server Components</h3>
+                                <span class="badge">Default</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="use-case">
+                                    <strong>When to use:</strong>
+                                    <ul>
+                                        <li>Static content</li>
+                                        <li>Data fetching</li>
+                                        <li>SEO-critical pages</li>
+                                        <li>Database queries</li>
+                                    </ul>
+                                </div>
+                                <div class="code-example">
+                                    <code>// Runs on server</code>
+                                    <pre>export default function Page() {
+  // Can query DB directly
+  return &lt;div&gt;Static content&lt;/div&gt;
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comparison-card client-card">
+                            <div class="card-header client-header">
+                                <span class="card-icon">🌐</span>
+                                <h3>Client Components</h3>
+                                <span class="badge">'use client'</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="use-case">
+                                    <strong>When to use:</strong>
+                                    <ul>
+                                        <li>Interactive forms</li>
+                                        <li>State management</li>
+                                        <li>Animations</li>
+                                        <li>Browser APIs</li>
+                                    </ul>
+                                </div>
+                                <div class="code-example">
+                                    <code>'use client'</code>
+                                    <pre>export function Hero() {
+  const [state, setState] = useState()
+  return &lt;motion.div&gt;...&lt;/motion.div&gt;
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Styling Architecture -->
+            <section class="slide" data-slide="10">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">09</span>
+                        <h2>Styling Architecture</h2>
+                    </div>
+                    <div class="styling-showcase">
+                        <div class="style-section">
+                            <h3>🎨 CSS Custom Properties (oklch)</h3>
+                            <div class="color-palette">
+                                <div class="color-swatch" style="--color: oklch(0.19 0.015 160)">
+                                    <span class="color-name">--background</span>
+                                    <span class="color-value">#1a2e23</span>
+                                </div>
+                                <div class="color-swatch" style="--color: oklch(0.78 0.18 150)">
+                                    <span class="color-name">--primary</span>
+                                    <span class="color-value">#10b981</span>
+                                </div>
+                                <div class="color-swatch" style="--color: oklch(0.72 0.14 190)">
+                                    <span class="color-name">--accent</span>
+                                    <span class="color-value">#22d3ee</span>
+                                </div>
+                                <div class="color-swatch" style="--color: oklch(0.62 0.22 25)">
+                                    <span class="color-name">--destructive</span>
+                                    <span class="color-value">#ef4444</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="style-section">
+                            <h3>🎯 Tailwind Utility Classes</h3>
+                            <pre class="code-block"><code>/* Instead of custom CSS */
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+/* Use Tailwind utilities */
+&lt;h1 className="text-5xl font-bold
+  tracking-tight md:text-6xl lg:text-7xl"&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: Data Flow -->
+            <section class="slide" data-slide="11">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">10</span>
+                        <h2>Data Flow: Creating a Listing</h2>
+                    </div>
+                    <div class="data-flow">
+                        <div class="flow-step">
+                            <div class="step-icon">👤</div>
+                            <div class="step-content">
+                                <h4>User Action</h4>
+                                <p>Fills form at /donate/new</p>
+                            </div>
+                        </div>
+                        <div class="flow-connector">↓</div>
+                        <div class="flow-step">
+                            <div class="step-icon">⚛️</div>
+                            <div class="step-content">
+                                <h4>React Validation</h4>
+                                <p>Client-side form validation (Zod)</p>
+                            </div>
+                        </div>
+                        <div class="flow-connector">↓</div>
+                        <div class="flow-step">
+                            <div class="step-icon">📡</div>
+                            <div class="step-content">
+                                <h4>API Request</h4>
+                                <p>POST /api/listings + JWT token</p>
+                            </div>
+                        </div>
+                        <div class="flow-connector">↓</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🔐</div>
+                            <div class="step-content">
+                                <h4>Backend Auth</h4>
+                                <p>Dependency injection validates JWT</p>
+                            </div>
+                        </div>
+                        <div class="flow-connector">↓</div>
+                        <div class="flow-step">
+                            <div class="step-icon">🗄️</div>
+                            <div class="step-content">
+                                <h4>Database Save</h4>
+                                <p>SQLAlchemy creates record</p>
+                            </div>
+                        </div>
+                        <div class="flow-connector">↓</div>
+                        <div class="flow-step">
+                            <div class="step-icon">✅</div>
+                            <div class="step-content">
+                                <h4>Response</h4>
+                                <p>201 Created + Listing JSON</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12: Key Features -->
+            <section class="slide" data-slide="12">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">11</span>
+                        <h2>Key Features & Modules</h2>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <span class="feature-icon">🔐</span>
+                            <h4>Authentication</h4>
+                            <p>JWT-based secure login/signup</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">📦</span>
+                            <h4>Listings</h4>
+                            <p>CRUD operations for items</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🔍</span>
+                            <h4>Browse & Search</h4>
+                            <p>Filter by category, region</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🤝</span>
+                            <h4>Requests</h4>
+                            <p>Request items from donors</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🚗</span>
+                            <h4>Pickups</h4>
+                            <p>Schedule meetup times</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">💬</span>
+                            <h4>Messages</h4>
+                            <p>User-to-user communication</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🔔</span>
+                            <h4>Notifications</h4>
+                            <p>Real-time alerts</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🏆</span>
+                            <h4>Gamification</h4>
+                            <p>Points & achievements</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13: Design Patterns -->
+            <section class="slide" data-slide="13">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">12</span>
+                        <h2>Design Patterns Used</h2>
+                    </div>
+                    <div class="patterns-grid">
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>Repository Pattern</h4>
+                                <span class="pattern-loc">Backend</span>
+                            </div>
+                            <p>Routers handle data access logic, abstracting database queries</p>
+                            <div class="pattern-code">
+                                <code>@router.get("/")</code>
+                                <p>def list_listings(filters...</p>
+                            </div>
+                        </div>
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>Dependency Injection</h4>
+                                <span class="pattern-loc">Backend</span>
+                            </div>
+                            <p>FastAPI auto-injects db sessions and auth users</p>
+                            <div class="pattern-code">
+                                <code>Depends(get_current_user)</code>
+                                <p>Depends(get_db)</p>
+                            </div>
+                        </div>
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>Container/Presentational</h4>
+                                <span class="pattern-loc">Frontend</span>
+                            </div>
+                            <p>Smart components handle logic, dumb components render UI</p>
+                            <div class="pattern-code">
+                                <code>ListingForm (logic)</code>
+                                <p>ListingFormUI (display)</p>
+                            </div>
+                        </div>
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>Feature Modularity</h4>
+                                <span class="pattern-loc">Frontend</span>
+                            </div>
+                            <p>Each feature isolated with own components, hooks, types</p>
+                            <div class="pattern-code">
+                                <code>features/browse/</code>
+                                <p>features/donate/</p>
+                            </div>
+                        </div>
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>Custom Hooks</h4>
+                                <span class="pattern-loc">Frontend</span>
+                            </div>
+                            <p>Reusable stateful logic extracted into hook functions</p>
+                            <div class="pattern-code">
+                                <code>useListings(filters)</code>
+                                <p>useAuth()</p>
+                            </div>
+                        </div>
+                        <div class="pattern-card">
+                            <div class="pattern-header">
+                                <h4>DTO (Data Transfer)</h4>
+                                <span class="pattern-loc">Backend</span>
+                            </div>
+                            <p>Separate Pydantic schemas for input vs output</p>
+                            <div class="pattern-code">
+                                <code>ListingCreate</code>
+                                <p>ListingResponse</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 14: Code Quality -->
+            <section class="slide" data-slide="14">
+                <div class="slide-content">
+                    <div class="slide-header">
+                        <span class="slide-number">13</span>
+                        <h2>Code Quality & Best Practices</h2>
+                    </div>
+                    <div class="quality-grid">
+                        <div class="quality-section">
+                            <h3 class="quality-title">✅ What We Do Well</h3>
+                            <ul class="quality-list good">
+                                <li>
+                                    <span class="quality-icon">🔒</span>
+                                    <div>
+                                        <strong>Type Safety</strong>
+                                        <p>TypeScript + Pydantic catches errors at compile-time</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="quality-icon">🧩</span>
+                                    <div>
+                                        <strong>Modular Architecture</strong>
+                                        <p>Features isolated and maintainable</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="quality-icon">🛡️</span>
+                                    <div>
+                                        <strong>Security</strong>
+                                        <p>JWT auth, CORS, input validation</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="quality-icon">⚡</span>
+                                    <div>
+                                        <strong>Performance</strong>
+                                        <p>Server components reduce client JS</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="quality-section">
+                            <h3 class="quality-title">📚 Key Concepts</h3>
+                            <div class="concepts-list">
+                                <div class="concept-tag">Full-Stack TypeScript</div>
+                                <div class="concept-tag">Server-Side Rendering</div>
+                                <div class="concept-tag">Progressive Enhancement</div>
+                                <div class="concept-tag">Responsive Design</div>
+                                <div class="concept-tag">Accessibility (ARIA)</div>
+                                <div class="concept-tag">Real-time Updates</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: Summary & Q&A -->
+            <section class="slide" data-slide="15">
+                <div class="slide-content title-slide">
+                    <div class="summary-content">
+                        <h2 class="summary-title">Summary</h2>
+                        <div class="summary-points">
+                            <div class="summary-item">
+                                <span class="summary-icon">🏗️</span>
+                                <p><strong>Full-stack architecture</strong> with clear separation of concerns</p>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">⚡</span>
+                                <p><strong>Modern tech stack</strong> leveraging latest framework features</p>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">🎨</span>
+                                <p><strong>Beautiful UI</strong> with animations and responsive design</p>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">🔒</span>
+                                <p><strong>Production-ready</strong> with security best practices</p>
+                            </div>
+                        </div>
+                        <div class="cta-section">
+                            <div class="cta-box">
+                                <h3>Questions?</h3>
+                                <p>Thank you for your attention!</p>
+                                <div class="team-info">
+                                    <span class="team-badge">Team 15</span>
+                                    <span class="project-name">ReVive</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Keyboard Hints -->
+        <div class="keyboard-hints">
+            <span>← → Navigate</span>
+            <span>Space Next</span>
+            <span>F Fullscreen</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

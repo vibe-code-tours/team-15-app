@@ -4,7 +4,8 @@
       "Bash(curl -s http://localhost:3000)",
       "mcp__21st__get_take",
       "mcp__21st__get_generation",
-      "Bash(npx tsx *)"
+      "Bash(npx tsx *)",
+      "Bash(python3 -m http.server 8081)"
     ]
   },
   "enabledMcpjsonServers": [

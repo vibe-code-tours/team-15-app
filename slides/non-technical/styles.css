@@ -1,0 +1,1466 @@
+/* ===== Non-Technical Presentation Styles ===== */
+/* Warm, friendly, and approachable design */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Warm, friendly colors */
+    --bg-cream: #faf8f5;
+    --bg-white: #ffffff;
+    --bg-light: #f5f3f0;
+    --text-dark: #2d2d2d;
+    --text-medium: #555555;
+    --text-light: #888888;
+
+    /* Brand colors - friendly and approachable */
+    --primary: #22c55e;
+    --primary-light: #86efac;
+    --primary-dark: #16a34a;
+    --accent: #3b82f6;
+    --accent-light: #93c5fd;
+    --warm-orange: #f97316;
+    --warm-pink: #ec4899;
+    --warm-purple: #8b5cf6;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+    --gradient-warm: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+    --gradient-cool: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+    /* Typography */
+    --font-display: 'Nunito', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    /* Spacing */
+    --slide-padding: 50px;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-body);
+    background: var(--bg-cream);
+    color: var(--text-dark);
+    overflow: hidden;
+    line-height: 1.6;
+}
+
+/* ===== Presentation Container ===== */
+.presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== Progress Bar ===== */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: var(--bg-light);
+    z-index: 1000;
+}
+
+.progress {
+    height: 100%;
+    background: var(--gradient-primary);
+    width: 0%;
+    transition: width 0.4s ease;
+    border-radius: 0 3px 3px 0;
+}
+
+/* ===== Slide Counter ===== */
+.slide-counter {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    z-index: 1000;
+    background: var(--bg-white);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+}
+
+/* ===== Navigation Buttons ===== */
+.nav-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-medium);
+}
+
+.nav-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: var(--shadow-strong);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.nav-prev {
+    left: 24px;
+}
+
+.nav-next {
+    right: 24px;
+}
+
+/* ===== Keyboard Hints ===== */
+.keyboard-hints {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-light);
+    z-index: 1000;
+}
+
+.keyboard-hints span {
+    padding: 6px 12px;
+    background: var(--bg-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+}
+
+/* ===== Slides Container ===== */
+.slides-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* ===== Individual Slide ===== */
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    padding: var(--slide-padding);
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.slide-content {
+    width: 100%;
+    max-width: 1100px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+/* ===== Slide Badge ===== */
+.slide-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--gradient-primary);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 30px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== Section Titles ===== */
+.section-title {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+/* ===== Slide 1: Opening Story ===== */
+.story-opening {
+    text-align: center;
+    padding: 40px;
+}
+
+.emoji-hero {
+    font-size: 100px;
+    margin-bottom: 30px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.story-title {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+    line-height: 1.2;
+}
+
+.story-subtitle {
+    font-size: 22px;
+    color: var(--text-medium);
+    max-width: 600px;
+    margin: 0 auto 50px;
+    line-height: 1.6;
+}
+
+.scroll-prompt {
+    color: var(--text-light);
+    font-size: 16px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.bounce-arrow {
+    font-size: 32px;
+    margin-top: 12px;
+    animation: bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+/* ===== Slide 2: The Problem ===== */
+.problem-slide {
+    text-align: center;
+}
+
+.problem-title {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 40px;
+}
+
+.stat-showcase {
+    margin-bottom: 50px;
+}
+
+.big-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.stat-number {
+    font-family: var(--font-display);
+    font-size: 96px;
+    font-weight: 800;
+    background: var(--gradient-warm);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-unit {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.stat-context {
+    font-size: 20px;
+    color: var(--text-medium);
+}
+
+.problem-visual {
+    margin-bottom: 40px;
+}
+
+.waste-pile {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pile-item {
+    font-size: 48px;
+    animation: shake 0.5s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.1s);
+}
+
+.pile-item:nth-child(1) { --i: 0; }
+.pile-item:nth-child(2) { --i: 1; }
+.pile-item:nth-child(3) { --i: 2; }
+.pile-item:nth-child(4) { --i: 3; }
+.pile-item:nth-child(5) { --i: 4; }
+.pile-item:nth-child(6) { --i: 5; }
+.pile-item:nth-child(7) { --i: 6; }
+.pile-item:nth-child(8) { --i: 7; }
+
+@keyframes shake {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+.visual-caption {
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+.consequence {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 32px;
+    background: #fef2f2;
+    border-radius: 16px;
+    border: 2px solid #fecaca;
+}
+
+.consequence-icon {
+    font-size: 36px;
+}
+
+.consequence p {
+    font-size: 18px;
+    color: #991b1b;
+}
+
+/* ===== Slide 3: Two Sides ===== */
+.two-sides {
+    text-align: center;
+}
+
+.story-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.story-card {
+    background: var(--bg-white);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 380px;
+    text-align: left;
+    box-shadow: var(--shadow-medium);
+    transition: transform 0.3s ease;
+}
+
+.story-card:hover {
+    transform: translateY(-5px);
+}
+
+.left-card {
+    border-top: 4px solid var(--primary);
+}
+
+.right-card {
+    border-top: 4px solid var(--accent);
+}
+
+.card-emoji {
+    font-size: 56px;
+    margin-bottom: 16px;
+}
+
+.story-card h3 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+}
+
+.story-text {
+    font-size: 16px;
+    color: var(--text-medium);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.card-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.status-label {
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.status-item {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.story-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.divider-line {
+    width: 2px;
+    height: 40px;
+    background: var(--text-light);
+}
+
+.divider-emoji {
+    font-size: 28px;
+    color: var(--text-light);
+}
+
+.connection-question {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 32px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.question-emoji {
+    font-size: 28px;
+}
+
+/* ===== Slide 4: Introduction ===== */
+.introduction-slide {
+    text-align: center;
+}
+
+.intro-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--bg-light);
+    color: var(--text-medium);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 30px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.logo-reveal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.logo-emoji {
+    font-size: 80px;
+    animation: spin-slow 8s linear infinite;
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.brand-name {
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    font-size: 24px;
+    color: var(--text-medium);
+    margin-bottom: 50px;
+    line-height: 1.5;
+}
+
+.simple-explanation {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.explanation-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: var(--bg-white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease;
+}
+
+.explanation-item:hover {
+    transform: scale(1.02);
+}
+
+.step-emoji {
+    font-size: 32px;
+}
+
+.explanation-item p {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.benefit-callout {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 32px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 16px;
+    font-size: 20px;
+}
+
+.benefit-emoji {
+    font-size: 28px;
+}
+
+/* ===== Slide 5: How It Works ===== */
+.how-it-works {
+    text-align: center;
+}
+
+.process-flow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 50px;
+}
+
+.process-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 240px;
+}
+
+.step-visual {
+    margin-bottom: 20px;
+}
+
+.step-circle {
+    width: 100px;
+    height: 100px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: var(--shadow-medium);
+}
+
+.process-arrow {
+    font-size: 36px;
+    color: var(--primary);
+    margin-top: 30px;
+}
+
+.step-content h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.step-content p {
+    font-size: 15px;
+    color: var(--text-medium);
+    line-height: 1.5;
+}
+
+.impact-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 40px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 60px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.impact-emoji {
+    font-size: 32px;
+}
+
+/* ===== Slide 6: User Stories ===== */
+.user-stories {
+    text-align: center;
+}
+
+.testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.testimonial {
+    background: var(--bg-white);
+    border-radius: 24px;
+    padding: 32px;
+    text-align: left;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+    transform: translateY(-5px);
+}
+
+.testimonial-emoji {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+blockquote {
+    font-size: 16px;
+    color: var(--text-medium);
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+blockquote strong {
+    color: var(--primary-dark);
+    font-style: normal;
+}
+
+cite {
+    font-size: 14px;
+    color: var(--text-light);
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* ===== Slide 7: Impact ===== */
+.impact-slide {
+    text-align: center;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.impact-card {
+    background: var(--bg-white);
+    border-radius: 24px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease;
+}
+
+.impact-card:hover {
+    transform: translateY(-5px);
+}
+
+.impact-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.impact-number {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.impact-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.impact-sublabel {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.growth-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    background: #dcfce7;
+    border-radius: 12px;
+    color: #166534;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.growth-emoji {
+    font-size: 24px;
+}
+
+/* ===== Slide 8: Safety ===== */
+.safety-slide {
+    text-align: center;
+}
+
+.safety-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.safety-item {
+    display: flex;
+    gap: 20px;
+    padding: 24px;
+    background: var(--bg-white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease;
+}
+
+.safety-item:hover {
+    transform: translateY(-3px);
+}
+
+.safety-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+}
+
+.safety-content h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.safety-content p {
+    font-size: 15px;
+    color: var(--text-medium);
+    line-height: 1.5;
+}
+
+.safety-reassurance {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 32px;
+    background: #dbeafe;
+    border-radius: 16px;
+    color: #1e40af;
+    font-size: 18px;
+}
+
+.shield-emoji {
+    font-size: 28px;
+}
+
+/* ===== Slide 9: Features ===== */
+.features-slide {
+    text-align: center;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.feature {
+    background: var(--bg-white);
+    border-radius: 20px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.feature-emoji {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.feature h4 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.feature p {
+    font-size: 14px;
+    color: var(--text-medium);
+    line-height: 1.4;
+}
+
+/* ===== Slide 10: Example Timeline ===== */
+.example-slide {
+    text-align: center;
+    justify-content: center;
+}
+
+.example-slide .section-title {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+}
+
+.timeline {
+    max-width: 700px;
+    margin: 0 auto 20px;
+    text-align: left;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 18px;
+    padding: 10px 0;
+    border-left: 3px solid var(--primary-light);
+    padding-left: 18px;
+    margin-left: 14px;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 20px;
+    width: 14px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 3px solid var(--bg-cream);
+}
+
+.timeline-time {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 120px;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-emoji {
+    font-size: 22px;
+    margin-right: 8px;
+}
+
+.timeline-content p {
+    font-size: 14px;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+
+.timeline-detail {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.timeline-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+.summary-emoji {
+    font-size: 22px;
+}
+
+/* ===== Slide 11: Call to Action ===== */
+.cta-slide {
+    text-align: center;
+}
+
+.cta-title {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.cta-subtitle {
+    font-size: 18px;
+    color: var(--text-medium);
+    margin-bottom: 36px;
+}
+
+.cta-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+.cta-option {
+    background: var(--bg-white);
+    border-radius: 20px;
+    padding: 28px;
+    width: 240px;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    transition: transform 0.3s ease;
+}
+
+.cta-option:hover {
+    transform: translateY(-5px);
+}
+
+.option-emoji {
+    font-size: 44px;
+    margin-bottom: 12px;
+}
+
+.cta-option h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+}
+
+.cta-option p {
+    font-size: 14px;
+    color: var(--text-medium);
+    margin-bottom: 16px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--gradient-primary);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+}
+
+.cta-button.secondary {
+    background: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.cta-button.secondary:hover {
+    background: var(--primary-light);
+}
+
+.cta-divider {
+    font-size: 16px;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.trust-badge {
+    padding: 8px 16px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 16px;
+}
+
+/* ===== Slide 12: Closing ===== */
+.closing-slide {
+    text-align: center;
+    background: var(--gradient-primary);
+    margin: -50px;
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closing-content {
+    max-width: 600px;
+}
+
+.closing-emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.closing-title {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.closing-message {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.closing-message p {
+    font-size: 16px;
+    color: white;
+    margin: 0;
+}
+
+.final-tagline {
+    margin-bottom: 20px;
+}
+
+.tagline-emoji {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.final-tagline h2 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.final-tagline p {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.questions-section {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: inline-block;
+}
+
+.questions-section h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+    .slide {
+        padding: 40px;
+    }
+
+    .story-title,
+    .problem-title,
+    .section-title,
+    .cta-title,
+    .closing-title {
+        font-size: 36px;
+    }
+
+    .story-cards {
+        flex-direction: column;
+    }
+
+    .story-divider {
+        flex-direction: row;
+    }
+
+    .divider-line {
+        width: 40px;
+        height: 2px;
+    }
+
+    .process-flow {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .process-arrow {
+        transform: rotate(90deg);
+        margin: 10px 0;
+    }
+
+    .impact-grid,
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .testimonials {
+        grid-template-columns: 1fr;
+    }
+
+    .safety-features {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-options {
+        flex-direction: column;
+    }
+
+    .cta-subtitle {
+        font-size: 16px;
+        margin-bottom: 28px;
+    }
+
+    .cta-option {
+        width: 100%;
+        max-width: 280px;
+        padding: 24px;
+    }
+
+    .option-emoji {
+        font-size: 36px;
+    }
+
+    .cta-option h3 {
+        font-size: 18px;
+    }
+
+    .cta-option p {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    .cta-button {
+        padding: 10px 24px;
+        font-size: 14px;
+    }
+
+    .trust-badges {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .trust-badge {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .closing-slide {
+        margin: -40px;
+        padding: 40px;
+    }
+
+    .closing-emoji {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    .closing-title {
+        font-size: 30px;
+        margin-bottom: 16px;
+    }
+
+    .closing-message {
+        padding: 14px 18px;
+        margin-bottom: 16px;
+    }
+
+    .closing-message p {
+        font-size: 14px;
+    }
+
+    .final-tagline {
+        margin-bottom: 16px;
+    }
+
+    .tagline-emoji {
+        font-size: 28px;
+        margin-bottom: 6px;
+    }
+
+    .final-tagline h2 {
+        font-size: 28px;
+    }
+
+    .final-tagline p {
+        font-size: 13px;
+    }
+
+    .questions-section {
+        padding: 14px 20px;
+    }
+
+    .questions-section h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slide {
+        padding: 20px;
+    }
+
+    .story-title,
+    .problem-title,
+    .section-title,
+    .cta-title,
+    .closing-title {
+        font-size: 28px;
+    }
+
+    .stat-number {
+        font-size: 64px;
+    }
+
+    .brand-name {
+        font-size: 48px;
+    }
+
+    .impact-grid,
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+
+    .nav-prev {
+        left: 12px;
+    }
+
+    .nav-next {
+        right: 12px;
+    }
+
+    .keyboard-hints {
+        display: none;
+    }
+
+    .cta-title {
+        font-size: 26px;
+    }
+
+    .cta-subtitle {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .cta-option {
+        padding: 20px;
+        max-width: 260px;
+    }
+
+    .option-emoji {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .cta-option h3 {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+
+    .cta-option p {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .cta-button {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    .cta-divider {
+        font-size: 14px;
+    }
+
+    .simple-explanation {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timeline-item {
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .timeline-time {
+        min-width: auto;
+    }
+
+    .timeline-emoji {
+        font-size: 16px;
+    }
+
+    .timeline-content p {
+        font-size: 13px;
+    }
+
+    .timeline-detail {
+        font-size: 11px;
+    }
+
+    .closing-slide {
+        margin: -20px;
+        padding: 20px;
+    }
+
+    .closing-emoji {
+        font-size: 36px;
+        margin-bottom: 8px;
+    }
+
+    .closing-title {
+        font-size: 24px;
+        margin-bottom: 14px;
+    }
+
+    .closing-message {
+        padding: 12px 16px;
+        margin-bottom: 14px;
+    }
+
+    .closing-message p {
+        font-size: 13px;
+    }
+
+    .final-tagline {
+        margin-bottom: 14px;
+    }
+
+    .tagline-emoji {
+        font-size: 24px;
+        margin-bottom: 6px;
+    }
+
+    .final-tagline h2 {
+        font-size: 24px;
+    }
+
+    .final-tagline p {
+        font-size: 12px;
+    }
+
+    .questions-section {
+        padding: 12px 18px;
+    }
+
+    .questions-section h3 {
+        font-size: 16px;
+    }
+}

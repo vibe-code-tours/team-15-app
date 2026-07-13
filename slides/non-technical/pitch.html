@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReVive — Team 15 Demo Pitch</title>
+    <link rel="stylesheet" href="pitch-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="presentation">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <!-- Slide Counter -->
+        <div class="slide-counter" id="slideCounter">1 / 7</div>
+
+        <!-- Navigation Controls -->
+        <button class="nav-btn nav-prev" id="prevBtn" onclick="prevSlide()">‹</button>
+        <button class="nav-btn nav-next" id="nextBtn" onclick="nextSlide()">›</button>
+
+        <!-- Slides Container -->
+        <div class="slides-container" id="slidesContainer">
+
+            <!-- Slide 1: Title -->
+            <section class="slide active" data-slide="1">
+                <div class="slide-content">
+                    <div class="title-slide">
+                        <div class="logo">♻️ ReVive</div>
+                        <h1>Giving Old Tech a Second Life</h1>
+                        <p class="subtitle">Team 15</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 2: HOOK -->
+            <section class="slide" data-slide="2">
+                <div class="slide-content">
+                    <div class="hook-slide">
+                        <div class="section-label">HOOK</div>
+                        <h2 class="big-text">
+                            <span class="highlight">50 million tons</span> of electronics
+                            get thrown away every year.
+                        </h2>
+                        <div class="split-content">
+                            <div class="who-hurts">
+                                <h3>Who hurts:</h3>
+                                <p>Families who can't afford devices.<br>Our planet drowning in e-waste.</p>
+                            </div>
+                            <div class="why-matters">
+                                <h3>Why it matters:</h3>
+                                <p>Perfectly good phones and laptops sit in drawers while students can't do homework.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: SOLUTION -->
+            <section class="slide" data-slide="3">
+                <div class="slide-content">
+                    <div class="solution-slide">
+                        <div class="section-label">SOLUTION</div>
+                        <h2 class="big-text">
+                            We built <span class="highlight">ReVive</span> —
+                            a free platform that connects donors with people who need devices.
+                        </h2>
+                        <div class="for-whom">
+                            <h3>For:</h3>
+                            <p>Anyone with old electronics to give, and anyone who needs them.</p>
+                        </div>
+                        <div class="simple-steps">
+                            <div class="step">📱 List</div>
+                            <div class="step-arrow">→</div>
+                            <div class="step">🤝 Connect</div>
+                            <div class="step-arrow">→</div>
+                            <div class="step">♻️ Reuse</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: DEMO Intro -->
+            <section class="slide" data-slide="4">
+                <div class="slide-content">
+                    <div class="demo-intro-slide">
+                        <div class="section-label">DEMO</div>
+                        <h1>Let me show you how it works</h1>
+                        <p class="demo-note">Follow along at <strong>localhost:3000</strong></p>
+                        <div class="demo-setup">
+                            <div class="persona">
+                                <span class="persona-emoji">👩</span>
+                                <span class="persona-name">Sarah has an old iPad</span>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="persona">
+                                <span class="persona-emoji">👨‍🏫</span>
+                                <span class="persona-name">Teacher needs one for class</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: DEMO Step 1 -->
+            <section class="slide" data-slide="5">
+                <div class="slide-content">
+                    <div class="demo-step-slide">
+                        <div class="step-number">Step 1</div>
+                        <div class="step-split">
+                            <div class="action-side">
+                                <div class="action-label">I click/type:</div>
+                                <div class="action-content">
+                                    <p>Click "Donate Item"</p>
+                                    <p>Take photo of iPad</p>
+                                    <p>Add description</p>
+                                    <p>Click "Post"</p>
+                                </div>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="viewer-side">
+                                <div class="viewer-label">Viewer sees:</div>
+                                <div class="viewer-content">
+                                    <div class="phone-mockup">
+                                        <div class="phone-screen">
+                                            <div class="listing-card">
+                                                <div class="card-image">📱</div>
+                                                <div class="card-text">
+                                                    <strong>iPad Air</strong>
+                                                    <span>Good condition • Downtown</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: DEMO Step 2 & 3 -->
+            <section class="slide" data-slide="6">
+                <div class="slide-content">
+                    <div class="demo-step-slide">
+                        <div class="step-number">Step 2 & 3</div>
+                        <div class="step-split">
+                            <div class="action-side">
+                                <div class="action-label">Step 2 — I click/type:</div>
+                                <div class="action-content">
+                                    <p>Teacher clicks "Request"</p>
+                                    <p>Sarah gets notification</p>
+                                    <p>They chat in the app</p>
+                                </div>
+                                <div class="action-label" style="margin-top: 30px;">Step 3 — The payoff:</div>
+                                <div class="action-content payoff">
+                                    <p>☕ Meet at coffee shop</p>
+                                    <p>Hand off iPad</p>
+                                    <p>🎉 30 students now have a device!</p>
+                                </div>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="viewer-side">
+                                <div class="viewer-label">Viewer sees:</div>
+                                <div class="viewer-content">
+                                    <div class="notification-flow">
+                                        <div class="notif">🔔 Request received!</div>
+                                        <div class="notif">💬 New message from teacher</div>
+                                        <div class="notif">✅ Pickup scheduled</div>
+                                        <div class="payoff-box">
+                                            <span class="payoff-emoji">🎉</span>
+                                            <span>Device donated!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: TECH HIGHLIGHT -->
+            <section class="slide" data-slide="7">
+                <div class="slide-content">
+                    <div class="tech-slide">
+                        <div class="section-label">TECH HIGHLIGHT</div>
+                        <div class="tech-content">
+                            <div class="hardest-thing">
+                                <h3>Hardest thing we solved:</h3>
+                                <p class="tech-answer">Building an isomorphic API client that works on both server and client side with automatic token-based authentication — so the app is fast AND secure.</p>
+                            </div>
+                            <div class="ai-tool">
+                                <h3>Which AI tool did it:</h3>
+                                <p class="tech-answer">Claude (Anthropic) helped architect the authentication flow and debug complex async patterns across the full stack.</p>
+                            </div>
+                        </div>
+                        <div class="tech-stack-mini">
+                            <span class="tech-badge">Next.js 16</span>
+                            <span class="tech-badge">React 19</span>
+                            <span class="tech-badge">FastAPI</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: WHAT'S NEXT -->
+            <section class="slide" data-slide="8">
+                <div class="slide-content">
+                    <div class="next-slide">
+                        <div class="section-label">WHAT'S NEXT</div>
+                        <h2 class="big-text">
+                            For real users, next we'd add:
+                        </h2>
+                        <div class="next-items">
+                            <div class="next-item">
+                                <span class="next-emoji">🗺️</span>
+                                <p>Map view to find devices near you</p>
+                            </div>
+                            <div class="next-item">
+                                <span class="next-emoji">🔔</span>
+                                <p>Push notifications for new items</p>
+                            </div>
+                            <div class="next-item">
+                                <span class="next-emoji">⭐</span>
+                                <p>Trust ratings for safe meetups</p>
+                            </div>
+                            <div class="next-item">
+                                <span class="next-emoji">🌍</span>
+                                <p>Impact dashboard showing e-waste prevented</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: OUTRO -->
+            <section class="slide" data-slide="9">
+                <div class="slide-content">
+                    <div class="outro-slide">
+                        <div class="outro-content">
+                            <div class="outro-emoji">♻️</div>
+                            <h1>That's Team 15.</h1>
+                            <p class="thanks">Thanks for watching.</p>
+                            <div class="outro-tagline">
+                                ReVive — Giving old tech a second life
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Keyboard Hints -->
+        <div class="keyboard-hints">
+            <span>← → Navigate</span>
+            <span>Space Next</span>
+        </div>
+    </div>
+
+    <script src="pitch-script.js"></script>
+</body>
+</html>

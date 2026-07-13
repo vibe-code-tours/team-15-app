@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Package, Clock, MapPin, User, Loader2, Check, X, ChevronRight } from "lucide-react"
+import { Package, Clock, MapPin, User, Loader2, Check, X, ChevronRight, Calendar } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getDonorRequests, acceptRequest, rejectRequest } from "@/features/account/services/account"
+import { timeSlotLabel } from "@/lib/categories"
 import type { DonorRequest } from "@/features/account/services/account"
 
 const MAX_ITEMS = 3
@@ -126,6 +127,27 @@ export function DonorRequests() {
                     <div>
                       <p className="text-sm font-medium">{item.requester.name}</p>
                       <p className="text-xs text-muted-foreground">{item.requester.email}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Requester's Preferred Pickup Details */}
+                {(item.requestedPickupFrom || item.requestedTimeSlot) && (
+                  <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+                    <p className="text-xs font-medium text-primary mb-1">Requested Pick-up</p>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      {item.requestedPickupFrom && item.requestedPickupTo && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="size-3" />
+                          {item.requestedPickupFrom} – {item.requestedPickupTo}
+                        </span>
+                      )}
+                      {item.requestedTimeSlot && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="size-3" />
+                          {timeSlotLabel(item.requestedTimeSlot)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}

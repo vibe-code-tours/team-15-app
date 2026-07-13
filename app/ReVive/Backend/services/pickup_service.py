@@ -115,12 +115,12 @@ def get_requested_pickups(db: Session, requester_id: str) -> list[models.Pickup]
 
 
 def get_donor_requests(db: Session, donor_id: str) -> list[dict]:
-    """Get pickups where other users have made requests."""
+    """Get pickups where other users have made requests (including accepted)."""
     pickups = (
         db.query(models.Pickup)
         .filter(
             models.Pickup.user_id == donor_id,
-            models.Pickup.status == "requested",
+            models.Pickup.status.in_(["requested", "accepted"]),
             models.Pickup.requested_by.isnot(None),
         )
         .order_by(models.Pickup.created_at.desc())

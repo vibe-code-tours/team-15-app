@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User } from "lucide-react"
+import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User, BadgeCheck } from "lucide-react"
 import {
   cancelPickup,
   deletePickup,
@@ -27,6 +27,14 @@ type Pickup = {
   address: string
   notes: string | null
   status: string
+  requestedBy: string | null
+  requestedPickupFrom: string | null
+  requestedPickupTo: string | null
+  requestedTimeSlot: string | null
+  requester?: {
+    name: string
+    email: string
+  } | null
 }
 
 const STATUS_STYLES: Record<string, string> = {
@@ -125,6 +133,38 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                     <span className="text-pretty">{p.address}</span>
                   </div>
                 </dl>
+
+                {/* Requester Info */}
+                {(p.status === "requested" || p.status === "accepted") && p.requester && (
+                  <div className="mt-3 flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+                    <User className="size-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">{p.requester.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.requester.email}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Requester's Preferred Pickup Details */}
+                {(p.status === "requested" || p.status === "accepted") && (p.requestedPickupFrom || p.requestedTimeSlot) && (
+                  <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+                    <p className="text-xs font-medium text-primary mb-1">Requested Pick-up</p>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      {p.requestedPickupFrom && p.requestedPickupTo && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="size-3" />
+                          {p.requestedPickupFrom} – {p.requestedPickupTo}
+                        </span>
+                      )}
+                      {p.requestedTimeSlot && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="size-3" />
+                          {timeSlotLabel(p.requestedTimeSlot)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Actions based on status */}

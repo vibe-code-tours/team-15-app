@@ -27,6 +27,7 @@ export async function getServerUser() {
       id: json.data.id,
       name: json.data.name || "User",
       email: json.data.email || "",
+      image: json.data.image || null,
     }
   } catch {
     return null

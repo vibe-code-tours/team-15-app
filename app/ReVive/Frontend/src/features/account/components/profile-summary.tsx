@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Camera, Check, Loader2 } from "lucide-react"
+import { apiUpload } from "@/lib/api/client"
 import { updateProfile } from "@/features/settings/services/settings"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,8 +20,45 @@ interface ProfileSummaryProps {
 export function ProfileSummary({ user }: ProfileSummaryProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [name, setName] = useState(user.name)
+  const [avatar, setAvatar] = useState(user.image)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate
+    if (!file.type.startsWith("image/")) return
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Image must be under 10MB")
+      return
+    }
+
+    setUploading(true)
+    try {
+      const result = await apiUpload<{ urls: string[] }>("/api/upload", [file])
+      const imageUrl = result.urls[0]
+
+      // Save to profile
+      await updateProfile({ image: imageUrl })
+      setAvatar(imageUrl)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 2000)
+    } catch (err) {
+      console.error("Failed to upload photo:", err)
+    } finally {
+      setUploading(false)
+      // Reset file input so the same file can be selected again
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
 
   const handleSave = async () => {
     if (!name.trim() || name === user.name) {
@@ -53,10 +91,10 @@ export function ProfileSummary({ user }: ProfileSummaryProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
         {/* Avatar */}
         <div className="relative group">
-          <div className="flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-3xl font-bold text-white">
-            {user.image ? (
+          <div className="flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-3xl font-bold text-white overflow-hidden">
+            {avatar ? (
               <img
-                src={user.image}
+                src={avatar}
                 alt={user.name}
                 className="size-full rounded-full object-cover"
               />
@@ -64,9 +102,30 @@ export function ProfileSummary({ user }: ProfileSummaryProps) {
               user.name.charAt(0).toUpperCase()
             )}
           </div>
-          <button className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Camera className="size-6 text-white" />
+
+          {/* Camera overlay button */}
+          <button
+            type="button"
+            onClick={handlePhotoClick}
+            disabled={uploading}
+            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-100"
+            aria-label="Change profile photo"
+          >
+            {uploading ? (
+              <Loader2 className="size-6 text-white animate-spin" />
+            ) : (
+              <Camera className="size-6 text-white" />
+            )}
           </button>
+
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
 
         {/* User Info */}
@@ -101,14 +160,20 @@ export function ProfileSummary({ user }: ProfileSummaryProps) {
             <>
               <h2 className="text-2xl font-bold">{user.name}</h2>
               <p className="text-muted-foreground">{user.email}</p>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-2"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </Button>
+              <div className="mt-2 flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </Button>
+                {success && (
+                  <span className="flex items-center gap-1 text-sm text-green-600">
+                    <Check className="size-4" /> Saved
+                  </span>
+                )}
+              </div>
             </>
           )}
         </div>

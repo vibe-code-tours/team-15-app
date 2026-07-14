@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReVive — Give Your Old Tech a Second Life</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-dark: #0a0a0f;
+      --bg-card: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.06);
+      --text: #f0f0f5;
+      --text-dim: #8888a0;
+      --accent: #22d3ee;
+      --accent2: #a78bfa;
+      --accent3: #34d399;
+      --gradient-1: linear-gradient(135deg, #22d3ee, #a78bfa);
+      --gradient-2: linear-gradient(135deg, #34d399, #22d3ee);
+      --gradient-3: linear-gradient(135deg, #f472b6, #a78bfa);
+      --glow: 0 0 80px rgba(34,211,238,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── Navigation ───────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,15,0.6);
+      border-bottom: 1px solid var(--border);
+      transition: transform 0.4s ease;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-dots {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      outline: none;
+    }
+
+    .nav-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(34,211,238,0.5);
+      transform: scale(1.3);
+    }
+
+    .nav-dot:hover:not(.active) {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.15);
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(34,211,238,0.15);
+    }
+
+    .slide-counter {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      min-width: 50px;
+      text-align: center;
+      line-height: 40px;
+    }
+
+    /* ── Slides Container ─────────────────────────────── */
+    .slides-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 90px 40px 60px;
+      opacity: 0;
+      transform: translateY(60px) scale(0.97);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .slide.exit-up {
+      opacity: 0;
+      transform: translateY(-60px) scale(0.97);
+    }
+
+    .slide.exit-down {
+      opacity: 0;
+      transform: translateY(60px) scale(0.97);
+    }
+
+    /* ── Background Orbs ──────────────────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: #22d3ee;
+      top: -10%; left: -5%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: #a78bfa;
+      bottom: -10%; right: -5%;
+      animation-delay: -4s;
+    }
+
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: #34d399;
+      top: 50%; left: 60%;
+      animation-delay: -8s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -30px) scale(1.1); }
+    }
+
+    /* ── Particle Canvas ───────────────────────────────── */
+    #particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Slide Content ─────────────────────────────────── */
+    .slide-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: auto;
+    }
+
+    /* ── Slide 1: Intro ────────────────────────────────── */
+    .intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: rgba(34,211,238,0.08);
+      border: 1px solid rgba(34,211,238,0.2);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 20px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.1s;
+    }
+
+    .intro-badge::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .intro-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -3px;
+      margin-bottom: 16px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.2s;
+    }
+
+    .intro-title .gradient {
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intro-subtitle {
+      font-size: clamp(0.95rem, 2vw, 1.3rem);
+      color: var(--text-dim);
+      font-weight: 400;
+      margin-bottom: 32px;
+      max-width: 700px;
+      line-height: 1.6;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.35s;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.5s;
+    }
+
+    .intro-stat {
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .intro-stat:hover {
+      border-color: rgba(34,211,238,0.3);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .intro-stat .number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intro-stat .label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ── Slide 2 & 3: Hook / Solution ─────────────────── */
+    .hook-icon {
+      width: 60px; height: 60px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.1s;
+    }
+
+    .hook-icon.red {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .hook-icon.green {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+
+    .hook-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.2s;
+    }
+
+    .hook-block {
+      padding: 18px 22px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border-left: 3px solid;
+      margin-bottom: 12px;
+      animation: fadeSlideUp 0.6s ease both;
+      backdrop-filter: blur(10px);
+    }
+
+    .hook-block.danger { border-color: #ef4444; animation-delay: 0.3s; }
+    .hook-block.warning { border-color: #f59e0b; animation-delay: 0.4s; }
+    .hook-block.info { border-color: var(--accent); animation-delay: 0.5s; }
+    .hook-block.success { border-color: var(--accent3); animation-delay: 0.3s; }
+    .hook-block.purple { border-color: var(--accent2); animation-delay: 0.4s; }
+
+    .hook-block-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+
+    .hook-block.danger .hook-block-label { color: #ef4444; }
+    .hook-block.warning .hook-block-label { color: #f59e0b; }
+    .hook-block.info .hook-block-label { color: var(--accent); }
+    .hook-block.success .hook-block-label { color: var(--accent3); }
+    .hook-block.purple .hook-block-label { color: var(--accent2); }
+
+    .hook-block p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: rgba(240,240,245,0.85);
+    }
+
+    .hook-block strong { color: var(--text); font-weight: 600; }
+
+    /* ── Slide 4: Demo Steps ──────────────────────────── */
+    .demo-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25);
+      color: var(--accent3);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.1s;
+    }
+
+    .demo-label::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .demo-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .demo-step {
+      display: flex;
+      gap: 20px;
+      padding: 20px 24px;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+
+    .demo-step:hover {
+      border-color: rgba(34,211,238,0.25);
+      transform: translateX(4px);
+    }
+
+    .demo-step:nth-child(1) { animation-delay: 0.2s; }
+    .demo-step:nth-child(2) { animation-delay: 0.35s; }
+    .demo-step:nth-child(3) { animation-delay: 0.5s; }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: var(--gradient-1);
+      color: #0a0a0f;
+    }
+
+    .step-body h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .step-body p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: rgba(240,240,245,0.7);
+    }
+
+    /* ── Slide 5: Tech ─────────────────────────────────── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .tech-card {
+      padding: 22px;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+
+    .tech-card:hover {
+      border-color: rgba(34,211,238,0.25);
+      transform: translateY(-4px);
+      box-shadow: var(--glow);
+    }
+
+    .tech-card:nth-child(1) { animation-delay: 0.15s; }
+    .tech-card:nth-child(2) { animation-delay: 0.25s; }
+    .tech-card:nth-child(3) { animation-delay: 0.35s; }
+    .tech-card:nth-child(4) { animation-delay: 0.45s; }
+
+    .tech-card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+    }
+
+    .tech-card-icon.blue { background: rgba(34,211,238,0.1); }
+    .tech-card-icon.purple { background: rgba(167,139,250,0.1); }
+    .tech-card-icon.green { background: rgba(52,211,153,0.1); }
+    .tech-card-icon.pink { background: rgba(244,114,182,0.1); }
+
+    .tech-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tech-tag {
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .tech-tag.cyan { background: rgba(34,211,238,0.08); border-color: rgba(34,211,238,0.2); color: var(--accent); }
+    .tech-tag.violet { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); color: var(--accent2); }
+    .tech-tag.emerald { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); color: var(--accent3); }
+
+    /* ── Slide 6: What's Next ──────────────────────────── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 8px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeSlideUp 0.6s ease both;
+    }
+
+    .timeline-item:last-child { border-bottom: none; }
+
+    .timeline-item:nth-child(1) { animation-delay: 0.15s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.25s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.35s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.45s; }
+    .timeline-item:nth-child(5) { animation-delay: 0.55s; }
+
+    .timeline-dot {
+      flex-shrink: 0;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: var(--gradient-1);
+      box-shadow: 0 0 12px rgba(34,211,238,0.4);
+    }
+
+    .timeline-item h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Slide 7: Outro ────────────────────────────────── */
+    .outro-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .outro-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      letter-spacing: -4px;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      animation: fadeSlideUp 0.6s ease both, glowPulse 3s ease-in-out infinite;
+      animation-delay: 0.2s, 0.8s;
+    }
+
+    .outro-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--text-dim);
+      font-weight: 300;
+      margin-bottom: 32px;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.35s;
+    }
+
+    .outro-repo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.5s;
+    }
+
+    .outro-repo:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    .outro-team {
+      margin-top: 32px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      animation: fadeSlideUp 0.6s ease both;
+      animation-delay: 0.6s;
+    }
+
+    /* ── Animations ────────────────────────────────────── */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.2); }
+    }
+
+    /* ── Keyboard hint ─────────────────────────────────── */
+    .key-hint {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .key-hint:hover { opacity: 1; }
+
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .slide { padding: 80px 20px 60px; }
+      .nav { padding: 12px 16px; }
+      .intro-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .tech-grid { grid-template-columns: 1fr; gap: 10px; }
+      .demo-step { flex-direction: column; gap: 12px; padding: 16px; }
+      .hook-block { padding: 14px 18px; }
+      .key-hint { display: none; }
+    }
+
+    /* ── Scrollbar ─────────────────────────────────────── */
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+    .slide::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Particle Canvas -->
+  <canvas id="particles"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-logo">⚡ ReVive</div>
+    <div class="nav-dots" id="navDots"></div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="prevBtn" aria-label="Previous slide">◀</button>
+      <div class="slide-counter" id="slideCounter">1 / 7</div>
+      <button class="nav-btn" id="nextBtn" aria-label="Next slide">▶</button>
+    </div>
+  </nav>
+
+  <!-- Slides -->
+  <div class="slides-wrapper" id="slidesWrapper">
+
+    <!-- Slide 1 — Intro -->
+    <section class="slide active" data-slide="0">
+      <div class="slide-content">
+        <div class="intro-badge">Team 15 · Vibe Code Tours</div>
+        <h1 class="intro-title"><span class="gradient">ReVive</span></h1>
+        <p class="intro-subtitle">Give your old tech a second life. A peer-to-peer e-waste recycling platform that connects people who have old electronics with people who need them — no middleman, no fees.</p>
+        <div class="intro-grid">
+          <div class="intro-stat">
+            <div class="number">50M+</div>
+            <div class="label">Tons of e-waste yearly</div>
+          </div>
+          <div class="intro-stat">
+            <div class="number">5 min</div>
+            <div class="label">To list a device</div>
+          </div>
+          <div class="intro-stat">
+            <div class="number">100%</div>
+            <div class="label">Free to use</div>
+          </div>
+          <div class="intro-stat">
+            <div class="number">80+</div>
+            <div class="label">Files across 6 phases</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2 — Hook -->
+    <section class="slide" data-slide="1">
+      <div class="slide-content">
+        <div class="hook-icon red">🌍</div>
+        <h2 class="hook-title">The Problem<br/>Is <span style="background:var(--gradient-3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Massive</span></h2>
+        <div class="hook-block danger">
+          <div class="hook-block-label">The Crisis</div>
+          <p>Every year, <strong>50 million metric tons</strong> of electronic waste are dumped in landfills — yet millions of people can't afford the devices they need for work and school.</p>
+        </div>
+        <div class="hook-block warning">
+          <div class="hook-block-label">Who Hurts</div>
+          <p>Communities without access to affordable tech, and the planet drowning in toxic e-waste.</p>
+        </div>
+        <div class="hook-block info">
+          <div class="hook-block-label">Why It Matters</div>
+          <p>E-waste is the <strong>fastest-growing waste stream</strong> on Earth. A single phone contains lead, mercury, and cadmium — toxins that leach into groundwater for decades. The devices are fine. <strong>The system is broken.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3 — Solution -->
+    <section class="slide" data-slide="2">
+      <div class="slide-content">
+        <div class="hook-icon green">💡</div>
+        <h2 class="hook-title">Our <span style="background:var(--gradient-2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Solution</span></h2>
+        <div class="hook-block success">
+          <div class="hook-block-label">What We Built</div>
+          <p><strong>ReVive</strong> — a peer-to-peer marketplace where anyone can list an old device in under 2 minutes, and someone nearby can claim it for free. No sellers. No shipping labels. Just a handoff.</p>
+        </div>
+        <div class="hook-block purple">
+          <div class="hook-block-label">Who It's For</div>
+          <p>Anyone with a drawer full of old phones, laptops, and tablets — and anyone who needs one. Think: <strong>"Facebook Marketplace, but only for giving things away"</strong>, and every single item keeps electronics out of a landfill.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4 — Demo -->
+    <section class="slide" data-slide="3">
+      <div class="slide-content">
+        <div class="demo-label">Live Demo</div>
+        <h2 class="hook-title">The One <span style="background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Flow</span></h2>
+        <div class="demo-steps">
+          <div class="demo-step">
+            <div class="step-number">1</div>
+            <div class="step-body">
+              <h3>List a Device</h3>
+              <p>Click "Donate" → fill in title, condition, category, pickup location. Upload photos. Hit submit. Done in 30 seconds — a clean multi-step form makes it effortless.</p>
+            </div>
+          </div>
+          <div class="demo-step">
+            <div class="step-number">2</div>
+            <div class="step-body">
+              <h3>Browse & Claim</h3>
+              <p>Click "Browse" → filterable marketplace grid. Filter by "Laptops" + "Working". Find the MacBook. Click "Request Pickup" — a scheduling form pops up with available time slots.</p>
+            </div>
+          </div>
+          <div class="demo-step">
+            <div class="step-number">3</div>
+            <div class="step-body">
+              <h3>The Payoff</h3>
+              <p>Confirm pickup → dashboard shows status tracking. Notification: "Pickup confirmed!" CO2 saved ticks up, points increase, a <strong>"First Donation" bronze badge</strong> unlocks. Gamification meets environmental action.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5 — Tech Highlight -->
+    <section class="slide" data-slide="4">
+      <div class="slide-content">
+        <div class="demo-label">Tech Deep Dive</div>
+        <h2 class="hook-title">How We <span style="background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Built It</span></h2>
+        <div class="tech-grid">
+          <div class="tech-card">
+            <div class="tech-card-icon blue">⚡</div>
+            <h3>Frontend</h3>
+            <div class="tech-tags">
+              <span class="tech-tag cyan">Next.js 16</span>
+              <span class="tech-tag cyan">React 19</span>
+              <span class="tech-tag cyan">Tailwind CSS 4</span>
+              <span class="tech-tag cyan">shadcn/ui</span>
+            </div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-card-icon purple">🔧</div>
+            <h3>Backend</h3>
+            <div class="tech-tags">
+              <span class="tech-tag violet">FastAPI</span>
+              <span class="tech-tag violet">Python</span>
+              <span class="tech-tag violet">SQLAlchemy</span>
+              <span class="tech-tag violet">PostgreSQL</span>
+            </div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-card-icon green">🚀</div>
+            <h3>Deploy & Infra</h3>
+            <div class="tech-tags">
+              <span class="tech-tag emerald">Render</span>
+              <span class="tech-tag emerald">Vercel</span>
+              <span class="tech-tag emerald">GitHub Actions</span>
+              <span class="tech-tag emerald">Alembic</span>
+            </div>
+          </div>
+          <div class="tech-card">
+            <div class="tech-card-icon pink">🤖</div>
+            <h3>AI Agents</h3>
+            <div class="tech-tags">
+              <span class="tech-tag violet">Claude Code</span>
+              <span class="tech-tag violet">21st.dev</span>
+              <span class="tech-tag violet">Vercel v0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6 — What's Next -->
+    <section class="slide" data-slide="5">
+      <div class="slide-content">
+        <div class="demo-label">Roadmap</div>
+        <h2 class="hook-title">What's <span style="background:var(--gradient-2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Next</span></h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <h3>Real-time GPS Tracking</h3>
+              <p>See your recycler approaching on a map — full pickup transparency from door to door.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <h3>Community Drives</h3>
+              <p>Neighborhoods organize bulk e-waste collection events — scale impact together.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <h3>Recycling Center Partners</h3>
+              <p>Devices that can't be reused get properly recycled through certified partners.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <h3>Impact Certificates</h3>
+              <p>Downloadable proof of your environmental contribution — shareable, verifiable.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <h3>Multi-city Scale</h3>
+              <p>Regional hubs and logistics partners — infrastructure for a circular electronics economy.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7 — Outro -->
+    <section class="slide" data-slide="6">
+      <div class="slide-content">
+        <div class="outro-content">
+          <div class="outro-logo">ReVive</div>
+          <p class="outro-tagline">Give Your Old Tech a Second Life</p>
+          <a href="https://github.com/vibe-code-tours/team-15-app" target="_blank" class="outro-repo">
+            <span>📦</span> vibe-code-tours/team-15-app
+          </a>
+          <p class="outro-team">Team 15 · Vibe Code Tours — Thanks for watching 🙌</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Keyboard Hint -->
+  <div class="key-hint">
+    <span>Use</span>
+    <span class="key">←</span>
+    <span class="key">→</span>
+    <span>or click arrows to navigate</span>
+  </div>
+
+  <script>
+    /* ── Slide Controller ──────────────────────────────── */
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.getElementById('navDots');
+    const counter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const total = slides.length;
+    let current = 0;
+
+    // Build dots
+    for (let i = 0; i < total; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      dots.appendChild(dot);
+    }
+
+    function goTo(index) {
+      if (index < 0 || index >= total || index === current) return;
+      const dir = index > current ? 'up' : 'down';
+      const prev = current;
+      slides[prev].classList.remove('active');
+      slides[prev].classList.add(dir === 'up' ? 'exit-up' : 'exit-down');
+      setTimeout(() => {
+        slides[prev].classList.remove('exit-up', 'exit-down');
+      }, 700);
+      current = index;
+      slides[current].classList.add('active');
+      counter.textContent = `${current + 1} / ${total}`;
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+    }
+
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        goTo(current + 1);
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        goTo(current - 1);
+      }
+    });
+
+    // Touch / Swipe
+    let touchStartY = 0;
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        dx < 0 ? goTo(current + 1) : goTo(current - 1);
+      } else if (Math.abs(dy) > 50) {
+        dy < 0 ? goTo(current + 1) : goTo(current - 1);
+      }
+    }, { passive: true });
+
+    // Mouse wheel
+    let wheelTimeout = false;
+    document.addEventListener('wheel', (e) => {
+      if (wheelTimeout) return;
+      wheelTimeout = true;
+      setTimeout(() => wheelTimeout = false, 800);
+      e.deltaY > 0 ? goTo(current + 1) : goTo(current - 1);
+    }, { passive: true });
+
+    /* ── Particles ─────────────────────────────────────── */
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    const particles = [];
+    const PARTICLE_COUNT = 50;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 2 + 0.5,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        o: Math.random() * 0.3 + 0.05,
+      });
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, W, H);
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(34,211,238,${p.o})`;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > W) p.dx *= -1;
+        if (p.y < 0 || p.y > H) p.dy *= -1;
+      }
+      // Draw faint connecting lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(34,211,238,${0.04 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+  </script>
+</body>
+</html>

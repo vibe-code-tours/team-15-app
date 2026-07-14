@@ -26,3 +26,4 @@ asyncpg==0.30.0
 
 # Cloud storage
 cloudinary==1.44.1
+python-multipart==0.0.9

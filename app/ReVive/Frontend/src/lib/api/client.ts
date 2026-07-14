@@ -59,7 +59,12 @@ async function request<T>(
     throw new ApiError(res.status, `Server error (${res.status})`)
   }
 
-  const json: ApiResponse<T> = await res.json()
+  const json = await res.json()
+
+  if (!res.ok) {
+    const message = json.error || json.detail || `Request failed (${res.status})`
+    throw new ApiError(res.status, message)
+  }
 
   if (!json.success || json.error) {
     throw new ApiError(res.status, json.error || "Request failed")
@@ -86,4 +91,44 @@ export function apiPatch<T>(path: string, body?: unknown): Promise<T> {
 
 export function apiDelete<T>(path: string): Promise<T> {
   return request<T>("DELETE", path)
+}
+
+export async function apiUpload<T>(path: string, files: File[]): Promise<T> {
+  const formData = new FormData()
+  files.forEach((file) => {
+    formData.append("files", file)
+  })
+
+  const token = await getTokenForRequest()
+  const headers: Record<string, string> = {}
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+  })
+
+  const contentType = res.headers.get("content-type") || ""
+  if (!contentType.includes("application/json")) {
+    // Try to read the response body for a better error message
+    const text = await res.text().catch(() => "")
+    const detail = text ? `: ${text.slice(0, 200)}` : ""
+    throw new ApiError(res.status, `Upload failed — server returned non-JSON (${res.status})${detail}`)
+  }
+
+  const json = await res.json()
+
+  if (!res.ok) {
+    const message = json.error || json.detail || `Upload failed (${res.status})`
+    throw new ApiError(res.status, message)
+  }
+
+  if (!json.success || json.error) {
+    throw new ApiError(res.status, json.error || "Upload failed")
+  }
+
+  return json.data as T
 }

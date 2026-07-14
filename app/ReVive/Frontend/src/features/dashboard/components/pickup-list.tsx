@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User, BadgeCheck } from "lucide-react"
+import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User, BadgeCheck, ImageIcon } from "lucide-react"
 import {
   cancelPickup,
   deletePickup,
@@ -26,6 +26,7 @@ type Pickup = {
   timeSlot: string
   address: string
   notes: string | null
+  images: string[] | null
   status: string
   requestedBy: string | null
   requestedPickupFrom: string | null
@@ -118,6 +119,29 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                 <p className="mt-1 text-sm text-muted-foreground">
                   {categoryLabel(p.category)} · Qty {p.quantity} · {conditionLabel(p.condition)}
                 </p>
+
+                {/* Item Images */}
+                {p.images && p.images.length > 0 && (
+                  <div className="mt-3 flex gap-2 overflow-x-auto">
+                    {p.images.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border"
+                      >
+                        <img
+                          src={img}
+                          alt={`${p.deviceName} photo ${idx + 1}`}
+                          className="size-full object-cover"
+                        />
+                        {idx === 0 && p.images!.length > 1 && (
+                          <span className="absolute bottom-0.5 left-0.5 rounded bg-primary px-1 py-0.5 text-[9px] font-medium text-primary-foreground">
+                            +{p.images!.length - 1}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                   <div className="flex items-center gap-2 text-muted-foreground">

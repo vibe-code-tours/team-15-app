@@ -85,6 +85,7 @@ export type BrowseItem = {
   condition: string
   address: string
   notes: string | null
+  images: string[] | null
   status: string
   createdAt: string
   donorName: string

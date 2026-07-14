@@ -23,3 +23,6 @@ httpx==0.28.1
 
 # Async (for future use)
 asyncpg==0.30.0
+
+# Cloud storage
+cloudinary==1.44.1

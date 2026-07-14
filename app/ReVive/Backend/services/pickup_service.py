@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import json
 from sqlalchemy.orm import Session
 import models
 
@@ -13,6 +14,9 @@ def get_user_pickups(db: Session, user_id: str) -> list[models.Pickup]:
 
 
 def create_pickup(db: Session, user_id: str, data: dict) -> models.Pickup:
+    images = data.get("images")
+    images_json = json.dumps(images) if images else None
+
     pickup = models.Pickup(
         user_id=user_id,
         category=data["category"],
@@ -24,6 +28,7 @@ def create_pickup(db: Session, user_id: str, data: dict) -> models.Pickup:
         time_slot=data["time_slot"],
         address=data["address"].strip(),
         notes=data.get("notes", "").strip() if data.get("notes") else None,
+        images=images_json,
         status="available",
         created_at=datetime.now(timezone.utc).isoformat(),
     )

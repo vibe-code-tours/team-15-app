@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -13,6 +14,14 @@ router = APIRouter(prefix="/api/pickups", tags=["pickups"])
 
 
 def _pickup_to_dict(p, requester=None) -> dict:
+    # Parse images JSON string to list
+    images = None
+    if p.images:
+        try:
+            images = json.loads(p.images)
+        except (json.JSONDecodeError, TypeError):
+            images = None
+
     result = {
         "id": p.id,
         "userId": p.user_id,
@@ -25,6 +34,7 @@ def _pickup_to_dict(p, requester=None) -> dict:
         "timeSlot": p.time_slot,
         "address": p.address,
         "notes": p.notes,
+        "images": images,
         "status": p.status,
         "requestedBy": p.requested_by,
         "requestedPickupFrom": p.requested_pickup_from,

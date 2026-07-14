@@ -27,6 +27,7 @@ class Pickup(Base):
     time_slot = Column(String, nullable=False)
     address = Column(String, nullable=False)
     notes = Column(Text)
+    images = Column(Text, nullable=True, comment="JSON array of image URLs")
     status = Column(String, nullable=False, default="available")
     requested_by = Column(String, nullable=True, comment="user_id of person who requested this item")
     requested_pickup_from = Column(String, nullable=True, comment="Requester preferred pickup start date")

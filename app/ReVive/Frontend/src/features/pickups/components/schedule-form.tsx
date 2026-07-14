@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation"
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { Check, ChevronLeft, ChevronRight, Loader2, PackageCheck } from "lucide-react"
 import { createPickup } from "@/features/pickups/services/pickups"
+import { apiUpload } from "@/lib/api/client"
 import { PICKUP_CATEGORIES, CONDITIONS, TIME_SLOTS } from "@/lib/categories"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
+import { MediaUploader } from "@/features/donate/components/media-uploader"
 
 const STEPS = ["Item", "When", "Where"] as const
 
@@ -31,12 +33,13 @@ export function ScheduleForm() {
   const [timeSlot, setTimeSlot] = useState("")
   const [address, setAddress] = useState("")
   const [notes, setNotes] = useState("")
+  const [imageFiles, setImageFiles] = useState<File[]>([])
 
   const prefersReducedMotion = useReducedMotion()
   const today = new Date().toISOString().split("T")[0]
 
   const canNext =
-    (step === 0 && category && deviceName.trim()) ||
+    (step === 0 && category && deviceName.trim() && imageFiles.length > 0) ||
     (step === 1 && availableFrom && availableTo && availableTo >= availableFrom && timeSlot) ||
     step === 2
 
@@ -48,6 +51,20 @@ export function ScheduleForm() {
     }
     setError(null)
     setLoading(true)
+
+    // Upload images first (client-side) — File objects can't cross the server action boundary
+    let imageUrls: string[] | undefined
+    if (imageFiles.length > 0) {
+      try {
+        const uploadResult = await apiUpload<{ urls: string[] }>("/api/upload", imageFiles)
+        imageUrls = uploadResult.urls
+      } catch (err: any) {
+        setError(err.message || "Failed to upload images.")
+        setLoading(false)
+        return
+      }
+    }
+
     const res = await createPickup({
       category,
       deviceName,
@@ -58,6 +75,7 @@ export function ScheduleForm() {
       timeSlot,
       address,
       notes,
+      images: imageUrls,
     })
     setLoading(false)
     if (res?.error) {
@@ -189,6 +207,13 @@ export function ScheduleForm() {
                       ))}
                     </select>
                   </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <MediaUploader
+                    onFilesChange={setImageFiles}
+                    maxFiles={5}
+                    disabled={loading}
+                  />
                 </div>
               </>
             )}

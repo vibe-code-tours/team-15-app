@@ -81,7 +81,7 @@ export function MediaUploader({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label>Photos (Optional)</Label>
+        <Label>Photos <span className="text-destructive">*</span> (Required, 1-{maxFiles})</Label>
         <span className="text-xs text-muted-foreground">
           {files.length}/{maxFiles} photos
         </span>

@@ -1,5 +1,7 @@
+import os
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -9,6 +11,7 @@ from database import get_db
 from routers import (
     auth, users, listings, categories, requests, messages,
     notifications, reports, admin, pickups, referrals, search, browse,
+    upload,
 )
 
 settings = get_settings()
@@ -38,6 +41,12 @@ app.include_router(pickups.router)
 app.include_router(referrals.router)
 app.include_router(search.router)
 app.include_router(browse.router)
+app.include_router(upload.router)
+
+# Serve uploaded files
+uploads_dir = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 
 @app.get("/")

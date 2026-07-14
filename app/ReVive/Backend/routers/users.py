@@ -18,6 +18,7 @@ def _user_to_dict(u) -> dict:
         "id": str(u.id),
         "name": u.name,
         "email": u.email,
+        "image": u.profile_picture_url,
     }
 
 

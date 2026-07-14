@@ -16,8 +16,11 @@ export type NotificationPreferences = {
 }
 
 /** Update user profile */
-export async function updateProfile(data: { name: string }) {
-  await apiPut("/api/users/me", { name: data.name })
+export async function updateProfile(data: { name?: string; image?: string }) {
+  const body: Record<string, string> = {}
+  if (data.name !== undefined) body.name = data.name
+  if (data.image !== undefined) body.profile_picture_url = data.image
+  await apiPut("/api/users/me", body)
   return { success: true }
 }
 

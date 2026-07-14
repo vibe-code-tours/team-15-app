@@ -12,6 +12,7 @@ export type PickupInput = {
   timeSlot: string
   address: string
   notes?: string
+  images?: string[]
 }
 
 export type Pickup = {
@@ -26,6 +27,7 @@ export type Pickup = {
   timeSlot: string
   address: string
   notes: string | null
+  images: string[] | null
   status: string
   requestedBy: string | null
   requestedPickupFrom: string | null
@@ -40,9 +42,9 @@ export async function getPickups(): Promise<Pickup[]> {
   return data.items
 }
 
-/** Create a new listing */
+/** Create a new listing (pass image URLs, not File objects — server actions can't serialize Files) */
 export async function createPickup(input: PickupInput) {
-  const result = await apiPost<{ success: boolean }, PickupInput>(
+  const result = await apiPost<{ success: boolean }>(
     "/api/pickups/",
     {
       category: input.category,
@@ -54,6 +56,7 @@ export async function createPickup(input: PickupInput) {
       timeSlot: input.timeSlot,
       address: input.address,
       notes: input.notes,
+      images: input.images,
     }
   )
   return { success: true }

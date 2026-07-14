@@ -13,6 +13,7 @@ class PickupCreate(BaseModel):
     time_slot: str = Field(alias="timeSlot")
     address: str = Field(min_length=1, max_length=500)
     notes: str | None = None
+    images: list[str] | None = None
 
 
 class PickupUpdate(BaseModel):

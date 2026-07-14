@@ -1,3 +1,4 @@
+import json
 import uuid
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -48,6 +49,14 @@ def browse_available_items(
 
     results = []
     for item in items:
+        # Parse images JSON string to list
+        images = None
+        if item.images:
+            try:
+                images = json.loads(item.images)
+            except (json.JSONDecodeError, TypeError):
+                images = None
+
         results.append({
             "id": item.id,
             "userId": item.user_id,
@@ -60,6 +69,7 @@ def browse_available_items(
             "timeSlot": item.time_slot,
             "address": item.address,
             "notes": item.notes,
+            "images": images,
             "status": item.status,
             "createdAt": item.created_at,
             "donorName": donors.get(item.user_id, "Anonymous"),

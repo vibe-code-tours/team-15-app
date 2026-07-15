@@ -20,6 +20,7 @@ from models.pickup_requests import PickupRequestStatus, PickupRequest
 from models.referrals import ReferralStatus, Referral
 from models.gamification import UserPoints, ImpactEvent
 from models.settings import UserSetting
+from models.chat import DirectMessage
 
 __all__ = [
     # Enums
@@ -44,4 +45,5 @@ __all__ = [
     "Referral",
     "UserPoints", "ImpactEvent",
     "UserSetting",
+    "DirectMessage",
 ]

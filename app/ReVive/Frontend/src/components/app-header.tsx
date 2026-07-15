@@ -32,7 +32,7 @@ export function AppHeader({ userName }: { userName?: string }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/browse" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Leaf className="size-4" />
           </span>
@@ -40,6 +40,7 @@ export function AppHeader({ userName }: { userName?: string }) {
         </Link>
 
         <nav className="flex items-center gap-6">
+          {navLink("/", "Home")}
           {navLink("/browse", "Browse")}
           {navLink("/search", "Search")}
           {navLink("/donate", "Donate")}

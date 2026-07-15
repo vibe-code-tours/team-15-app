@@ -17,10 +17,19 @@ export default async function AccountPage() {
   const user = await getServerUser()
   if (!user) redirect("/sign-in")
 
-  const [userStats, achievementStats] = await Promise.all([
-    getUserStats(user.id),
-    getAchievementStats(),
-  ])
+  let userStats = { totalPickups: 0, totalReferrals: 0, totalPoints: 0 }
+  let achievementStats = { unlocked: 0 }
+
+  try {
+    const [fetchedStats, fetchedAchievements] = await Promise.all([
+      getUserStats(user.id),
+      getAchievementStats(),
+    ])
+    if (fetchedStats) userStats = fetchedStats
+    if (fetchedAchievements) achievementStats = fetchedAchievements
+  } catch (error) {
+    console.error("Failed to fetch user stats for Account Page:", error)
+  }
 
   return (
     <div className="min-h-svh bg-background">

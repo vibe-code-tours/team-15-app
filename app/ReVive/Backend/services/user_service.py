@@ -101,5 +101,6 @@ def delete_user_data(db: Session, user_id: str) -> bool:
     db.query(models.UserPoints).filter(models.UserPoints.user_id == user_id).delete()
     db.query(models.Referral).filter(models.Referral.referrer_id == user_id).delete()
     db.query(models.Pickup).filter(models.Pickup.user_id == user_id).delete()
+    db.query(models.User).filter(models.User.id == user_id).delete()
     db.commit()
     return True

@@ -13,7 +13,8 @@ from services import pickup_service, referral_service
 router = APIRouter(prefix="/api/pickups", tags=["pickups"])
 
 
-def _pickup_to_dict(p, requester=None) -> dict:
+def _pickup_to_dict(p, requests=None) -> dict:
+    """Convert a Pickup model to a dict, optionally including requests."""
     # Parse images JSON string to list
     images = None
     if p.images:
@@ -36,11 +37,26 @@ def _pickup_to_dict(p, requester=None) -> dict:
         "notes": p.notes,
         "images": images,
         "status": p.status,
-        "requestedBy": p.requested_by,
-        "requestedPickupFrom": p.requested_pickup_from,
-        "requestedPickupTo": p.requested_pickup_to,
-        "requestedTimeSlot": p.requested_time_slot,
         "createdAt": p.created_at,
+    }
+
+    if requests is not None:
+        result["requests"] = requests
+
+    return result
+
+
+def _request_to_dict(req, requester=None) -> dict:
+    """Convert a PickupRequest model to a dict."""
+    result = {
+        "id": req.id,
+        "pickupId": req.pickup_id,
+        "requesterId": req.requester_id,
+        "pickupFrom": req.pickup_from,
+        "pickupTo": req.pickup_to,
+        "timeSlot": req.time_slot,
+        "status": req.status,
+        "createdAt": req.created_at,
     }
     if requester:
         result["requester"] = {
@@ -66,13 +82,20 @@ def list_my_pickups(
     offset = (page - 1) * limit
     paginated = pickups[offset: offset + limit]
 
-    # Fetch requester info for pickups that have been requested
+    # Fetch requests for each pickup
     items = []
     for p in paginated:
-        requester = None
-        if p.requested_by:
-            requester = db.query(models.User).filter(models.User.id == p.requested_by).first()
-        items.append(_pickup_to_dict(p, requester=requester))
+        reqs = (
+            db.query(models.PickupRequest)
+            .filter(models.PickupRequest.pickup_id == p.id)
+            .order_by(models.PickupRequest.created_at.desc())
+            .all()
+        )
+        request_dicts = []
+        for req in reqs:
+            requester = db.query(models.User).filter(models.User.id == req.requester_id).first()
+            request_dicts.append(_request_to_dict(req, requester=requester))
+        items.append(_pickup_to_dict(p, requests=request_dicts))
 
     total_pages = (total + limit - 1) // limit if limit > 0 else 1
     return paginated_response(
@@ -89,10 +112,13 @@ def list_requested_pickups(
     db: Session = Depends(get_db),
 ):
     """Get pickups that the user has requested from other donors."""
-    pickups = pickup_service.get_requested_pickups(db, str(current_user.id))
-    return success_response(
-        data=[_pickup_to_dict(p) for p in pickups],
-    )
+    results = pickup_service.get_requested_pickups(db, str(current_user.id))
+    data = []
+    for item in results:
+        pickup_dict = _pickup_to_dict(item["pickup"])
+        pickup_dict["request"] = _request_to_dict(item["request"])
+        data.append(pickup_dict)
+    return success_response(data=data)
 
 
 @router.get("/donor-requests")
@@ -100,17 +126,17 @@ def list_donor_requests(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Get pickups where other users have made requests (donor view)."""
+    """Get pickups where other users have made requests (donor view with all requests)."""
     results = pickup_service.get_donor_requests(db, str(current_user.id))
     data = []
     for item in results:
         pickup_dict = _pickup_to_dict(item["pickup"])
-        requester = item["requester"]
-        pickup_dict["requester"] = {
-            "id": str(requester.id) if requester else None,
-            "name": requester.name if requester else "Unknown",
-            "email": requester.email if requester else "",
-        } if requester else None
+        request_list = []
+        for req_item in item["requests"]:
+            requester = req_item["requester"]
+            req_dict = _request_to_dict(req_item["request"], requester=requester)
+            request_list.append(req_dict)
+        pickup_dict["requests"] = request_list
         data.append(pickup_dict)
     return success_response(data=data)
 
@@ -158,7 +184,7 @@ def update_pickup(
             return JSONResponse(status_code=404, content=error_response("Pickup not found"))
         return success_response(data={"success": True}, message="Listing cancelled")
     elif body.action == "request":
-        pickup = pickup_service.request_pickup(
+        request = pickup_service.request_pickup(
             db,
             pickup_id,
             str(current_user.id),
@@ -166,18 +192,22 @@ def update_pickup(
             pickup_to=body.pickup_to,
             time_slot=body.time_slot,
         )
-        if not pickup:
-            return JSONResponse(status_code=404, content=error_response("Pickup not found or already requested"))
+        if not request:
+            return JSONResponse(status_code=404, content=error_response("Pickup not found, already requested, or not available"))
         return success_response(data={"success": True}, message="Request sent successfully")
     elif body.action == "accept":
-        pickup = pickup_service.accept_request(db, pickup_id, str(current_user.id))
+        if not body.request_id:
+            return JSONResponse(status_code=400, content=error_response("requestId is required for accept action"))
+        pickup = pickup_service.accept_request(db, pickup_id, str(current_user.id), body.request_id)
         if not pickup:
-            return JSONResponse(status_code=404, content=error_response("Pickup not found or not in requested state"))
+            return JSONResponse(status_code=404, content=error_response("Pickup or request not found"))
         return success_response(data={"success": True}, message="Request accepted")
     elif body.action == "reject":
-        pickup = pickup_service.reject_request(db, pickup_id, str(current_user.id))
+        if not body.request_id:
+            return JSONResponse(status_code=400, content=error_response("requestId is required for reject action"))
+        pickup = pickup_service.reject_request(db, pickup_id, str(current_user.id), body.request_id)
         if not pickup:
-            return JSONResponse(status_code=404, content=error_response("Pickup not found or not in requested state"))
+            return JSONResponse(status_code=404, content=error_response("Pickup or request not found"))
         return success_response(data={"success": True}, message="Request rejected")
     else:
         return JSONResponse(

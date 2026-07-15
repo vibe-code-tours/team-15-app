@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Package, Clock, MapPin, User, Loader2, Check, X, ChevronRight, Calendar, BadgeCheck } from "lucide-react"
+import { Package, Clock, MapPin, User, Loader2, Check, X, ChevronRight, Calendar, BadgeCheck, Users } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { getDonorRequests, acceptRequest, rejectRequest } from "@/features/account/services/account"
 import { timeSlotLabel } from "@/lib/categories"
 import type { DonorRequest } from "@/features/account/services/account"
+import type { PickupRequest } from "@/features/pickups/types"
 
 const MAX_ITEMS = 3
 
@@ -31,14 +32,23 @@ export function DonorRequests() {
     }
   }
 
-  async function handleAccept(pickupId: number) {
-    setProcessingId(pickupId)
+  async function handleAccept(pickupId: number, requestId: number) {
+    setProcessingId(requestId)
     try {
-      await acceptRequest(pickupId)
+      await acceptRequest(pickupId, requestId)
       setRequests(
-        requests.map((r) =>
-          r.id === pickupId ? { ...r, status: "accepted" } : r
-        )
+        requests.map((r) => {
+          if (r.id !== pickupId) return r
+          return {
+            ...r,
+            requests: r.requests.map((req) =>
+              req.id === requestId
+                ? { ...req, status: "accepted" }
+                : { ...req, status: "rejected" }
+            ),
+            status: "accepted",
+          }
+        })
       )
     } catch (error) {
       console.error("Failed to accept request:", error)
@@ -47,11 +57,24 @@ export function DonorRequests() {
     }
   }
 
-  async function handleReject(pickupId: number) {
-    setProcessingId(pickupId)
+  async function handleReject(pickupId: number, requestId: number) {
+    setProcessingId(requestId)
     try {
-      await rejectRequest(pickupId)
-      setRequests(requests.filter((r) => r.id !== pickupId))
+      await rejectRequest(pickupId, requestId)
+      setRequests(
+        requests.map((r) => {
+          if (r.id !== pickupId) return r
+          const updatedRequests = r.requests.map((req) =>
+            req.id === requestId ? { ...req, status: "rejected" } : req
+          )
+          const hasPending = updatedRequests.some((req) => req.status === "pending")
+          return {
+            ...r,
+            requests: updatedRequests,
+            status: hasPending ? r.status : "available",
+          }
+        })
+      )
     } catch (error) {
       console.error("Failed to reject request:", error)
     } finally {
@@ -101,104 +124,124 @@ export function DonorRequests() {
         )}
       </div>
       <div className="space-y-3">
-        {displayItems.map((item) => (
-          <div
-            key={item.id}
-            className="rounded-lg border border-border bg-background p-4"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="font-medium">{item.deviceName}</p>
-                <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Package className="size-3" />
-                    {item.category}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="size-3" />
-                    {item.address}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="size-3" />
-                    {item.availableFrom} – {item.availableTo}
-                  </span>
+        {displayItems.map((item) => {
+          const pendingRequests = item.requests.filter((r) => r.status === "pending")
+          const hasAccepted = item.requests.some((r) => r.status === "accepted")
+
+          return (
+            <div
+              key={item.id}
+              className="rounded-lg border border-border bg-background p-4"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">{item.deviceName}</p>
+                    <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      <Users className="size-3" />
+                      {item.requests.length}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Package className="size-3" />
+                      {item.category}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="size-3" />
+                      {item.address}
+                    </span>
+                  </div>
+
+                  {/* Show first pending request */}
+                  {pendingRequests.length > 0 && (
+                    <RequestSummary
+                      request={pendingRequests[0]}
+                      pickupId={item.id}
+                      onAccept={handleAccept}
+                      onReject={handleReject}
+                      processingId={processingId}
+                    />
+                  )}
+
+                  {/* Show accepted request */}
+                  {hasAccepted && (
+                    <div className="mt-2 flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                      <BadgeCheck className="size-3.5" />
+                      Request accepted
+                    </div>
+                  )}
                 </div>
-
-                {/* Requester Info */}
-                {item.requester && (
-                  <div className="mt-3 flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
-                    <User className="size-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{item.requester.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.requester.email}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Requester's Preferred Pickup Details */}
-                {(item.requestedPickupFrom || item.requestedTimeSlot) && (
-                  <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
-                    <p className="text-xs font-medium text-primary mb-1">Requested Pick-up</p>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      {item.requestedPickupFrom && item.requestedPickupTo && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="size-3" />
-                          {item.requestedPickupFrom} – {item.requestedPickupTo}
-                        </span>
-                      )}
-                      {item.requestedTimeSlot && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="size-3" />
-                          {timeSlotLabel(item.requestedTimeSlot)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 shrink-0">
-                {item.status === "accepted" ? (
-                  <span className="flex items-center gap-1.5 rounded-full bg-green-500/15 px-3 py-1 text-xs font-medium text-green-600 dark:text-green-400">
-                    <BadgeCheck className="size-3.5" />
-                    Accepted
-                  </span>
-                ) : (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleReject(item.id)}
-                      disabled={processingId === item.id}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      {processingId === item.id ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <X className="size-4" />
-                      )}
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleAccept(item.id)}
-                      disabled={processingId === item.id}
-                    >
-                      {processingId === item.id ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <Check className="size-4" />
-                      )}
-                      Accept
-                    </Button>
-                  </>
-                )}
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </Card>
+  )
+}
+
+function RequestSummary({
+  request,
+  pickupId,
+  onAccept,
+  onReject,
+  processingId,
+}: {
+  request: PickupRequest
+  pickupId: number
+  onAccept: (pickupId: number, requestId: number) => void
+  onReject: (pickupId: number, requestId: number) => void
+  processingId: number | null
+}) {
+  const isProcessing = processingId === request.id
+
+  return (
+    <div className="mt-2 space-y-2">
+      {request.requester && (
+        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
+          <User className="size-3.5 text-muted-foreground" />
+          <span className="text-sm">{request.requester.name}</span>
+        </div>
+      )}
+      {(request.pickupFrom || request.timeSlot) && (
+        <div className="rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            {request.pickupFrom && request.pickupTo && (
+              <span className="flex items-center gap-1">
+                <Calendar className="size-3" />
+                {request.pickupFrom} – {request.pickupTo}
+              </span>
+            )}
+            {request.timeSlot && (
+              <span className="flex items-center gap-1">
+                <Clock className="size-3" />
+                {timeSlotLabel(request.timeSlot)}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="flex items-center gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onReject(pickupId, request.id)}
+          disabled={isProcessing}
+          className="text-destructive hover:text-destructive"
+        >
+          {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <X className="size-3" />}
+          Reject
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => onAccept(pickupId, request.id)}
+          disabled={isProcessing}
+        >
+          {isProcessing ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
+          Accept
+        </Button>
+      </div>
+    </div>
   )
 }

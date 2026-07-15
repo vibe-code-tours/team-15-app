@@ -15,6 +15,22 @@ export type PickupInput = {
   images?: string[]
 }
 
+export type PickupRequest = {
+  id: number
+  pickupId: number
+  requesterId: string
+  pickupFrom: string | null
+  pickupTo: string | null
+  timeSlot: string | null
+  status: string
+  createdAt: string
+  requester?: {
+    id: string
+    name: string
+    email: string
+  } | null
+}
+
 export type Pickup = {
   id: number
   userId: string
@@ -29,11 +45,8 @@ export type Pickup = {
   notes: string | null
   images: string[] | null
   status: string
-  requestedBy: string | null
-  requestedPickupFrom: string | null
-  requestedPickupTo: string | null
-  requestedTimeSlot: string | null
   createdAt: string
+  requests?: PickupRequest[]
 }
 
 /** Get current user's own listings */
@@ -78,14 +91,14 @@ export async function completePickup(id: number) {
   return { success: true }
 }
 
-/** Donor accepts a request on their listing */
-export async function acceptRequest(id: number) {
-  await apiPatch(`/api/pickups/${id}`, { action: "accept" })
+/** Donor accepts a specific request on their listing */
+export async function acceptRequest(pickupId: number, requestId: number) {
+  await apiPatch(`/api/pickups/${pickupId}`, { action: "accept", requestId })
   return { success: true }
 }
 
-/** Donor declines a request */
-export async function declineRequest(id: number) {
-  await apiPatch(`/api/pickups/${id}`, { action: "decline" })
+/** Donor rejects a specific request */
+export async function declineRequest(pickupId: number, requestId: number) {
+  await apiPatch(`/api/pickups/${pickupId}`, { action: "reject", requestId })
   return { success: true }
 }

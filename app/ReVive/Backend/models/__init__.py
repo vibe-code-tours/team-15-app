@@ -16,6 +16,7 @@ from models.moderation import (
 )
 from models.notifications import NotificationChannel, NotificationType, Notification
 from models.pickups import PickupStatus, Pickup
+from models.pickup_requests import PickupRequestStatus, PickupRequest
 from models.referrals import ReferralStatus, Referral
 from models.gamification import UserPoints, ImpactEvent
 from models.settings import UserSetting
@@ -28,6 +29,7 @@ __all__ = [
     "ReportTargetType", "ReportStatus", "AdminActionType",
     "NotificationChannel", "NotificationType",
     "PickupStatus",
+    "PickupRequestStatus",
     "ReferralStatus",
     # Models
     "Region",
@@ -38,6 +40,7 @@ __all__ = [
     "Report", "AdminAction",
     "Notification",
     "Pickup",
+    "PickupRequest",
     "Referral",
     "UserPoints", "ImpactEvent",
     "UserSetting",

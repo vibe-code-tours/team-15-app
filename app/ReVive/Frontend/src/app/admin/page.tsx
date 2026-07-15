@@ -11,6 +11,7 @@ export const metadata = {
 export default async function AdminDashboardPage() {
   const user = await getServerUser()
   if (!user) redirect("/sign-in")
+  if (!user.isAdmin) redirect("/dashboard")
 
   const stats = await getAdminStats()
   return <AdminDashboardView stats={stats} />

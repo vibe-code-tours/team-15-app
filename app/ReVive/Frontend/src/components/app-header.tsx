@@ -40,8 +40,12 @@ export function AppHeader({ userName }: { userName?: string }) {
         </Link>
 
         <nav className="flex items-center gap-6">
+          {navLink("/browse", "Browse")}
+          {navLink("/search", "Search")}
           {navLink("/donate", "Donate")}
           {navLink("/dashboard", "My Pickups")}
+          {navLink("/messages", "Messages")}
+          {navLink("/notifications", "Notifications")}
           {navLink("/referral", "Referral")}
           {navLink("/account", "Account")}
           <div className="flex items-center gap-3">

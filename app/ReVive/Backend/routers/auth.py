@@ -87,4 +87,5 @@ def get_me(current_user: models.User = Depends(get_current_user)):
         "name": current_user.name,
         "email": current_user.email,
         "image": current_user.profile_picture_url,
+        "isAdmin": current_user.is_admin,
     })

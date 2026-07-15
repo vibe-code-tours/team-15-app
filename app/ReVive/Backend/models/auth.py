@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, JSON, Enum as SQLEnum, Index
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, JSON, Enum as SQLEnum, Index, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -23,6 +23,7 @@ class User(Base):
     notification_prefs = Column(JSON, comment="per-channel opt in/out")
     items_donated_count = Column(Integer, nullable=False, default=0)
     items_received_count = Column(Integer, nullable=False, default=0)
+    is_admin = Column(Boolean, nullable=False, default=False, server_default='false')
     banned_ip = Column(String, comment="set when status = banned")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

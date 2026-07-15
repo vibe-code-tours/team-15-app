@@ -28,6 +28,7 @@ export async function getServerUser() {
       name: json.data.name || "User",
       email: json.data.email || "",
       image: json.data.image || null,
+      isAdmin: json.data.isAdmin || false,
     }
   } catch {
     return null

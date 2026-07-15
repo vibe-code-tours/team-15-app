@@ -12,6 +12,13 @@ from services import admin_service
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
+def get_admin_user(current_user: models.User = Depends(get_current_user)) -> models.User:
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
+    return current_user
 
 class AdminActionRequest(BaseModel):
     action: str
@@ -23,7 +30,7 @@ class AdminActionRequest(BaseModel):
 
 @router.get("/stats")
 def get_admin_stats(
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     stats = admin_service.get_admin_stats(db)
@@ -50,7 +57,7 @@ def get_admin_stats(
 
 @router.get("/pickups")
 def list_all_pickups(
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     pickups = admin_service.get_all_pickups(db)
@@ -78,7 +85,7 @@ def list_all_pickups(
 
 @router.get("/users")
 def list_all_users(
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     users = admin_service.get_all_users(db)
@@ -97,7 +104,7 @@ def list_all_users(
 
 @router.get("/breakdown/categories")
 def get_category_breakdown(
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     breakdown = admin_service.get_category_breakdown(db)
@@ -106,7 +113,7 @@ def get_category_breakdown(
 
 @router.get("/breakdown/status")
 def get_status_breakdown(
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     breakdown = admin_service.get_status_breakdown(db)
@@ -120,7 +127,7 @@ def list_reports(
     status_filter: str | None = Query(None, alias="status"),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100),
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     query = db.query(models.Report)
@@ -152,7 +159,7 @@ def list_reports(
 def update_report_status(
     report_id: str,
     status_update: str,
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     report = db.query(models.Report).filter(models.Report.id == uuid.UUID(report_id)).first()
@@ -177,7 +184,7 @@ def update_report_status(
 @router.post("/actions")
 def take_action(
     body: AdminActionRequest,
-    current_user: models.User = Depends(get_current_user),
+    current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
     from datetime import datetime, timedelta, timezone

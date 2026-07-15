@@ -35,16 +35,15 @@ def get_referral_info(
 
 
 @router.post("/")
-def apply_referral(
+async def apply_referral(
     request: Request,
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     import json
-    import asyncio
 
-    # Read body manually since we need raw JSON
-    body = asyncio.get_event_loop().run_until_complete(request.json())
+    # Read body asynchronously
+    body = await request.json()
     code = body.get("code", "")
 
     if not code or len(code) != 8:

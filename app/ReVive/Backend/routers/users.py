@@ -22,6 +22,23 @@ def _user_to_dict(u) -> dict:
     }
 
 
+@router.get("/")
+def get_all_users(
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    users = db.query(models.User).filter(models.User.id != current_user.id).all()
+    # Don't return emails for privacy
+    return success_response(data=[
+        {
+            "id": str(u.id),
+            "name": u.name,
+            "image": u.profile_picture_url,
+        }
+        for u in users
+    ])
+
+
 @router.get("/me")
 def get_my_profile(current_user: models.User = Depends(get_current_user)):
     return success_response(data=_user_to_dict(current_user))

@@ -10,6 +10,9 @@ export const metadata = {
   description: "Manage your account, profile, and settings.",
 }
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export default async function AccountPage() {
   const user = await getServerUser()
   if (!user) redirect("/sign-in")

@@ -27,4 +27,7 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if s.SECRET_KEY == "dev-secret-change-in-production":
+        raise RuntimeError("SECRET_KEY is set to the default dev value. Please set it in your environment variables!")
+    return s

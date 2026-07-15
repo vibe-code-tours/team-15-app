@@ -29,11 +29,10 @@ class Pickup(Base):
     notes = Column(Text)
     images = Column(Text, nullable=True, comment="JSON array of image URLs")
     status = Column(String, nullable=False, default="available")
-    requested_by = Column(String, nullable=True, comment="user_id of person who requested this item")
-    requested_pickup_from = Column(String, nullable=True, comment="Requester preferred pickup start date")
-    requested_pickup_to = Column(String, nullable=True, comment="Requester preferred pickup end date")
-    requested_time_slot = Column(String, nullable=True, comment="Requester preferred pickup time slot")
     created_at = Column(String, nullable=False)
+
+    # Relationship to pickup requests (multiple users can request the same item)
+    requests = relationship("PickupRequest", backref="pickup", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('idx_pickups_user_status', 'user_id', 'status'),

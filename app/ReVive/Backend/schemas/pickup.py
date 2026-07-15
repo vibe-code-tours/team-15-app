@@ -56,3 +56,4 @@ class PickupAction(BaseModel):
     pickup_from: str | None = Field(None, alias="pickupFrom")
     pickup_to: str | None = Field(None, alias="pickupTo")
     time_slot: str | None = Field(None, alias="timeSlot")
+    request_id: int | None = Field(None, alias="requestId")

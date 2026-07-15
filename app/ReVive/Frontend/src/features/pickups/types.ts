@@ -10,6 +10,22 @@ export type PickupInput = {
   notes?: string
 }
 
+export type PickupRequest = {
+  id: number
+  pickupId: number
+  requesterId: string
+  pickupFrom: string | null
+  pickupTo: string | null
+  timeSlot: string | null
+  status: string
+  createdAt: string
+  requester?: {
+    id: string
+    name: string
+    email: string
+  } | null
+}
+
 export type Pickup = {
   id: number
   userId: string
@@ -22,10 +38,9 @@ export type Pickup = {
   timeSlot: string
   address: string
   notes: string | null
+  images: string[] | null
   status: string
-  requestedBy: string | null
-  requestedPickupFrom: string | null
-  requestedPickupTo: string | null
-  requestedTimeSlot: string | null
   createdAt: string
+  requests?: PickupRequest[]
+  request?: PickupRequest
 }

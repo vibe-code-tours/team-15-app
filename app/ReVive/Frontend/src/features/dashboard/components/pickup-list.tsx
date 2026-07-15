@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User, BadgeCheck, ImageIcon } from "lucide-react"
+import { Calendar, Clock, MapPin, Package, Trash2, X, Check, User, BadgeCheck, Users } from "lucide-react"
 import {
   cancelPickup,
   deletePickup,
@@ -14,29 +14,7 @@ import {
 import { categoryLabel, conditionLabel, timeSlotLabel } from "@/lib/categories"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-
-type Pickup = {
-  id: number
-  category: string
-  deviceName: string
-  quantity: number
-  condition: string
-  availableFrom: string
-  availableTo: string
-  timeSlot: string
-  address: string
-  notes: string | null
-  images: string[] | null
-  status: string
-  requestedBy: string | null
-  requestedPickupFrom: string | null
-  requestedPickupTo: string | null
-  requestedTimeSlot: string | null
-  requester?: {
-    name: string
-    email: string
-  } | null
-}
+import type { Pickup, PickupRequest } from "@/features/pickups/services/pickups"
 
 const STATUS_STYLES: Record<string, string> = {
   available: "bg-primary/15 text-primary",
@@ -66,7 +44,7 @@ function formatDate(value: string) {
 export function PickupList({ pickups }: { pickups: Pickup[] }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [busyId, setBusyId] = useState<number | null>(null)
+  const [busyId, setBusyId] = useState<string | null>(null)
 
   if (pickups.length === 0) {
     return (
@@ -85,7 +63,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
     )
   }
 
-  const doAction = (id: number, action: () => Promise<unknown>) => {
+  const doAction = (id: string, action: () => Promise<unknown>) => {
     setBusyId(id)
     startTransition(async () => {
       await action()
@@ -96,158 +74,205 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
 
   return (
     <div className="grid gap-4">
-      {pickups.map((p, i) => (
-        <motion.div
-          key={p.id}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: i * 0.05 }}
-        >
-          <Card className="p-5">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="truncate text-lg font-semibold">{p.deviceName}</h3>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      STATUS_STYLES[p.status] ?? STATUS_STYLES.available
-                    }`}
-                  >
-                    {STATUS_LABELS[p.status] ?? p.status}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {categoryLabel(p.category)} · Qty {p.quantity} · {conditionLabel(p.condition)}
-                </p>
+      {pickups.map((p, i) => {
+        const pendingRequests = p.requests?.filter((r) => r.status === "pending") ?? []
+        const acceptedRequest = p.requests?.find((r) => r.status === "accepted")
 
-                {/* Item Images */}
-                {p.images && p.images.length > 0 && (
-                  <div className="mt-3 flex gap-2 overflow-x-auto">
-                    {p.images.map((img, idx) => (
-                      <div
-                        key={idx}
-                        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border"
-                      >
-                        <img
-                          src={img}
-                          alt={`${p.deviceName} photo ${idx + 1}`}
-                          className="size-full object-cover"
-                        />
-                        {idx === 0 && p.images!.length > 1 && (
-                          <span className="absolute bottom-0.5 left-0.5 rounded bg-primary px-1 py-0.5 text-[9px] font-medium text-primary-foreground">
-                            +{p.images!.length - 1}
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="size-4 shrink-0 text-primary" />
-                    <span>{formatDate(p.availableFrom)} – {formatDate(p.availableTo)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="size-4 shrink-0 text-primary" />
-                    <span>{timeSlotLabel(p.timeSlot)}</span>
-                  </div>
-                  <div className="flex items-start gap-2 text-muted-foreground sm:col-span-2">
-                    <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
-                    <span className="text-pretty">{p.address}</span>
-                  </div>
-                </dl>
-
-                {/* Requester Info */}
-                {(p.status === "requested" || p.status === "accepted") && p.requester && (
-                  <div className="mt-3 flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2">
-                    <User className="size-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{p.requester.name}</p>
-                      <p className="text-xs text-muted-foreground">{p.requester.email}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Requester's Preferred Pickup Details */}
-                {(p.status === "requested" || p.status === "accepted") && (p.requestedPickupFrom || p.requestedTimeSlot) && (
-                  <div className="mt-2 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
-                    <p className="text-xs font-medium text-primary mb-1">Requested Pick-up</p>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      {p.requestedPickupFrom && p.requestedPickupTo && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="size-3" />
-                          {p.requestedPickupFrom} – {p.requestedPickupTo}
-                        </span>
-                      )}
-                      {p.requestedTimeSlot && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="size-3" />
-                          {timeSlotLabel(p.requestedTimeSlot)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Actions based on status */}
-              <div className="flex shrink-0 flex-col gap-2">
-                {p.status === "available" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={isPending && busyId === p.id}
-                    onClick={() => doAction(p.id, () => cancelPickup(p.id))}
-                  >
-                    <X className="size-4" /> Remove
-                  </Button>
-                )}
-
-                {p.status === "requested" && (
-                  <>
-                    <Button
-                      size="sm"
-                      disabled={isPending && busyId === p.id}
-                      onClick={() => doAction(p.id, () => acceptRequest(p.id))}
+        return (
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+          >
+            <Card className="p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="truncate text-lg font-semibold">{p.deviceName}</h3>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        STATUS_STYLES[p.status] ?? STATUS_STYLES.available
+                      }`}
                     >
-                      <Check className="size-4" /> Accept
-                    </Button>
+                      {STATUS_LABELS[p.status] ?? p.status}
+                    </span>
+                    {(p.status === "requested" || p.status === "accepted") && p.requests && p.requests.length > 0 && (
+                      <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        <Users className="size-3" />
+                        {p.requests.length}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {categoryLabel(p.category)} · Qty {p.quantity} · {conditionLabel(p.condition)}
+                  </p>
+
+                  {/* Item Images */}
+                  {p.images && p.images.length > 0 && (
+                    <div className="mt-3 flex gap-2 overflow-x-auto">
+                      {p.images.map((img, idx) => (
+                        <div
+                          key={idx}
+                          className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border"
+                        >
+                          <img
+                            src={img}
+                            alt={`${p.deviceName} photo ${idx + 1}`}
+                            className="size-full object-cover"
+                          />
+                          {idx === 0 && p.images!.length > 1 && (
+                            <span className="absolute bottom-0.5 left-0.5 rounded bg-primary px-1 py-0.5 text-[9px] font-medium text-primary-foreground">
+                              +{p.images!.length - 1}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="size-4 shrink-0 text-primary" />
+                      <span>{formatDate(p.availableFrom)} – {formatDate(p.availableTo)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Clock className="size-4 shrink-0 text-primary" />
+                      <span>{timeSlotLabel(p.timeSlot)}</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-muted-foreground sm:col-span-2">
+                      <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                      <span className="text-pretty">{p.address}</span>
+                    </div>
+                  </dl>
+
+                  {/* Show accepted request */}
+                  {acceptedRequest && (
+                    <div className="mt-3 space-y-2">
+                      <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                        <BadgeCheck className="size-3.5" />
+                        Accepted request
+                      </div>
+                      {acceptedRequest.requester && (
+                        <div className="flex items-center gap-2 rounded-md bg-green-500/5 px-3 py-2">
+                          <User className="size-3.5 text-muted-foreground" />
+                          <span className="text-sm">{acceptedRequest.requester.name}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Show pending requests */}
+                  {pendingRequests.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        {pendingRequests.length} pending request{pendingRequests.length !== 1 ? "s" : ""}
+                      </p>
+                      {pendingRequests.map((req) => (
+                        <RequestRow
+                          key={req.id}
+                          request={req}
+                          busyId={busyId}
+                          onAccept={(reqId) => doAction(`${p.id}-${reqId}`, () => acceptRequest(p.id, reqId))}
+                          onReject={(reqId) => doAction(`${p.id}-${reqId}`, () => declineRequest(p.id, reqId))}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions based on status */}
+                <div className="flex shrink-0 flex-col gap-2">
+                  {p.status === "available" && (
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={isPending && busyId === p.id}
-                      onClick={() => doAction(p.id, () => declineRequest(p.id))}
+                      disabled={isPending && busyId === String(p.id)}
+                      onClick={() => doAction(String(p.id), () => cancelPickup(p.id))}
                     >
-                      <X className="size-4" /> Decline
+                      <X className="size-4" /> Remove
                     </Button>
-                  </>
-                )}
+                  )}
 
-                {p.status === "accepted" && (
+                  {p.status === "accepted" && (
+                    <Button
+                      size="sm"
+                      disabled={isPending && busyId === String(p.id)}
+                      onClick={() => doAction(String(p.id), () => completePickup(p.id))}
+                    >
+                      <Check className="size-4" /> Picked Up
+                    </Button>
+                  )}
+
                   <Button
+                    variant="ghost"
                     size="sm"
-                    disabled={isPending && busyId === p.id}
-                    onClick={() => doAction(p.id, () => completePickup(p.id))}
+                    disabled={isPending && busyId === String(p.id)}
+                    onClick={() => doAction(String(p.id), () => deletePickup(p.id))}
+                    aria-label="Delete listing"
                   >
-                    <Check className="size-4" /> Picked Up
+                    <Trash2 className="size-4" />
                   </Button>
-                )}
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={isPending && busyId === p.id}
-                  onClick={() => doAction(p.id, () => deletePickup(p.id))}
-                  aria-label="Delete listing"
-                >
-                  <Trash2 className="size-4" />
-                </Button>
+                </div>
               </div>
-            </div>
-          </Card>
-        </motion.div>
-      ))}
+            </Card>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+
+function RequestRow({
+  request,
+  busyId,
+  onAccept,
+  onReject,
+}: {
+  request: PickupRequest
+  busyId: string | null
+  onAccept: (requestId: number) => void
+  onReject: (requestId: number) => void
+}) {
+  const isProcessing = busyId === `${request.pickupId}-${request.id}`
+
+  return (
+    <div className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <User className="size-3.5 shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          <p className="text-sm font-medium truncate">{request.requester?.name ?? "Unknown"}</p>
+          {(request.pickupFrom || request.timeSlot) && (
+            <p className="text-xs text-muted-foreground truncate">
+              {request.pickupFrom && request.pickupTo
+                ? `${request.pickupFrom} – ${request.pickupTo}`
+                : ""}
+              {request.pickupFrom && request.timeSlot ? " · " : ""}
+              {request.timeSlot ? timeSlotLabel(request.timeSlot) : ""}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={isProcessing}
+          onClick={() => onReject(request.id)}
+          className="text-destructive hover:text-destructive h-7 px-2"
+        >
+          <X className="size-3" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          disabled={isProcessing}
+          onClick={() => onAccept(request.id)}
+          className="text-green-600 hover:text-green-600 h-7 px-2"
+        >
+          <Check className="size-3" />
+        </Button>
+      </div>
     </div>
   )
 }

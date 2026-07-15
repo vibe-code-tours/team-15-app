@@ -75,6 +75,8 @@ def delete_pickup(db: Session, pickup_id: int, user_id: str) -> bool:
         return False
     # Delete related impact_events first (foreign key constraint)
     db.query(models.ImpactEvent).filter(models.ImpactEvent.pickup_id == pickup_id).delete()
+    # Delete related pickup_requests
+    db.query(models.PickupRequest).filter(models.PickupRequest.pickup_id == pickup_id).delete()
     db.delete(pickup)
     db.commit()
     return True
@@ -87,99 +89,205 @@ def request_pickup(
     pickup_from: str | None = None,
     pickup_to: str | None = None,
     time_slot: str | None = None,
-) -> models.Pickup | None:
-    """Request an item from another user."""
+) -> models.PickupRequest | None:
+    """Request an item from another user. Multiple users can request the same item."""
     pickup = db.query(models.Pickup).filter(models.Pickup.id == pickup_id).first()
     if not pickup:
         return None
     # Can't request your own item
     if pickup.user_id == requester_id:
         return None
-    # Can only request available items
-    if pickup.status != "available":
+    # Can't request if already accepted/picked_up/cancelled
+    if pickup.status in ("accepted", "picked_up", "cancelled"):
         return None
-    pickup.status = "requested"
-    pickup.requested_by = requester_id
-    if pickup_from:
-        pickup.requested_pickup_from = pickup_from
-    if pickup_to:
-        pickup.requested_pickup_to = pickup_to
-    if time_slot:
-        pickup.requested_time_slot = time_slot
+
+    # Check if this user already has a pending request
+    existing = (
+        db.query(models.PickupRequest)
+        .filter(
+            models.PickupRequest.pickup_id == pickup_id,
+            models.PickupRequest.requester_id == requester_id,
+            models.PickupRequest.status == "pending",
+        )
+        .first()
+    )
+    if existing:
+        return None  # Already has a pending request
+
+    # Create the request
+    request = models.PickupRequest(
+        pickup_id=pickup_id,
+        requester_id=requester_id,
+        pickup_from=pickup_from,
+        pickup_to=pickup_to,
+        time_slot=time_slot,
+        status="pending",
+        created_at=datetime.now(timezone.utc).isoformat(),
+    )
+    db.add(request)
+
+    # Update pickup status to requested if it's currently available
+    if pickup.status == "available":
+        pickup.status = "requested"
+
     db.commit()
-    db.refresh(pickup)
-    return pickup
+    db.refresh(request)
+    return request
 
 
-def get_requested_pickups(db: Session, requester_id: str) -> list[models.Pickup]:
+def get_requested_pickups(db: Session, requester_id: str) -> list[dict]:
     """Get pickups that the user has requested from other donors."""
-    return (
-        db.query(models.Pickup)
-        .filter(models.Pickup.requested_by == requester_id)
-        .order_by(models.Pickup.created_at.desc())
+    requests = (
+        db.query(models.PickupRequest)
+        .filter(models.PickupRequest.requester_id == requester_id)
+        .order_by(models.PickupRequest.created_at.desc())
         .all()
     )
 
+    results = []
+    for req in requests:
+        pickup = db.query(models.Pickup).filter(models.Pickup.id == req.pickup_id).first()
+        if pickup:
+            results.append({
+                "pickup": pickup,
+                "request": req,
+            })
+
+    return results
+
 
 def get_donor_requests(db: Session, donor_id: str) -> list[dict]:
-    """Get pickups where other users have made requests (including accepted)."""
+    """Get pickups where other users have made requests (donor view with all requests)."""
     pickups = (
         db.query(models.Pickup)
         .filter(
             models.Pickup.user_id == donor_id,
             models.Pickup.status.in_(["requested", "accepted"]),
-            models.Pickup.requested_by.isnot(None),
         )
         .order_by(models.Pickup.created_at.desc())
         .all()
     )
 
-    # Get requester info for each pickup
     results = []
     for pickup in pickups:
-        requester = db.query(models.User).filter(models.User.id == pickup.requested_by).first()
+        # Get all requests for this pickup
+        requests = (
+            db.query(models.PickupRequest)
+            .filter(models.PickupRequest.pickup_id == pickup.id)
+            .order_by(models.PickupRequest.created_at.asc())
+            .all()
+        )
+
+        # Get requester info for each request
+        requesters = []
+        for req in requests:
+            requester = db.query(models.User).filter(models.User.id == req.requester_id).first()
+            requesters.append({
+                "request": req,
+                "requester": requester,
+            })
+
         results.append({
             "pickup": pickup,
-            "requester": requester,
+            "requests": requesters,
         })
 
     return results
 
 
-def accept_request(db: Session, pickup_id: int, donor_id: str) -> models.Pickup | None:
-    """Donor accepts a request on their item."""
+def accept_request(db: Session, pickup_id: int, donor_id: str, request_id: int) -> models.Pickup | None:
+    """Donor accepts a specific request. Rejects all other pending requests for that pickup."""
     pickup = (
         db.query(models.Pickup)
         .filter(
             models.Pickup.id == pickup_id,
             models.Pickup.user_id == donor_id,
-            models.Pickup.status == "requested",
         )
         .first()
     )
     if not pickup:
         return None
+
+    # Find the specific request
+    target_request = (
+        db.query(models.PickupRequest)
+        .filter(
+            models.PickupRequest.id == request_id,
+            models.PickupRequest.pickup_id == pickup_id,
+            models.PickupRequest.status == "pending",
+        )
+        .first()
+    )
+    if not target_request:
+        return None
+
+    # Accept the target request
+    target_request.status = "accepted"
+
+    # Reject all other pending requests for this pickup
+    other_requests = (
+        db.query(models.PickupRequest)
+        .filter(
+            models.PickupRequest.pickup_id == pickup_id,
+            models.PickupRequest.status == "pending",
+            models.PickupRequest.id != request_id,
+        )
+        .all()
+    )
+    for req in other_requests:
+        req.status = "rejected"
+
+    # Update pickup status
     pickup.status = "accepted"
+
     db.commit()
     db.refresh(pickup)
     return pickup
 
 
-def reject_request(db: Session, pickup_id: int, donor_id: str) -> models.Pickup | None:
-    """Donor rejects a request, making item available again."""
+def reject_request(db: Session, pickup_id: int, donor_id: str, request_id: int) -> models.Pickup | None:
+    """Donor rejects a specific request. If no other pending requests remain, item goes back to available."""
     pickup = (
         db.query(models.Pickup)
         .filter(
             models.Pickup.id == pickup_id,
             models.Pickup.user_id == donor_id,
-            models.Pickup.status == "requested",
         )
         .first()
     )
     if not pickup:
         return None
-    pickup.status = "available"
-    pickup.requested_by = None
+
+    # Find the specific request
+    target_request = (
+        db.query(models.PickupRequest)
+        .filter(
+            models.PickupRequest.id == request_id,
+            models.PickupRequest.pickup_id == pickup_id,
+            models.PickupRequest.status == "pending",
+        )
+        .first()
+    )
+    if not target_request:
+        return None
+
+    # Reject the target request
+    target_request.status = "rejected"
+
+    # Check if there are any remaining pending requests
+    remaining_pending = (
+        db.query(models.PickupRequest)
+        .filter(
+            models.PickupRequest.pickup_id == pickup_id,
+            models.PickupRequest.status == "pending",
+        )
+        .count()
+    )
+
+    # If no pending requests remain, make the item available again
+    if remaining_pending == 0:
+        pickup.status = "available"
+
     db.commit()
     db.refresh(pickup)
     return pickup
@@ -257,7 +365,7 @@ def browse_pickups(
     """Browse available pickups from OTHER users."""
     query = db.query(models.Pickup).filter(
         models.Pickup.user_id != current_user_id,
-        models.Pickup.status == "available",
+        models.Pickup.status.in_(["available", "requested"]),
     )
 
     # Text search

@@ -78,6 +78,12 @@ function AuthFormInner({ mode }: { mode: "sign-in" | "sign-up" }) {
   return (
     <main className="min-h-svh bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
+        <div className="mb-4 flex justify-start">
+          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            ← Back to Home
+          </Link>
+        </div>
+        
         <Link href="/" className="mb-8 flex items-center justify-center gap-2 cursor-pointer">
           <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Leaf className="size-5" aria-hidden="true" />

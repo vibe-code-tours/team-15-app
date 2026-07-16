@@ -102,7 +102,7 @@ export function BrowseFilters({ filters, onFiltersChange }: BrowseFiltersProps) 
           onChange={(e) =>
             onFiltersChange({ ...filters, sortBy: e.target.value as "newest" | "oldest" })
           }
-          className="h-8 cursor-pointer rounded-md border border-input bg-transparent px-3 text-xs shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="h-8 cursor-pointer rounded-md border border-input bg-background px-3 text-xs shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <option value="newest">Newest first</option>
           <option value="oldest">Oldest first</option>

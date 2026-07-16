@@ -12,6 +12,9 @@ from services.auth_service import (
     authenticate_user,
     create_access_token,
 )
+from config import get_settings
+
+settings = get_settings()
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -47,7 +50,7 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
         key="revive_backend_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production
+        secure=settings.ENVIRONMENT == "production",
         samesite="lax",
         max_age=60 * 60 * 24 * 7,  # 7 days
     )
@@ -73,7 +76,7 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
         key="revive_backend_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production
+        secure=settings.ENVIRONMENT == "production",
         samesite="lax",
         max_age=60 * 60 * 24 * 7,  # 7 days
     )

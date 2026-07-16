@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/revive_db"
 
+    # Environment
+    ENVIRONMENT: str = "development"
+
     # JWT
     SECRET_KEY: str = "dev-secret-change-in-production"
     ALGORITHM: str = "HS256"

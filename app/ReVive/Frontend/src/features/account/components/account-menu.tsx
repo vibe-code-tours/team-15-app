@@ -15,7 +15,7 @@ import {
   ChevronRight,
   AlertTriangle,
 } from "lucide-react"
-import { signOut } from "@/lib/auth-client"
+import { backendLogout } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -85,9 +85,8 @@ export function AccountMenu() {
   ]
 
   const handleLogout = async () => {
-    await signOut()
-    router.push("/")
-    router.refresh()
+    await backendLogout()
+    window.location.href = "/"
   }
 
   return (

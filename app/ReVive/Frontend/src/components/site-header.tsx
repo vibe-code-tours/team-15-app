@@ -28,7 +28,7 @@ export function SiteHeader({ user }: { user?: { name: string } | null }) {
 
   const handleSignOut = async () => {
     await backendLogout()
-    router.refresh()
+    window.location.reload()
   }
 
   return (

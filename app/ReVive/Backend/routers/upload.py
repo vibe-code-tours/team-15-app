@@ -20,7 +20,7 @@ cloudinary.config(
 
 router = APIRouter(prefix="/api/upload", tags=["upload"])
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_FILES = 5
 
@@ -56,7 +56,7 @@ async def upload_images(
         if len(contents) > MAX_FILE_SIZE:
             return JSONResponse(
                 status_code=400,
-                content=error_response(f"File '{file.filename}' exceeds 10MB limit"),
+                content=error_response(f"File '{file.filename}' exceeds 5MB limit"),
             )
 
         upload_tasks.append(

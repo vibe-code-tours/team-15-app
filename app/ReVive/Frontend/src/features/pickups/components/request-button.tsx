@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Send, Loader2, Check } from "lucide-react"
-import { createItemRequest } from "@/features/messages/services/messages"
+import { requestItem } from "@/features/browse/services/browse"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -32,19 +32,15 @@ export function RequestButton({ listingId, donorId }: RequestButtonProps) {
     setError(null)
 
     try {
-      const result = await createItemRequest(listingId, donorId, message)
-      if (result.error) {
-        setError(result.error)
-      } else {
-        setSuccess(true)
-        setTimeout(() => {
-          setOpen(false)
-          setSuccess(false)
-          setMessage("")
-        }, 1500)
-      }
-    } catch {
-      setError("Failed to send request")
+      await requestItem(listingId)
+      setSuccess(true)
+      setTimeout(() => {
+        setOpen(false)
+        setSuccess(false)
+        setMessage("")
+      }, 1500)
+    } catch (err: any) {
+      setError(err.message || "Failed to send request")
     } finally {
       setLoading(false)
     }

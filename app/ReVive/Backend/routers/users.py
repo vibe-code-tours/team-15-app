@@ -22,7 +22,7 @@ def _user_to_dict(u) -> dict:
     }
 
 
-@router.get("/")
+@router.get("")
 def get_all_users(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),

@@ -1,59 +1,105 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Dict, List
+from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, and_
 
 from database import get_db
 from dependencies import get_current_user
-from schemas.message import MessageCreate, MessageResponse
-import models
+from schemas.chat import ChatMessageCreate, ChatMessageResponse, WebSocketMessage
+from models.chat import DirectMessage
+from models.auth import User
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 
+# Connection Manager for WebSockets
+class ConnectionManager:
+    def __init__(self):
+        # Maps user_id -> List of active WebSocket connections
+        self.active_connections: Dict[uuid.UUID, List[WebSocket]] = {}
 
-@router.post("/{request_id}", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
-def send_message(
-    request_id: str,
-    body: MessageCreate,
-    current_user: models.User = Depends(get_current_user),
+    async def connect(self, websocket: WebSocket, user_id: uuid.UUID):
+        await websocket.accept()
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = []
+        self.active_connections[user_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, user_id: uuid.UUID):
+        if user_id in self.active_connections:
+            if websocket in self.active_connections[user_id]:
+                self.active_connections[user_id].remove(websocket)
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+
+    async def send_personal_message(self, message: dict, user_id: uuid.UUID):
+        if user_id in self.active_connections:
+            for connection in self.active_connections[user_id]:
+                await connection.send_json(message)
+
+manager = ConnectionManager()
+
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Session = Depends(get_db)):
+    # Note: In production, you would want to securely authenticate the WebSocket connection.
+    # We rely on the client passing their user_id for this implementation.
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            ws_message = WebSocketMessage(**data)
+            
+            if ws_message.type == "message":
+                # Save to database
+                new_msg = DirectMessage(
+                    sender_id=user_id,
+                    receiver_id=ws_message.receiver_id,
+                    content=ws_message.content
+                )
+                db.add(new_msg)
+                db.commit()
+                db.refresh(new_msg)
+
+                # Broadcast to receiver if online
+                payload = {
+                    "type": "message",
+                    "message": {
+                        "id": str(new_msg.id),
+                        "sender_id": str(new_msg.sender_id),
+                        "receiver_id": str(new_msg.receiver_id),
+                        "content": new_msg.content,
+                        "created_at": new_msg.created_at.isoformat(),
+                    }
+                }
+                
+                await manager.send_personal_message(payload, ws_message.receiver_id)
+                
+                # Also send back to sender for confirmation
+                await manager.send_personal_message(payload, user_id)
+                
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, user_id)
+
+
+@router.get("/{other_user_id}", response_model=List[ChatMessageResponse])
+def get_chat_history(
+    other_user_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    request = db.query(models.Request).filter(models.Request.id == uuid.UUID(request_id)).first()
-    if not request:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request not found")
-
-    # Only participants (requester or listing owner) can message
-    listing = db.query(models.Listing).filter(models.Listing.id == request.listing_id).first()
-    if current_user.id not in (request.requester_id, listing.owner_id):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
-
-    message = models.Message(
-        request_id=uuid.UUID(request_id),
-        sender_id=current_user.id,
-        body=body.body,
-    )
-    db.add(message)
-    db.commit()
-    db.refresh(message)
-    return message
-
-
-@router.get("/{request_id}", response_model=list[MessageResponse])
-def get_messages(
-    request_id: str,
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    request = db.query(models.Request).filter(models.Request.id == uuid.UUID(request_id)).first()
-    if not request:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request not found")
-
-    listing = db.query(models.Listing).filter(models.Listing.id == request.listing_id).first()
-    if current_user.id not in (request.requester_id, listing.owner_id):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
-
-    return (
-        db.query(models.Message)
-        .filter(models.Message.request_id == uuid.UUID(request_id))
-        .order_by(models.Message.sent_at.asc())
+    messages = (
+        db.query(DirectMessage)
+        .filter(
+            or_(
+                and_(DirectMessage.sender_id == current_user.id, DirectMessage.receiver_id == other_user_id),
+                and_(DirectMessage.sender_id == other_user_id, DirectMessage.receiver_id == current_user.id)
+            )
+        )
+        .order_by(DirectMessage.created_at.asc())
         .all()
     )
+    return messages

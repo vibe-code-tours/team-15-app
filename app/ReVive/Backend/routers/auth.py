@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from database import get_db
-from dependencies import get_current_user
+from dependencies import get_current_user, require_rate_limit
 from schemas.auth import RegisterRequest, LoginRequest
 from schemas.response import success_response, error_response
 import models
@@ -12,11 +12,14 @@ from services.auth_service import (
     authenticate_user,
     create_access_token,
 )
+from config import get_settings
+
+settings = get_settings()
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-@router.post("/register")
+@router.post("/register", dependencies=[Depends(require_rate_limit(3, 60))])
 def register(body: RegisterRequest, db: Session = Depends(get_db)):
     existing = db.query(models.User).filter(models.User.email == body.email).first()
     if existing:
@@ -47,14 +50,14 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
         key="revive_backend_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production
+        secure=settings.ENVIRONMENT == "production",
         samesite="lax",
         max_age=60 * 60 * 24 * 7,  # 7 days
     )
     return response
 
 
-@router.post("/login")
+@router.post("/login", dependencies=[Depends(require_rate_limit(5, 60))])
 def login(body: LoginRequest, db: Session = Depends(get_db)):
     user = authenticate_user(db, body.email, body.password)
     if not user:
@@ -73,7 +76,7 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
         key="revive_backend_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production
+        secure=settings.ENVIRONMENT == "production",
         samesite="lax",
         max_age=60 * 60 * 24 * 7,  # 7 days
     )

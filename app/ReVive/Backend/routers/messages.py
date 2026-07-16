@@ -9,6 +9,7 @@ from dependencies import get_current_user
 from schemas.chat import ChatMessageCreate, ChatMessageResponse, WebSocketMessage
 from models.chat import DirectMessage
 from models.auth import User
+from middleware.rate_limit import rate_limiter
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 
@@ -54,6 +55,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Sessi
             ws_message = WebSocketMessage(**data)
             
             if ws_message.type == "message":
+                # Rate limit: 30 messages per minute
+                rate_limiter.check(f"{user_id}:ws", 30, 60)
+
                 # Save to database
                 new_msg = DirectMessage(
                     sender_id=user_id,

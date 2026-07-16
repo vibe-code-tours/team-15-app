@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from database import get_db
-from dependencies import get_current_user
+from dependencies import get_current_user, require_rate_limit
 from schemas.pickup import PickupCreate, PickupAction
 from schemas.response import success_response, error_response, paginated_response
 import models
@@ -141,7 +141,7 @@ def list_donor_requests(
     return success_response(data=data)
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_rate_limit(20, 60))])
 def create_pickup(
     body: PickupCreate,
     current_user: models.User = Depends(get_current_user),

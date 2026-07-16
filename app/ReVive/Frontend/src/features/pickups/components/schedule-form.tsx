@@ -8,6 +8,7 @@ import { Check, ChevronLeft, ChevronRight, Loader2, PackageCheck } from "lucide-
 import { createPickup } from "@/features/pickups/services/pickups"
 import { apiUpload } from "@/lib/api/client"
 import { PICKUP_CATEGORIES, CONDITIONS, TIME_SLOTS } from "@/lib/categories"
+import { GLOBAL_LOCATIONS } from "@/lib/locations"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,6 +33,10 @@ export function ScheduleForm() {
   const [availableTo, setAvailableTo] = useState("")
   const [timeSlot, setTimeSlot] = useState("")
   const [address, setAddress] = useState("")
+  const [country, setCountry] = useState("")
+  const [city, setCity] = useState("")
+  const [meetingSpot, setMeetingSpot] = useState("")
+  const [isManualLocation, setIsManualLocation] = useState(false)
   const [notes, setNotes] = useState("")
   const [imageFiles, setImageFiles] = useState<File[]>([])
 
@@ -45,8 +50,10 @@ export function ScheduleForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!address.trim()) {
-      setError("Please enter a pickup address.")
+    const finalAddress = isManualLocation ? address : `${meetingSpot}, ${city}, ${country}`
+    
+    if (!finalAddress.trim() || (!isManualLocation && (!country || !city || !meetingSpot.trim()))) {
+      setError("Please provide a complete pickup address.")
       return
     }
     setError(null)
@@ -73,7 +80,7 @@ export function ScheduleForm() {
       availableFrom,
       availableTo,
       timeSlot,
-      address,
+      address: finalAddress,
       notes,
       images: imageUrls,
     })
@@ -272,16 +279,89 @@ export function ScheduleForm() {
 
             {step === 2 && (
               <>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="address">Meeting location</Label>
-                  <Textarea
-                    id="address"
-                    placeholder="Street, city, postal code (suggest a public spot)"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    rows={3}
-                  />
-                </div>
+                {!isManualLocation ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="country">Country</Label>
+                        <Input
+                          id="country"
+                          list="countries-list"
+                          placeholder="Select or type..."
+                          value={country}
+                          onChange={(e) => {
+                            setCountry(e.target.value)
+                            setCity("")
+                          }}
+                        />
+                        <datalist id="countries-list">
+                          {GLOBAL_LOCATIONS.map((loc) => (
+                            <option key={loc.country} value={loc.country} />
+                          ))}
+                        </datalist>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="city">City</Label>
+                        <Input
+                          id="city"
+                          list="cities-list"
+                          placeholder="Select or type..."
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          disabled={!country}
+                        />
+                        <datalist id="cities-list">
+                          {GLOBAL_LOCATIONS.find((loc) => loc.country === country)?.cities.map((c) => (
+                            <option key={c} value={c} />
+                          ))}
+                        </datalist>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="meetingSpot">Meeting spot</Label>
+                      <Textarea
+                        id="meetingSpot"
+                        placeholder="Street, building, or specific public spot"
+                        value={meetingSpot}
+                        onChange={(e) => setMeetingSpot(e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-start">
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="h-auto p-0 text-xs text-primary"
+                        onClick={() => setIsManualLocation(true)}
+                      >
+                        My city isn't listed? Enter manually
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="address">Meeting location (Manual)</Label>
+                      <Textarea
+                        id="address"
+                        placeholder="Street, city, country, postal code"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-start">
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="h-auto p-0 text-xs text-primary"
+                        onClick={() => setIsManualLocation(false)}
+                      >
+                        Back to Country / City search
+                      </Button>
+                    </div>
+                  </>
+                )}
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="notes">Notes (optional)</Label>
                   <Textarea

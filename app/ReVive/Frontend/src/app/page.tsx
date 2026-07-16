@@ -13,10 +13,10 @@ import { Newsletter } from '@/features/marketing/components/newsletter'
 import { ProcessTimeline } from '@/features/marketing/components/process-timeline'
 import { PremiumStats } from '@/features/marketing/components/premium-stats'
 import { PremiumGallery } from '@/features/marketing/components/premium-gallery'
-import { getBackendUser } from '@/lib/api/auth'
+import { getServerUser } from '@/lib/api/server-auth'
 
 export default async function HomePage() {
-  const user = await getBackendUser()
+  const user = await getServerUser()
 
   return (
     <main className="min-h-dvh bg-background text-foreground">

@@ -196,8 +196,8 @@ def test_user_stats(client, auth_headers):
     assert "totalPoints" in data["data"]
 
 
-def test_admin_stats(client, auth_headers):
-    response = client.get("/api/admin/stats", headers=auth_headers)
+def test_admin_stats(client, admin_auth_headers):
+    response = client.get("/api/admin/stats", headers=admin_auth_headers)
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True

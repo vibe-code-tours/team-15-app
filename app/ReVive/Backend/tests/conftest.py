@@ -57,3 +57,24 @@ def test_user(db_session):
 def auth_headers(test_user):
     token = create_access_token(str(test_user.id))
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def admin_user(db_session):
+    user = models.User(
+        name="Admin User",
+        email="admin@example.com",
+        password_hash=hash_password("adminpass123"),
+        auth_provider=models.AuthProvider.email,
+        is_admin=True,
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
+def admin_auth_headers(admin_user):
+    token = create_access_token(str(admin_user.id))
+    return {"Authorization": f"Bearer {token}"}

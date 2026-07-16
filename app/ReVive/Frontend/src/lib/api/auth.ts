@@ -14,7 +14,10 @@ export async function backendLogin(
   password: string
 ): Promise<UserResponse> {
   // Call the Next.js Server Action
-  await serverLogin(email, password)
+  const loginRes = await serverLogin(email, password)
+  if (loginRes && typeof loginRes === "object" && "_error" in loginRes) {
+    throw new Error(loginRes._error as string)
+  }
   const user = await getBackendUser()
   if (!user) throw new Error("Failed to fetch user after login")
   return user
@@ -26,7 +29,10 @@ export async function backendRegister(
   password: string
 ): Promise<UserResponse> {
   // Call the Next.js Server Action
-  await serverRegister(name, email, password)
+  const regRes = await serverRegister(name, email, password)
+  if (regRes && typeof regRes === "object" && "_error" in regRes) {
+    throw new Error(regRes._error as string)
+  }
   const user = await getBackendUser()
   if (!user) throw new Error("Failed to fetch user after register")
   return user

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from dependencies import get_current_user
 from schemas.search import SearchRequest
-from schemas.response import error_response
+from schemas.response import error_response, success_response
 import models
 from services import pickup_service
 
@@ -62,12 +62,12 @@ def search_pickups(
             "matchHighlights": highlights,
         })
 
-    return {
+    return success_response(data={
         "results": results,
         "total": total,
         "page": body.page,
         "totalPages": total_pages,
-    }
+    })
 
 
 @router.get("/stats")
@@ -76,9 +76,9 @@ def get_search_stats(
     db: Session = Depends(get_db),
 ):
     stats = pickup_service.get_search_stats(db, str(current_user.id))
-    return {
+    return success_response(data={
         "byStatus": stats["by_status"],
         "byCategory": stats["by_category"],
         "byCondition": stats["by_condition"],
         "totalPickups": stats["total_pickups"],
-    }
+    })

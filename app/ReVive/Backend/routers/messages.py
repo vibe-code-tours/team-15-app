@@ -85,7 +85,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Sessi
         manager.disconnect(websocket, user_id)
 
 
-@router.get("/{other_user_id}", response_model=List[ChatMessageResponse])
+from schemas.response import success_response
+
+@router.get("/{other_user_id}")
 def get_chat_history(
     other_user_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
@@ -102,4 +104,18 @@ def get_chat_history(
         .order_by(DirectMessage.created_at.asc())
         .all()
     )
-    return messages
+    
+    # We must convert SQLAlchemy objects to dicts manually since success_response expects JSON-serializable data
+    # OR we can just let FastAPI serialize it if we return a dict that matches success_response
+    data = []
+    for msg in messages:
+        data.append({
+            "id": str(msg.id),
+            "sender_id": str(msg.sender_id),
+            "receiver_id": str(msg.receiver_id),
+            "content": msg.content,
+            "created_at": msg.created_at.isoformat(),
+            "read_at": msg.read_at.isoformat() if msg.read_at else None
+        })
+
+    return success_response(data=data)

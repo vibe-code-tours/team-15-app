@@ -17,8 +17,8 @@ class DirectMessage(Base):
     read_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    sender = relationship("User", foreign_keys=[sender_id], backref="messages_sent")
-    receiver = relationship("User", foreign_keys=[receiver_id], backref="messages_received")
+    sender = relationship("User", foreign_keys=[sender_id], backref="direct_messages_sent")
+    receiver = relationship("User", foreign_keys=[receiver_id], backref="direct_messages_received")
 
     __table_args__ = (
         Index('idx_dm_participants_created', 'sender_id', 'receiver_id', 'created_at'),

@@ -13,13 +13,16 @@ import { Newsletter } from '@/features/marketing/components/newsletter'
 import { ProcessTimeline } from '@/features/marketing/components/process-timeline'
 import { PremiumStats } from '@/features/marketing/components/premium-stats'
 import { PremiumGallery } from '@/features/marketing/components/premium-gallery'
+import { getBackendUser } from '@/lib/api/auth'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getBackendUser()
+
   return (
     <main className="min-h-dvh bg-background text-foreground">
       <NeuralCanvas className="fixed inset-0 z-0" />
       <ScrollProgress />
-      <SiteHeader />
+      <SiteHeader user={user} />
       <Hero />
       <PremiumShowcase />
       <Categories />

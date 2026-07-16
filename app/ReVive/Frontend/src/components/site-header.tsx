@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { label: 'Impact', href: '#impact' },
 ]
 
-export function SiteHeader() {
+export function SiteHeader({ user }: { user?: { name: string } | null }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -38,33 +38,46 @@ export function SiteHeader() {
             : 'border-transparent bg-transparent'
         }`}
       >
-        <a href="#" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-white">
             <Leaf className="size-5" />
           </span>
           <span className="text-lg font-bold tracking-tight">ReVive</span>
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="group relative cursor-pointer text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-hover:w-full" />
-            </a>
+            </Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link href="/sign-in" className="inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
-            Sign in
-          </Link>
-          <Link href="/sign-up" className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
-            List an Item
-          </Link>
+          {user ? (
+            <>
+              <Link href="/browse" className="inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+                Dashboard
+              </Link>
+              <Link href="/donate" className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
+                List an Item
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/sign-in" className="inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -86,22 +99,35 @@ export function SiteHeader() {
         >
           <nav className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
                 className="cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Link href="/sign-in" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
-                Sign in
-              </Link>
-              <Link href="/sign-up" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
-                List an Item
-              </Link>
+              {user ? (
+                <>
+                  <Link href="/browse" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+                    Dashboard
+                  </Link>
+                  <Link href="/donate" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
+                    List an Item
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/sign-in" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+                    Sign in
+                  </Link>
+                  <Link href="/sign-up" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
+                    Sign up
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </motion.div>

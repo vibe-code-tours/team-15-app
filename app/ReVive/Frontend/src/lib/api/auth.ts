@@ -1,11 +1,7 @@
-import { setToken, removeToken, getToken } from "./cookies"
+import { serverLogin, serverRegister, serverLogout } from "@/app/actions/auth"
+import { getToken } from "./cookies"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-
-interface LoginResponse {
-  accessToken: string
-  tokenType: string
-}
 
 interface UserResponse {
   id: string
@@ -17,17 +13,11 @@ export async function backendLogin(
   email: string,
   password: string
 ): Promise<UserResponse> {
-  const res = await fetch(`${API_BASE}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  })
-
-  const json = await res.json()
-  if (!json.success) throw new Error(json.error || "Login failed")
-
-  setToken(json.data.accessToken)
-  return getBackendUser()
+  // Call the Next.js Server Action
+  await serverLogin(email, password)
+  const user = await getBackendUser()
+  if (!user) throw new Error("Failed to fetch user after login")
+  return user
 }
 
 export async function backendRegister(
@@ -35,21 +25,15 @@ export async function backendRegister(
   email: string,
   password: string
 ): Promise<UserResponse> {
-  const res = await fetch(`${API_BASE}/api/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
-  })
-
-  const json = await res.json()
-  if (!json.success) throw new Error(json.error || "Registration failed")
-
-  setToken(json.data.accessToken)
-  return getBackendUser()
+  // Call the Next.js Server Action
+  await serverRegister(name, email, password)
+  const user = await getBackendUser()
+  if (!user) throw new Error("Failed to fetch user after register")
+  return user
 }
 
 export async function getBackendUser(): Promise<UserResponse | null> {
-  const token = getToken()
+  const token = await getToken()
   if (!token) return null
 
   const res = await fetch(`${API_BASE}/api/auth/me`, {
@@ -58,13 +42,15 @@ export async function getBackendUser(): Promise<UserResponse | null> {
 
   const json = await res.json()
   if (!json.success) {
-    removeToken()
+    // If the token is invalid, we don't automatically delete the HttpOnly cookie here
+    // because this might be called on the client. If it's a Server Action, we could.
     return null
   }
 
   return json.data
 }
 
-export function backendLogout(): void {
-  removeToken()
+export async function backendLogout(): Promise<void> {
+  // Call the Next.js Server Action
+  await serverLogout()
 }

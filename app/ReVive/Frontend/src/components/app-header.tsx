@@ -12,7 +12,6 @@ export function AppHeader({ userName }: { userName?: string }) {
   const pathname = usePathname()
 
   const handleSignOut = async () => {
-    await authClient.signOut()
     backendLogout()
     router.push("/")
     router.refresh()

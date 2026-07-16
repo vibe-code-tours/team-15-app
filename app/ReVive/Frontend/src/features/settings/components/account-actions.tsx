@@ -17,7 +17,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-import { authClient } from "@/lib/auth-client"
 import { backendLogout } from "@/lib/api/auth"
 
 export function AccountActions() {
@@ -52,7 +51,6 @@ export function AccountActions() {
     setDeleting(true)
     try {
       await deleteAccount()
-      await authClient.signOut()
       backendLogout()
       router.push("/")
       router.refresh()

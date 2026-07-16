@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 
 from config import get_settings
-from dependencies import get_current_user
+from dependencies import get_current_user, require_rate_limit
 from schemas.response import success_response, error_response
 import models
 import asyncio
@@ -25,7 +25,7 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_FILES = 5
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_rate_limit(10, 60))])
 async def upload_images(
     files: list[UploadFile] = File(...),
     current_user: models.User = Depends(get_current_user),

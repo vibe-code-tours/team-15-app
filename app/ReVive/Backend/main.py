@@ -1,4 +1,6 @@
 import os
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -8,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from config import get_settings
 from database import get_db
+from middleware.rate_limit import rate_limiter
 from routers import (
     auth, users, listings, categories, requests, messages,
     notifications, reports, admin, pickups, referrals, search, browse,
@@ -16,7 +19,20 @@ from routers import (
 
 settings = get_settings()
 
-app = FastAPI(title="ReVive API")
+async def cleanup_rate_limiter():
+    while True:
+        await asyncio.sleep(300)
+        rate_limiter.cleanup()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    task = asyncio.create_task(cleanup_rate_limiter())
+    yield
+    # Shutdown
+    task.cancel()
+
+app = FastAPI(title="ReVive API", lifespan=lifespan)
 
 # CORS
 app.add_middleware(

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from config import get_settings
 from database import get_db
 import models
+from middleware.rate_limit import rate_limiter
 
 settings = get_settings()
 
@@ -54,3 +55,11 @@ def get_current_user(
             detail="Account is not active",
         )
     return user
+
+
+def require_rate_limit(max_requests: int, window_seconds: int):
+    async def _check(request: Request):
+        host = request.client.host if request.client else "unknown"
+        key = f"{host}:{request.url.path}"
+        rate_limiter.check(key, max_requests, window_seconds)
+    return _check

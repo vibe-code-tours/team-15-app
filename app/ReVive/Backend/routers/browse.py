@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database import get_db
-from dependencies import get_current_user
+from dependencies import get_current_user, require_rate_limit
 from schemas.response import paginated_response
 import models
 from services import pickup_service
@@ -27,7 +27,7 @@ class BrowseRequest(BaseModel):
     limit: int = Field(default=12, ge=1, le=50)
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_rate_limit(60, 60))])
 def browse_available_items(
     body: BrowseRequest,
     current_user: models.User = Depends(get_current_user),

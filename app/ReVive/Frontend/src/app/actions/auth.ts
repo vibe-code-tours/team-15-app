@@ -12,7 +12,7 @@ export async function serverLogin(email: string, password: string) {
   })
 
   const json = await res.json()
-  if (!json.success) throw new Error(json.error || "Login failed")
+  if (!json.success) return { _error: json.error || "Login failed" }
 
   const token = json.data.accessToken
   const cookieStore = await cookies()
@@ -37,7 +37,7 @@ export async function serverRegister(name: string, email: string, password: stri
   })
 
   const json = await res.json()
-  if (!json.success) throw new Error(json.error || "Registration failed")
+  if (!json.success) return { _error: json.error || "Registration failed" }
 
   const token = json.data.accessToken
   const cookieStore = await cookies()

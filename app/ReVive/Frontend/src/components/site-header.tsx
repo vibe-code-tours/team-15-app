@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Leaf, Menu, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Leaf, Menu, X, LogOut } from 'lucide-react'
+import { backendLogout } from '@/lib/api/auth'
 
 const NAV_LINKS = [
   { label: 'Browse', href: '/browse' },
@@ -16,6 +17,7 @@ const NAV_LINKS = [
 export function SiteHeader({ user }: { user?: { name: string } | null }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -23,6 +25,11 @@ export function SiteHeader({ user }: { user?: { name: string } | null }) {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const handleSignOut = async () => {
+    await backendLogout()
+    window.location.reload()
+  }
 
   return (
     <motion.header
@@ -67,6 +74,13 @@ export function SiteHeader({ user }: { user?: { name: string } | null }) {
               <Link href="/donate" className="inline-flex h-8 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
                 List an Item
               </Link>
+              <button
+                onClick={handleSignOut}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground ml-1"
+                aria-label="Sign out"
+              >
+                <LogOut className="size-4" />
+              </button>
             </>
           ) : (
             <>
@@ -117,6 +131,9 @@ export function SiteHeader({ user }: { user?: { name: string } | null }) {
                   <Link href="/donate" onClick={() => setOpen(false)} className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-3 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl hover:shadow-primary/20">
                     List an Item
                   </Link>
+                  <button onClick={() => { handleSignOut(); setOpen(false); }} className="inline-flex w-full items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500/10">
+                    Sign out
+                  </button>
                 </>
               ) : (
                 <>

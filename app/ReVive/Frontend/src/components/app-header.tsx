@@ -12,9 +12,8 @@ export function AppHeader({ userName }: { userName?: string }) {
   const pathname = usePathname()
 
   const handleSignOut = async () => {
-    backendLogout()
-    router.push("/")
-    router.refresh()
+    await backendLogout()
+    window.location.href = "/"
   }
 
   const navLink = (href: string, label: string) => (

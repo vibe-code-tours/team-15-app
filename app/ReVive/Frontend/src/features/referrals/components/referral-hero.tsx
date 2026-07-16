@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { Copy, Share2, ExternalLink, MessageCircle, Globe, Check } from 'lucide-react'
+import { Copy, Share2, Check } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
 import { Button } from '@/components/ui/button'
 
@@ -39,30 +39,23 @@ export function ReferralHero({ code, stats }: ReferralHeroProps) {
     }
   }
 
-  const shareToTwitter = () => {
-    const text = encodeURIComponent(
-      `♻️ I'm recycling my e-waste with ReVive and helping the planet! Join me using my referral code: ${code} 🌱`
-    )
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener,noreferrer')
-  }
-
-  const shareToWhatsApp = () => {
-    const text = encodeURIComponent(
-      `♻️ Check out ReVive - an e-waste recycling platform! Use my referral code ${code} to join: ${referralLink}`
-    )
-    window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer')
-  }
-
-  const shareToLinkedIn = () => {
-    const url = encodeURIComponent(referralLink)
-    const summary = encodeURIComponent(
-      `I'm recycling my e-waste with ReVive! Join me using my referral code: ${code}`
-    )
-    window.open(
-      `https://www.linkedin.com/sharing/share-offsite/?url=${url}&summary=${summary}`,
-      '_blank',
-      'noopener,noreferrer'
-    )
+  const shareNative = async () => {
+    const shareData = {
+      title: 'ReVive - E-Waste Recycling',
+      text: `♻️ I'm recycling my e-waste with ReVive! Join me using my referral code: ${code}`,
+      url: referralLink,
+    }
+    
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData)
+      } else {
+        // Fallback to copy if Web Share API is not supported (e.g. desktop)
+        copyToClipboard()
+      }
+    } catch (err) {
+      console.error('Error sharing:', err)
+    }
   }
 
   return (
@@ -145,33 +138,13 @@ export function ReferralHero({ code, stats }: ReferralHeroProps) {
           <div className="mt-8">
             <p className="mb-4 text-sm font-medium text-muted-foreground">Share with friends</p>
             <div className="flex gap-3">
-              <motion.button
-                whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                onClick={shareToTwitter}
-                aria-label="Share on X (formerly Twitter)"
-                className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border border-border bg-background/50 text-muted-foreground transition-colors hover:border-sky-500/50 hover:text-sky-400"
+              <Button
+                onClick={shareNative}
+                className="gap-2 rounded-xl"
               >
-                <ExternalLink className="h-5 w-5" aria-hidden="true" />
-              </motion.button>
-              <motion.button
-                whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                onClick={shareToWhatsApp}
-                aria-label="Share on WhatsApp"
-                className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border border-border bg-background/50 text-muted-foreground transition-colors hover:border-green-500/50 hover:text-green-400"
-              >
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-              </motion.button>
-              <motion.button
-                whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-                whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
-                onClick={shareToLinkedIn}
-                aria-label="Share on LinkedIn"
-                className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border border-border bg-background/50 text-muted-foreground transition-colors hover:border-blue-500/50 hover:text-blue-400"
-              >
-                <Globe className="h-5 w-5" aria-hidden="true" />
-              </motion.button>
+                <Share2 className="h-4 w-4" />
+                Share Referral Link
+              </Button>
             </div>
           </div>
 

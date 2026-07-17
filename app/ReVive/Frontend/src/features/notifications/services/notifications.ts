@@ -30,8 +30,8 @@ export async function getNotifications(limit = 20): Promise<Notification[]> {
 }
 
 export async function getUnreadCount(): Promise<number> {
-  const data = await apiGet<{ items: Notification[] }>("/api/notifications/?unread_only=true")
-  return data.items?.length || 0
+  const data = await apiGet<Notification[]>("/api/notifications/?unread_only=true")
+  return Array.isArray(data) ? data.length : 0
 }
 
 export async function markAsRead(id: string) {

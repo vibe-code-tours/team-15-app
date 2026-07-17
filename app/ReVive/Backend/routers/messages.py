@@ -13,31 +13,7 @@ from middleware.rate_limit import rate_limiter
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 
-# Connection Manager for WebSockets
-class ConnectionManager:
-    def __init__(self):
-        # Maps user_id -> List of active WebSocket connections
-        self.active_connections: Dict[uuid.UUID, List[WebSocket]] = {}
-
-    async def connect(self, websocket: WebSocket, user_id: uuid.UUID):
-        await websocket.accept()
-        if user_id not in self.active_connections:
-            self.active_connections[user_id] = []
-        self.active_connections[user_id].append(websocket)
-
-    def disconnect(self, websocket: WebSocket, user_id: uuid.UUID):
-        if user_id in self.active_connections:
-            if websocket in self.active_connections[user_id]:
-                self.active_connections[user_id].remove(websocket)
-            if not self.active_connections[user_id]:
-                del self.active_connections[user_id]
-
-    async def send_personal_message(self, message: dict, user_id: uuid.UUID):
-        if user_id in self.active_connections:
-            for connection in self.active_connections[user_id]:
-                await connection.send_json(message)
-
-manager = ConnectionManager()
+from services.websocket import websocket_manager
 
 @router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Session = Depends(get_db)):
@@ -48,7 +24,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Sessi
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
-    await manager.connect(websocket, user_id)
+    await websocket_manager.connect(websocket, user_id)
     try:
         while True:
             data = await websocket.receive_json()
@@ -80,13 +56,13 @@ async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Sessi
                     }
                 }
                 
-                await manager.send_personal_message(payload, ws_message.receiver_id)
+                await websocket_manager.send_personal_message(payload, ws_message.receiver_id)
                 
                 # Also send back to sender for confirmation
-                await manager.send_personal_message(payload, user_id)
+                await websocket_manager.send_personal_message(payload, user_id)
                 
     except WebSocketDisconnect:
-        manager.disconnect(websocket, user_id)
+        await websocket_manager.disconnect(websocket, user_id)
 
 
 from schemas.response import success_response

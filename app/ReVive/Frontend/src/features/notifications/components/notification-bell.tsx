@@ -5,12 +5,16 @@ import { Bell } from "lucide-react"
 import { getUnreadCount } from "@/features/notifications/services/notifications"
 import { NotificationDropdown } from "./notification-dropdown"
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/auth-client"
 
 export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
 
   useEffect(() => {
+    if (!session?.user?.id) return
+
     const fetchCount = async () => {
       try {
         const count = await getUnreadCount()
@@ -22,11 +26,25 @@ export function NotificationBell() {
 
     fetchCount()
 
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchCount, 30000)
+    // Setup WebSocket connection
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
+    const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
+    
+    const socket = new WebSocket(`${wsUrl}/api/messages/ws/${session.user.id}`)
+    
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      if (data.type === "notification") {
+        setUnreadCount(data.unread_count)
+      } else if (data.type === "active_users") {
+        window.dispatchEvent(new CustomEvent("activeUsers", { detail: data.users }))
+      }
+    }
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => {
+      socket.close()
+    }
+  }, [session?.user?.id])
 
   const handleCountChange = (newCount: number) => {
     setUnreadCount(newCount)

@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,8 @@ from schemas.pickup import PickupCreate, PickupAction
 from schemas.response import success_response, error_response, paginated_response
 import models
 from services import pickup_service, referral_service
+from services.websocket import websocket_manager
+import uuid
 
 router = APIRouter(prefix="/api/pickups", tags=["pickups"])
 
@@ -169,6 +171,7 @@ def get_pickup(
 def update_pickup(
     pickup_id: int,
     body: PickupAction,
+    background_tasks: BackgroundTasks,
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -194,6 +197,20 @@ def update_pickup(
         )
         if not request:
             return JSONResponse(status_code=404, content=error_response("Pickup not found, already requested, or not available"))
+            
+        # Get donor unread count and schedule websocket push
+        pickup = db.query(models.Pickup).filter(models.Pickup.id == pickup_id).first()
+        if pickup:
+            unread_count = db.query(models.notifications.Notification).filter(
+                models.notifications.Notification.user_id == pickup.user_id,
+                models.notifications.Notification.read_at == None
+            ).count()
+            background_tasks.add_task(
+                websocket_manager.send_personal_message,
+                {"type": "notification", "unread_count": unread_count},
+                uuid.UUID(str(pickup.user_id))
+            )
+            
         return success_response(data={"success": True}, message="Request sent successfully")
     elif body.action == "accept":
         if not body.request_id:

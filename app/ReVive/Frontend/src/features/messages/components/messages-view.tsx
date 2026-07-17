@@ -16,6 +16,17 @@ export function MessagesView({ currentUser }: { currentUser: any }) {
   const [users, setUsers] = useState<UserProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null)
+  const [activeUsers, setActiveUsers] = useState<string[]>([])
+
+  useEffect(() => {
+    const handleActiveUsers = (e: Event) => {
+      const customEvent = e as CustomEvent<string[]>
+      setActiveUsers(customEvent.detail)
+    }
+    
+    window.addEventListener("activeUsers", handleActiveUsers)
+    return () => window.removeEventListener("activeUsers", handleActiveUsers)
+  }, [])
 
   useEffect(() => {
     async function fetchUsers() {
@@ -59,11 +70,14 @@ export function MessagesView({ currentUser }: { currentUser: any }) {
                       : "hover:bg-muted text-foreground"
                   }`}
                 >
-                  <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted border border-border">
+                  <div className="relative flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-muted border border-border">
                     {user.image ? (
                       <img src={user.image} alt={user.name} className="size-full rounded-full object-cover" />
                     ) : (
                       <User className="size-5 text-muted-foreground" />
+                    )}
+                    {activeUsers.includes(user.id) && (
+                      <span className="absolute bottom-0 right-0 size-3 rounded-full bg-green-500 border-2 border-background" />
                     )}
                   </div>
                   <div className="overflow-hidden">

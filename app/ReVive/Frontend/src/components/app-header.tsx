@@ -6,6 +6,7 @@ import { Leaf, LogOut, Share2 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { backendLogout } from "@/lib/api/auth"
 import { Button } from "@/components/ui/button"
+import { NotificationBellWrapper } from "@/features/notifications/components/notification-bell-wrapper"
 
 export function AppHeader({ userName }: { userName?: string }) {
   const router = useRouter()
@@ -44,10 +45,10 @@ export function AppHeader({ userName }: { userName?: string }) {
           {navLink("/donate", "Donate")}
           {navLink("/dashboard", "My Pickups")}
           {navLink("/messages", "Messages")}
-          {navLink("/notifications", "Notifications")}
           {navLink("/referral", "Referral")}
           {navLink("/account", "Account")}
           <div className="flex items-center gap-3">
+            <NotificationBellWrapper />
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="size-4" />
               <span className="sr-only sm:not-sr-only">Sign out</span>

@@ -32,7 +32,12 @@ export function RequestButton({ listingId, donorId }: RequestButtonProps) {
     setError(null)
 
     try {
-      await requestItem(listingId)
+      const res = await requestItem(listingId)
+      if (res?.error) {
+        setError(res.error)
+        setLoading(false)
+        return
+      }
       setSuccess(true)
       setTimeout(() => {
         setOpen(false)

@@ -39,9 +39,13 @@ export async function requestItem(
   listingId: number,
   preferences?: { pickupFrom?: string; pickupTo?: string; timeSlot?: string }
 ) {
-  await apiPatch<{ success: boolean }>(`/api/pickups/${listingId}`, {
-    action: "request",
-    ...preferences,
-  })
-  return { success: true }
+  try {
+    await apiPatch<{ success: boolean }>(`/api/pickups/${listingId}`, {
+      action: "request",
+      ...preferences,
+    })
+    return { success: true, error: null }
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to request item" }
+  }
 }

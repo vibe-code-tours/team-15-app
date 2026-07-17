@@ -29,6 +29,13 @@ export function MediaUploader({
 
       if (filesToAdd.length === 0) return
 
+      // Validate 5MB limit
+      const invalidFiles = filesToAdd.filter(f => f.size > 5 * 1024 * 1024)
+      if (invalidFiles.length > 0) {
+        alert("File size too large! Each image must be under 5MB.")
+        return
+      }
+
       const updatedFiles = [...files, ...filesToAdd]
       setFiles(updatedFiles)
       onFilesChange(updatedFiles)
@@ -112,7 +119,7 @@ export function MediaUploader({
           <span className="font-medium text-primary">Click to upload</span> or drag and drop
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          PNG, JPG, GIF up to 10MB each
+          PNG, JPG, GIF up to 5MB each
         </p>
       </div>
 

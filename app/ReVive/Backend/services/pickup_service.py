@@ -2,6 +2,8 @@ from datetime import datetime, timezone
 import json
 from sqlalchemy.orm import Session
 import models
+from models.notifications import Notification, NotificationType, NotificationChannel
+import uuid
 
 
 def get_user_pickups(db: Session, user_id: str) -> list[models.Pickup]:
@@ -129,6 +131,21 @@ def request_pickup(
     # Update pickup status to requested if it's currently available
     if pickup.status == "available":
         pickup.status = "requested"
+
+    # Create notification for donor
+    notification = Notification(
+        id=uuid.uuid4(),
+        user_id=pickup.user_id,
+        type=NotificationType.new_request,
+        channel=NotificationChannel.push,
+        payload={
+            "pickup_id": pickup_id,
+            "requester_id": requester_id,
+            "device_name": pickup.device_name
+        },
+        sent_at=datetime.now(timezone.utc)
+    )
+    db.add(notification)
 
     db.commit()
     db.refresh(request)
@@ -300,7 +317,7 @@ def search_pickups(
     page: int = 1,
     limit: int = 10,
 ) -> tuple[list[models.Pickup], int]:
-    query = db.query(models.Pickup).filter(models.Pickup.user_id == user_id)
+    query = db.query(models.Pickup)
 
     # Text search
     if filters.get("query"):
@@ -414,7 +431,6 @@ def get_search_stats(db: Session, user_id: str) -> dict:
     # By status
     status_rows = (
         db.query(models.Pickup.status, func.count())
-        .filter(models.Pickup.user_id == user_id)
         .group_by(models.Pickup.status)
         .all()
     )
@@ -423,7 +439,6 @@ def get_search_stats(db: Session, user_id: str) -> dict:
     # By category
     category_rows = (
         db.query(models.Pickup.category, func.count())
-        .filter(models.Pickup.user_id == user_id)
         .group_by(models.Pickup.category)
         .all()
     )
@@ -432,13 +447,12 @@ def get_search_stats(db: Session, user_id: str) -> dict:
     # By condition
     condition_rows = (
         db.query(models.Pickup.condition, func.count())
-        .filter(models.Pickup.user_id == user_id)
         .group_by(models.Pickup.condition)
         .all()
     )
     by_condition = {row[0]: row[1] for row in condition_rows}
 
-    total = db.query(models.Pickup).filter(models.Pickup.user_id == user_id).count()
+    total = db.query(models.Pickup).count()
 
     return {
         "by_status": by_status,

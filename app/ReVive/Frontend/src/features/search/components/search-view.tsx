@@ -41,11 +41,11 @@ export function SearchView() {
             query: currentFilters.query,
             status: currentFilters.status,
             categories: currentFilters.categories,
-            dateFrom: currentFilters.dateFrom,
-            dateTo: currentFilters.dateTo,
+            date_from: currentFilters.dateFrom,
+            date_to: currentFilters.dateTo,
             condition: currentFilters.condition,
-            sortBy: currentFilters.sortBy,
-            sortOrder: currentFilters.sortOrder,
+            sort_by: currentFilters.sortBy,
+            sort_order: currentFilters.sortOrder,
           },
           page: currentPage,
           limit: 10,
@@ -181,7 +181,7 @@ export function SearchView() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Search Listings</h1>
         <p className="mt-2 text-muted-foreground">
-          Find and filter your listed items.
+          Find and filter all available items globally.
         </p>
       </div>
 

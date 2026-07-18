@@ -5,15 +5,30 @@ import { Bell } from "lucide-react"
 import { getUnreadCount } from "@/features/notifications/services/notifications"
 import { NotificationDropdown } from "./notification-dropdown"
 import { Button } from "@/components/ui/button"
-import { useSession } from "@/lib/auth-client"
+import { apiGet } from "@/lib/api/client"
 
 export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
-  const { data: session } = useSession()
+  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!session?.user?.id) return
+    const init = async () => {
+      try {
+        // Fetch current user ID to connect to WebSocket
+        const user = await apiGet<{ id: string }>("/api/auth/me")
+        if (user && user.id) {
+          setUserId(user.id)
+        }
+      } catch (err) {
+        console.error("Failed to fetch user for notifications", err)
+      }
+    }
+    init()
+  }, [])
+
+  useEffect(() => {
+    if (!userId) return
 
     const fetchCount = async () => {
       try {
@@ -30,7 +45,7 @@ export function NotificationBell() {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
     const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
     
-    const socket = new WebSocket(`${wsUrl}/api/messages/ws/${session.user.id}`)
+    const socket = new WebSocket(`${wsUrl}/api/messages/ws/${userId}`)
     
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)
@@ -44,7 +59,7 @@ export function NotificationBell() {
     return () => {
       socket.close()
     }
-  }, [session?.user?.id])
+  }, [userId])
 
   const handleCountChange = (newCount: number) => {
     setUnreadCount(newCount)

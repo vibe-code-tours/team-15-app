@@ -1,4 +1,4 @@
-# 🌱 ReVive
+# 🌱 [ReVive](https://team-15-app.vercel.app)
 
 ### *Revolutionizing E-Waste Recycling Through Community*
 

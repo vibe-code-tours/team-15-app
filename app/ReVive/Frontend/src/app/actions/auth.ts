@@ -23,7 +23,7 @@ export async function serverLogin(email: string, password: string) {
     maxAge: 60 * 60 * 24 * 7, // 7 days
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    httpOnly: false,
+    httpOnly: true,
   })
 
   return json.data
@@ -48,7 +48,7 @@ export async function serverRegister(name: string, email: string, password: stri
     maxAge: 60 * 60 * 24 * 7, // 7 days
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    httpOnly: false,
+    httpOnly: true,
   })
 
   return json.data
@@ -57,4 +57,9 @@ export async function serverRegister(name: string, email: string, password: stri
 export async function serverLogout() {
   const cookieStore = await cookies()
   cookieStore.delete("revive_backend_token")
+}
+
+export async function getSessionToken(): Promise<string | null> {
+  const cookieStore = await cookies()
+  return cookieStore.get("revive_backend_token")?.value || null
 }

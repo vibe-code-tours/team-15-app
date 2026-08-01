@@ -15,12 +15,33 @@ router = APIRouter(prefix="/api/messages", tags=["messages"])
 
 from services.websocket import websocket_manager
 
-@router.websocket("/ws/{user_id}")
-async def websocket_endpoint(websocket: WebSocket, user_id: uuid.UUID, db: Session = Depends(get_db)):
-    # Note: In production, you would want to securely authenticate the WebSocket connection.
-    # We rely on the client passing their user_id for this implementation.
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+    # Authenticate via token query param or cookie
+    token = websocket.query_params.get("token")
+    if not token:
+        token = websocket.cookies.get("revive_backend_token")
+    if not token:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
+    from jose import JWTError, jwt as jose_jwt
+    from config import get_settings
+    settings = get_settings()
+
+    try:
+        payload = jose_jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id_str = payload.get("sub")
+        if not user_id_str:
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            return
+        user_id = uuid.UUID(user_id_str)
+    except (JWTError, ValueError):
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
     user = db.query(User).filter(User.id == user_id).first()
-    if not user:
+    if not user or user.status != "active":
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 

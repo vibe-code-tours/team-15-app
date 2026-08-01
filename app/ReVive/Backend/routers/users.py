@@ -132,8 +132,16 @@ def delete_my_account(
 
 
 @router.get("/{user_id}")
-def get_user(user_id: str, db: Session = Depends(get_db)):
+def get_user(
+    user_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     user = db.query(models.User).filter(models.User.id == uuid.UUID(user_id)).first()
     if not user:
         return JSONResponse(status_code=404, content=error_response("User not found"))
-    return success_response(data=_user_to_dict(user))
+    return success_response(data={
+        "id": str(user.id),
+        "name": user.name,
+        "image": user.profile_picture_url,
+    })

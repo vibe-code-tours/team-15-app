@@ -1,11 +1,9 @@
 const JWT_COOKIE = "revive_backend_token"
-const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
-export function setToken(token: string): void {
-  if (typeof document === "undefined") return
-  document.cookie = `${JWT_COOKIE}=${token}; path=/; max-age=${MAX_AGE}; SameSite=Lax`
-}
-
+/**
+ * Get token from cookie - server-side only.
+ * For client-side, use the getSessionToken server action from @/app/actions/auth.
+ */
 export function getToken(): string | null {
   if (typeof document === "undefined") return null
   const match = document.cookie.match(new RegExp(`(?:^|; )${JWT_COOKIE}=([^;]*)`))

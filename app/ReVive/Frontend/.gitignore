@@ -14,3 +14,7 @@ node_modules
 .next/
 .DS_Store
 *.tsbuildinfocookies.txt
+
+# Database files
+*.db
+*.sqlite*

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from dependencies import get_current_user
+from dependencies import get_current_user, require_rate_limit
 from schemas.listing import ListingCreate, ListingUpdate, ListingResponse, ListingListResponse
 import models
 
@@ -26,7 +26,7 @@ def create_listing(
     return listing
 
 
-@router.get("/", response_model=list[ListingListResponse])
+@router.get("/", response_model=list[ListingListResponse], dependencies=[Depends(require_rate_limit(30, 60))])
 def list_listings(
     region_id: str | None = None,
     category_id: str | None = None,
@@ -50,7 +50,7 @@ def list_listings(
     return query.all()
 
 
-@router.get("/{listing_id}", response_model=ListingResponse)
+@router.get("/{listing_id}", response_model=ListingResponse, dependencies=[Depends(require_rate_limit(30, 60))])
 def get_listing(listing_id: str, db: Session = Depends(get_db)):
     listing = db.query(models.Listing).filter(models.Listing.id == uuid.UUID(listing_id)).first()
     if not listing:

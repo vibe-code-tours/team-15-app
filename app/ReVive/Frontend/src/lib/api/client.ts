@@ -1,4 +1,4 @@
-import { getToken } from "./cookies"
+
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
@@ -20,15 +20,20 @@ interface ApiResponse<T> {
 }
 
 async function getTokenForRequest(): Promise<string | null> {
-  // Client-side: use document.cookie
-  if (typeof document !== "undefined") {
-    return getToken()
+  // Server-side: use next/headers cookies API
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers")
+      const cookieStore = await cookies()
+      return cookieStore.get("revive_backend_token")?.value || null
+    } catch {
+      return null
+    }
   }
+  // Client-side: call server action to read httpOnly cookie
   try {
-    const { cookies } = await import("next/headers")
-    const cookieStore = await cookies()
-
-    return cookieStore.get("revive_backend_token")?.value || null
+    const { getSessionToken } = await import("@/app/actions/auth")
+    return await getSessionToken()
   } catch {
     return null
   }

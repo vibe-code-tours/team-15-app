@@ -42,22 +42,32 @@ export function NotificationBell() {
     fetchCount()
 
     // Setup WebSocket connection
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
-    const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
-    
-    const socket = new WebSocket(`${wsUrl}/api/messages/ws/${userId}`)
-    
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === "notification") {
-        setUnreadCount(data.unread_count)
-      } else if (data.type === "active_users") {
-        window.dispatchEvent(new CustomEvent("activeUsers", { detail: data.users }))
+    let socket: WebSocket | null = null
+
+    async function connectWs() {
+      const { getSessionToken } = await import("@/app/actions/auth")
+      const token = await getSessionToken()
+      if (!token) return
+
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
+      const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
+      
+      socket = new WebSocket(`${wsUrl}/api/messages/ws?token=${encodeURIComponent(token)}`)
+      
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "notification") {
+          setUnreadCount(data.unread_count)
+        } else if (data.type === "active_users") {
+          window.dispatchEvent(new CustomEvent("activeUsers", { detail: data.users }))
+        }
       }
     }
 
+    connectWs()
+
     return () => {
-      socket.close()
+      socket?.close()
     }
   }, [userId])
 

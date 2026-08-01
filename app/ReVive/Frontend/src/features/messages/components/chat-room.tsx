@@ -49,39 +49,41 @@ export function ChatRoom({ currentUser, selectedUser }: ChatRoomProps) {
 
   // WebSocket Connection
   useEffect(() => {
-    // ReVive is hosted on Render for backend
-    const isProduction = process.env.NODE_ENV === "production"
-    // Using wss for production and ws for local development
-    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    // In local dev, API is proxied, so we might need to connect directly to the backend URL
-    // but Next.js rewrites can't proxy WebSockets easily without a custom server.
-    // For this app, we'll try to use the host window location for Vercel/Render compatibility.
-    // Actually, we use NEXT_PUBLIC_API_URL or default to Render if in prod
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
-    const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
-    
-    const socket = new WebSocket(`${wsUrl}/api/messages/ws/${currentUser.id}`)
-    
-    socket.onopen = () => {
-      console.log("WebSocket Connected")
-    }
+    let socket: WebSocket | null = null
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === "message") {
-        setMessages((prev) => [...prev, data.message])
-        setTimeout(scrollToBottom, 50)
+    async function connectWs() {
+      const { getSessionToken } = await import("@/app/actions/auth")
+      const token = await getSessionToken()
+      if (!token) return
+
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://revive-and-donate.onrender.com"
+      const wsUrl = backendUrl.replace("http", "ws").replace("https", "wss")
+      
+      socket = new WebSocket(`${wsUrl}/api/messages/ws?token=${encodeURIComponent(token)}`)
+      
+      socket.onopen = () => {
+        console.log("WebSocket Connected")
       }
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "message") {
+          setMessages((prev) => [...prev, data.message])
+          setTimeout(scrollToBottom, 50)
+        }
+      }
+
+      socket.onerror = (error) => {
+        console.error("WebSocket Error:", error)
+      }
+
+      ws.current = socket
     }
 
-    socket.onerror = (error) => {
-      console.error("WebSocket Error:", error)
-    }
-
-    ws.current = socket
+    connectWs()
 
     return () => {
-      socket.close()
+      socket?.close()
     }
   }, [currentUser.id])
 

@@ -270,7 +270,7 @@ function RequestCard({
           ) : (
             <>
               <AlertDialog>
-                <AlertDialogTrigger asChild>
+                <AlertDialogTrigger render={
                   <Button
                     size="sm"
                     variant="outline"
@@ -284,7 +284,7 @@ function RequestCard({
                     )}
                     Reject
                   </Button>
-                </AlertDialogTrigger>
+                } />
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Reject this request?</AlertDialogTitle>
@@ -302,7 +302,7 @@ function RequestCard({
               </AlertDialog>
 
               <AlertDialog>
-                <AlertDialogTrigger asChild>
+                <AlertDialogTrigger render={
                   <Button
                     size="sm"
                     disabled={isProcessing || isAccepted}
@@ -314,7 +314,7 @@ function RequestCard({
                     )}
                     Accept
                   </Button>
-                </AlertDialogTrigger>
+                } />
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Accept this request?</AlertDialogTitle>

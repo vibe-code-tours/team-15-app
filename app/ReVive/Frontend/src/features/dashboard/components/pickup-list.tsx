@@ -195,7 +195,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                 <div className="flex shrink-0 flex-col gap-2">
                   {p.status === "available" && (
                     <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                      <AlertDialogTrigger render={
                         <Button
                           variant="outline"
                           size="sm"
@@ -203,7 +203,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                         >
                           <X className="size-4" /> Remove
                         </Button>
-                      </AlertDialogTrigger>
+                      } />
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Remove this listing?</AlertDialogTitle>
@@ -232,7 +232,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                   )}
 
                   <AlertDialog>
-                    <AlertDialogTrigger asChild>
+                    <AlertDialogTrigger render={
                       <Button
                         variant="ghost"
                         size="sm"
@@ -241,7 +241,7 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                       >
                         <Trash2 className="size-4" />
                       </Button>
-                    </AlertDialogTrigger>
+                    } />
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete this listing?</AlertDialogTitle>

@@ -59,7 +59,22 @@ def get_current_user(
 
 def require_rate_limit(max_requests: int, window_seconds: int):
     async def _check(request: Request):
-        host = request.client.host if request.client else "unknown"
+        forwarded = request.headers.get("X-Forwarded-For")
+        if forwarded:
+            host = forwarded.split(",")[0].strip()
+        else:
+            host = request.client.host if request.client else "unknown"
+
+        token = request.headers.get("Authorization", "").replace("Bearer ", "") or request.cookies.get("revive_backend_token")
+        if token:
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+                user_id = payload.get("sub")
+                if user_id:
+                    host = f"user_{user_id}"
+            except Exception:
+                pass
+
         key = f"{host}:{request.url.path}"
         rate_limiter.check(key, max_requests, window_seconds)
     return _check

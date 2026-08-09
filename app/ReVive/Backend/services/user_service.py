@@ -68,8 +68,15 @@ def update_notification_preferences(db: Session, user_id: str, prefs: dict) -> b
         )
         db.add(settings)
 
+    allowed_fields = {
+        "email_pickup_updates",
+        "email_referral_alerts",
+        "email_milestones",
+        "push_enabled"
+    }
+    
     for key, value in prefs.items():
-        if value is not None:
+        if key in allowed_fields and value is not None:
             setattr(settings, key, value)
     settings.updated_at = now
     db.commit()

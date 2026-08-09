@@ -24,6 +24,17 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 MAX_FILES = 5
 
+def get_magic_mime(file_bytes: bytes) -> str | None:
+    if file_bytes.startswith(b'\xff\xd8\xff'):
+        return 'image/jpeg'
+    if file_bytes.startswith(b'\x89PNG\r\n\x1a\n'):
+        return 'image/png'
+    if file_bytes.startswith(b'GIF87a') or file_bytes.startswith(b'GIF89a'):
+        return 'image/gif'
+    if file_bytes.startswith(b'RIFF') and file_bytes[8:12] == b'WEBP':
+        return 'image/webp'
+    return None
+
 
 @router.post("/", dependencies=[Depends(require_rate_limit(10, 60))])
 async def upload_images(
@@ -45,18 +56,19 @@ async def upload_images(
     # Validate and read all files
     upload_tasks = []
     for file in files:
-        content_type = file.content_type or ""
-        if content_type not in ALLOWED_TYPES:
-            return JSONResponse(
-                status_code=400,
-                content=error_response(f"File '{file.filename}' is not a valid image. Allowed: JPG, PNG, GIF, WebP"),
-            )
-
         contents = await file.read()
+        
         if len(contents) > MAX_FILE_SIZE:
             return JSONResponse(
                 status_code=400,
                 content=error_response(f"File '{file.filename}' exceeds 5MB limit"),
+            )
+
+        mime_type = get_magic_mime(contents)
+        if mime_type not in ALLOWED_TYPES:
+            return JSONResponse(
+                status_code=400,
+                content=error_response(f"File '{file.filename}' is not a valid image. Allowed: JPG, PNG, GIF, WebP"),
             )
 
         upload_tasks.append(

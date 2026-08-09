@@ -16,6 +16,8 @@ export type AchievementProgress = {
   achievement: Achievement
   unlocked: boolean
   percentage: number
+  current: number
+  target: number
   unlockedAt?: string
 }
 

@@ -12,6 +12,7 @@ export interface NotificationMetadata {
   referralCode?: string
   referrerName?: string
   milestone?: string
+  message?: string
   [key: string]: unknown
 }
 

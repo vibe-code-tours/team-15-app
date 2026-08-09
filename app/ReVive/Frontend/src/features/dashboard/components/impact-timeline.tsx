@@ -5,14 +5,7 @@ import { Leaf, Zap, Gift, Clock } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
 import { cn } from '@/lib/utils'
 
-interface ImpactEvent {
-  id: string
-  type: string
-  points: number
-  co2Saved: number | null
-  createdAt: Date | null
-  referredName: string | null
-}
+import type { ImpactEvent } from '@/features/referrals/types'
 
 interface ImpactTimelineProps {
   events: ImpactEvent[]
@@ -75,7 +68,7 @@ function getEventDescription(event: ImpactEvent) {
   }
 }
 
-function formatDate(date: Date | null) {
+function formatDate(date: string | Date | null) {
   if (!date) return ''
   const d = new Date(date)
   const now = new Date()

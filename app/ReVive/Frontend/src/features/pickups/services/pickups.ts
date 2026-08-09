@@ -56,23 +56,27 @@ export async function getPickups(): Promise<Pickup[]> {
 }
 
 /** Create a new listing (pass image URLs, not File objects — server actions can't serialize Files) */
-export async function createPickup(input: PickupInput) {
-  const result = await apiPost<{ success: boolean }>(
-    "/api/pickups/",
-    {
-      category: input.category,
-      deviceName: input.deviceName,
-      quantity: input.quantity || 1,
-      condition: input.condition || "working",
-      availableFrom: input.availableFrom,
-      availableTo: input.availableTo,
-      timeSlot: input.timeSlot,
-      address: input.address,
-      notes: input.notes,
-      images: input.images,
-    }
-  )
-  return { success: true }
+export async function createPickup(input: PickupInput): Promise<{ success: boolean; error?: string }> {
+  try {
+    await apiPost(
+      "/api/pickups/",
+      {
+        category: input.category,
+        deviceName: input.deviceName,
+        quantity: input.quantity || 1,
+        condition: input.condition || "working",
+        availableFrom: input.availableFrom,
+        availableTo: input.availableTo,
+        timeSlot: input.timeSlot,
+        address: input.address,
+        notes: input.notes,
+        images: input.images,
+      }
+    )
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to create pickup" }
+  }
 }
 
 /** Cancel a listing */

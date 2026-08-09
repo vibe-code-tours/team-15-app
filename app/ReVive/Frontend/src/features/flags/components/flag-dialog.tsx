@@ -61,14 +61,18 @@ export function FlagDialog({ targetType, targetId, trigger }: FlagDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button variant="ghost" size="sm">
-            <Flag className="mr-2 size-4" />
-            Report
-          </Button>
-        )}
-      </DialogTrigger>
+      {trigger ? (
+        <DialogTrigger render={trigger as any} />
+      ) : (
+        <DialogTrigger
+          render={
+            <Button variant="ghost" size="sm">
+              <Flag className="mr-2 size-4" />
+              Report
+            </Button>
+          }
+        />
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Report Content</DialogTitle>

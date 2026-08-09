@@ -3,8 +3,8 @@ import type { AdminStats } from "@/features/admin/types"
 
 type AdminAnalyticsViewProps = {
   stats: AdminStats
-  categoryBreakdown: Array<{ label: string; count: number }>
-  statusBreakdown: Array<{ label: string; count: number }>
+  categoryBreakdown: Array<{ category: string; count: number }>
+  statusBreakdown: Array<{ status: string; count: number }>
 }
 
 export function AdminAnalyticsView({

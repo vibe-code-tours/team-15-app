@@ -39,7 +39,7 @@ async def upload_images(
     if not settings.CLOUDINARY_CLOUD_NAME or settings.CLOUDINARY_CLOUD_NAME == "your_cloud_name_here":
         return JSONResponse(
             status_code=500,
-            content=error_response("Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in .env"),
+            content=error_response("Image upload service is currently unavailable."),
         )
 
     # Validate and read all files

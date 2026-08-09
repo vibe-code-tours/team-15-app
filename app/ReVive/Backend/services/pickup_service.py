@@ -48,6 +48,10 @@ def complete_pickup(db: Session, pickup_id: int, user_id: str) -> models.Pickup 
     )
     if not pickup:
         return None
+    
+    if pickup.status in ("picked_up", "cancelled"):
+        return None
+
     pickup.status = "picked_up"
     db.commit()
     db.refresh(pickup)

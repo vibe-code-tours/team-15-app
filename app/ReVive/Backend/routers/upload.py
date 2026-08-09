@@ -75,7 +75,7 @@ async def upload_images(
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content=error_response(f"Failed to upload images: {str(e)}"),
+            content=error_response("Failed to upload images. Please try again later."),
         )
 
     return success_response(data={"urls": urls})

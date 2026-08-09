@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSoc
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 
-from database import get_db
+from database import get_db, SessionLocal
 from dependencies import get_current_user
 from schemas.chat import ChatMessageCreate, ChatMessageResponse, WebSocketMessage
 from models.chat import DirectMessage
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/messages", tags=["messages"])
 from services.websocket import websocket_manager
 
 @router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+async def websocket_endpoint(websocket: WebSocket):
     # Authenticate via token query param or cookie
     token = websocket.query_params.get("token")
     if not token:
@@ -40,10 +40,11 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return
 
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user or user.status != "active":
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-        return
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user or user.status != "active":
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+            return
 
     await websocket_manager.connect(websocket, user_id)
     try:
@@ -56,24 +57,32 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
                 rate_limiter.check(f"{user_id}:ws", 30, 60)
 
                 # Save to database
-                new_msg = DirectMessage(
-                    sender_id=user_id,
-                    receiver_id=ws_message.receiver_id,
-                    content=ws_message.content
-                )
-                db.add(new_msg)
-                db.commit()
-                db.refresh(new_msg)
+                with SessionLocal() as db:
+                    new_msg = DirectMessage(
+                        sender_id=user_id,
+                        receiver_id=ws_message.receiver_id,
+                        content=ws_message.content
+                    )
+                    db.add(new_msg)
+                    db.commit()
+                    db.refresh(new_msg)
+                    
+                    # Extract values we need before the session closes
+                    msg_id = str(new_msg.id)
+                    msg_sender = str(new_msg.sender_id)
+                    msg_receiver = str(new_msg.receiver_id)
+                    msg_content = new_msg.content
+                    msg_created_at = new_msg.created_at.isoformat()
 
                 # Broadcast to receiver if online
                 payload = {
                     "type": "message",
                     "message": {
-                        "id": str(new_msg.id),
-                        "sender_id": str(new_msg.sender_id),
-                        "receiver_id": str(new_msg.receiver_id),
-                        "content": new_msg.content,
-                        "created_at": new_msg.created_at.isoformat(),
+                        "id": msg_id,
+                        "sender_id": msg_sender,
+                        "receiver_id": msg_receiver,
+                        "content": msg_content,
+                        "created_at": msg_created_at,
                     }
                 }
                 

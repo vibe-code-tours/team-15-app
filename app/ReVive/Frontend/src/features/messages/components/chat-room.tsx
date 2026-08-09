@@ -106,9 +106,9 @@ export function ChatRoom({ currentUser, selectedUser }: ChatRoomProps) {
   }
 
   return (
-    <div className="flex h-full flex-col bg-background/50 relative">
+    <div className="flex flex-1 flex-col bg-background/50 relative min-h-0">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-border/60 bg-card/80 backdrop-blur z-10 shadow-sm">
+      <div className="shrink-0 flex items-center gap-3 p-4 border-b border-border/60 bg-card/80 backdrop-blur z-10 shadow-sm">
         <div className="flex size-10 items-center justify-center rounded-full bg-muted border border-border">
           {selectedUser.image ? (
             <img src={selectedUser.image} alt={selectedUser.name} className="size-full rounded-full object-cover" />
@@ -122,7 +122,7 @@ export function ChatRoom({ currentUser, selectedUser }: ChatRoomProps) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-4">
         {loading ? (
           <div className="flex justify-center items-center h-full">
             <span className="text-muted-foreground">Loading history...</span>
@@ -156,7 +156,7 @@ export function ChatRoom({ currentUser, selectedUser }: ChatRoomProps) {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-card border-t border-border/60">
+      <div className="shrink-0 p-4 bg-card border-t border-border/60">
         <form onSubmit={sendMessage} className="flex gap-2">
           <input
             type="text"

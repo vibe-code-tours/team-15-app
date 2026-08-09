@@ -321,7 +321,10 @@ def search_pickups(
     page: int = 1,
     limit: int = 10,
 ) -> tuple[list[models.Pickup], int]:
-    query = db.query(models.Pickup)
+    query = db.query(models.Pickup).filter(
+        models.Pickup.user_id != user_id,
+        models.Pickup.status.in_(["available", "requested"])
+    )
 
     # Text search
     if filters.get("query"):

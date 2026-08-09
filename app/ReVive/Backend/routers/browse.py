@@ -67,7 +67,7 @@ def browse_available_items(
             "availableFrom": item.available_from,
             "availableTo": item.available_to,
             "timeSlot": item.time_slot,
-            "address": item.address,
+            "address": ", ".join(item.address.split(",")[-2:]).strip() if item.address and "," in item.address else "Protected Location",
             "notes": item.notes,
             "images": images,
             "status": item.status,

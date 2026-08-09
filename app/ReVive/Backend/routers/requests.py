@@ -98,6 +98,8 @@ def update_request(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
     if body.status == "withdrawn" and request.requester_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
+    if body.status == "pending" and listing.owner_id != current_user.id and request.requester_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
 
     request.status = body.status
     if body.status in ("accepted", "declined"):

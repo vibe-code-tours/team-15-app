@@ -38,12 +38,16 @@ export async function getReferralStats(userId: string): Promise<ReferralStats> {
 }
 
 /** Apply a referral code when a new user signs up */
-export async function applyReferralCode(code: string, newUserId: string) {
-  const result = await apiPost<{ success: boolean }, { code: string }>(
-    "/api/referrals/",
-    { code: code.toUpperCase() }
-  )
-  return { success: true }
+export async function applyReferralCode(code: string, newUserId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    await apiPost<{ success: boolean }>(
+      "/api/referrals/",
+      { code: code.toUpperCase() }
+    )
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to apply code" }
+  }
 }
 
 /** Award double impact points when a referred user completes a donation */

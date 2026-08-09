@@ -7,8 +7,10 @@ export async function checkAchievements() {
   return { success: true }
 }
 
-export async function getProgress() {
-  return { total: 0, unlocked: 0, percentage: 0 }
+import type { AchievementProgress } from "@/features/achievements/types"
+
+export async function getProgress(): Promise<AchievementProgress[]> {
+  return []
 }
 
 export async function dismissAchievement(achievementId: string) {
@@ -20,5 +22,10 @@ export async function getNewAchievements() {
 }
 
 export async function getAchievementStats() {
-  return { total: 0, unlocked: 0, recent: [] }
+  return {
+    unlocked: 0,
+    inProgress: 0,
+    locked: 0,
+    totalPointsEarned: 0
+  }
 }

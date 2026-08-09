@@ -50,9 +50,11 @@ def update_my_profile(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    allowed_fields = {"name", "phone", "profile_picture_url"}
     update_data = body.model_dump(exclude_unset=True)
     for field, value in update_data.items():
-        setattr(current_user, field, value)
+        if field in allowed_fields:
+            setattr(current_user, field, value)
     db.commit()
     db.refresh(current_user)
     return success_response(data={"success": True}, message="Profile updated successfully")

@@ -109,9 +109,8 @@ export function SearchResults({
       {/* Results list */}
       <div className="space-y-3">
         {results.map((result) => (
-          <Link
+          <div
             key={result.id}
-            href="/dashboard"
             className="block rounded-2xl border border-border bg-card p-4 transition-colors hover:bg-muted/50"
           >
             <div className="flex items-start justify-between gap-4">
@@ -171,7 +170,7 @@ export function SearchResults({
 
               <PickupStatusBadge status={result.status} />
             </div>
-          </Link>
+          </div>
         ))}
       </div>
 

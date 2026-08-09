@@ -53,12 +53,14 @@ export function RequestButton({ listingId, donorId }: RequestButtonProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full">
-          <Send className="mr-2 size-4" />
-          Request Item
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button className="w-full">
+            <Send className="mr-2 size-4" />
+            Request Item
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Request This Item</DialogTitle>

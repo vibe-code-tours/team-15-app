@@ -7,6 +7,11 @@ class RateLimiter:
         self._requests: dict[str, list[float]] = defaultdict(list)
 
     def check(self, key: str, max_requests: int, window_seconds: int) -> None:
+        if len(self._requests) > 10000:
+            self.cleanup(max_age=window_seconds)
+            if len(self._requests) > 10000:
+                self._requests.clear()
+                
         now = time.time()
         self._requests[key] = [
             t for t in self._requests[key] if now - t < window_seconds

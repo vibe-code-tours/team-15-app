@@ -2,6 +2,8 @@
 
 import { apiGet } from "@/lib/api/client"
 
+import { Pickup } from "@/features/pickups/types"
+
 export type AdminStats = {
   totalPickups: number
   completedPickups: number
@@ -25,14 +27,23 @@ export async function getAdminStats(): Promise<AdminStats> {
 }
 
 /** Get all pickups (admin view) */
-export async function getAllPickups() {
-  const data = await apiGet<Array<Record<string, unknown>>>("/api/admin/pickups")
+export async function getAllPickups(): Promise<Pickup[]> {
+  const data = await apiGet<Pickup[]>("/api/admin/pickups")
   return data
 }
 
+export type AdminUser = {
+  id: string
+  name: string
+  email: string
+  createdAt: string
+  pickupCount: number
+  totalPoints: number
+}
+
 /** Get all users (admin view) */
-export async function getAllUsers() {
-  const data = await apiGet<Array<Record<string, unknown>>>("/api/admin/users")
+export async function getAllUsers(): Promise<AdminUser[]> {
+  const data = await apiGet<AdminUser[]>("/api/admin/users")
   return data
 }
 
@@ -41,7 +52,7 @@ export async function getCategoryBreakdown() {
   const data = await apiGet<Array<{ label: string; count: number }>>(
     "/api/admin/breakdown/categories"
   )
-  return data
+  return (data || []).map((d) => ({ category: d.label, count: d.count }))
 }
 
 /** Get status breakdown */
@@ -49,5 +60,5 @@ export async function getStatusBreakdown() {
   const data = await apiGet<Array<{ label: string; count: number }>>(
     "/api/admin/breakdown/status"
   )
-  return data
+  return (data || []).map((d) => ({ status: d.label, count: d.count }))
 }

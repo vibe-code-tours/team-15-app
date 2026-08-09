@@ -48,6 +48,10 @@ def complete_pickup(db: Session, pickup_id: int, user_id: str) -> models.Pickup 
     )
     if not pickup:
         return None
+    
+    if pickup.status in ("picked_up", "cancelled"):
+        return None
+
     pickup.status = "picked_up"
     db.commit()
     db.refresh(pickup)
@@ -317,7 +321,10 @@ def search_pickups(
     page: int = 1,
     limit: int = 10,
 ) -> tuple[list[models.Pickup], int]:
-    query = db.query(models.Pickup)
+    query = db.query(models.Pickup).filter(
+        models.Pickup.user_id != user_id,
+        models.Pickup.status.in_(["available", "requested"])
+    )
 
     # Text search
     if filters.get("query"):

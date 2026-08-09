@@ -14,6 +14,17 @@ import {
 import { categoryLabel, conditionLabel, timeSlotLabel } from "@/lib/categories"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import type { Pickup, PickupRequest } from "@/features/pickups/services/pickups"
 
 const STATUS_STYLES: Record<string, string> = {
@@ -181,17 +192,33 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                   )}
                 </div>
 
-                {/* Actions based on status */}
                 <div className="flex shrink-0 flex-col gap-2">
                   {p.status === "available" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={isPending && busyId === String(p.id)}
-                      onClick={() => doAction(String(p.id), () => cancelPickup(p.id))}
-                    >
-                      <X className="size-4" /> Remove
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger render={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={isPending && busyId === String(p.id)}
+                        >
+                          <X className="size-4" /> Remove
+                        </Button>
+                      } />
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Remove this listing?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will cancel your listing and remove it from the browse page. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => doAction(String(p.id), () => cancelPickup(p.id))}>
+                            Remove
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   )}
 
                   {p.status === "accepted" && (
@@ -204,15 +231,32 @@ export function PickupList({ pickups }: { pickups: Pickup[] }) {
                     </Button>
                   )}
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={isPending && busyId === String(p.id)}
-                    onClick={() => doAction(String(p.id), () => deletePickup(p.id))}
-                    aria-label="Delete listing"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={isPending && busyId === String(p.id)}
+                        aria-label="Delete listing"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    } />
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete this listing?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete the item and all associated requests. This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => doAction(String(p.id), () => deletePickup(p.id))}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </Card>
@@ -243,7 +287,7 @@ function RequestRow({
         <div className="min-w-0">
           <p className="text-sm font-medium truncate">{request.requester?.name ?? "Unknown"}</p>
           {(request.pickupFrom || request.timeSlot) && (
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs text-muted-foreground text-pretty">
               {request.pickupFrom && request.pickupTo
                 ? `${request.pickupFrom} – ${request.pickupTo}`
                 : ""}

@@ -9,7 +9,7 @@ import { getRequestedItems } from "@/features/account/services/account"
 import type { Pickup } from "@/features/pickups/types"
 
 export function RequestedItemsFull() {
-  const [items, setItems] = useState<Pickup[]>([])
+  const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -62,35 +62,35 @@ export function RequestedItemsFull() {
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
-            <Card key={item.id} className="p-4">
+            <Card key={item.request.id} className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium truncate">{item.deviceName}</p>
+                    <p className="font-medium truncate">{item.pickup.deviceName}</p>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                        item.status === "requested"
+                        item.request.status === "requested"
                           ? "bg-yellow-100 text-yellow-800"
-                          : item.status === "accepted"
+                          : item.request.status === "accepted"
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {item.status}
+                      {item.request.status}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center gap-4 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Package className="size-3" />
-                      {item.category}
+                      {item.pickup.category}
                     </span>
                     <span className="flex items-center gap-1">
                       <MapPin className="size-3" />
-                      {item.address}
+                      {item.pickup.address}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="size-3" />
-                      {item.availableFrom} – {item.availableTo}
+                      {item.pickup.availableFrom} – {item.pickup.availableTo}
                     </span>
                   </div>
                 </div>

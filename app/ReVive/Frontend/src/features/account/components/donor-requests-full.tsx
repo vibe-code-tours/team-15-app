@@ -5,6 +5,17 @@ import Link from "next/link"
 import { Package, Clock, MapPin, User, Loader2, Check, X, ArrowLeft, Calendar, BadgeCheck, Users } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { getDonorRequests, acceptRequest, rejectRequest } from "@/features/account/services/account"
 import { timeSlotLabel } from "@/lib/categories"
 import type { DonorRequest } from "@/features/account/services/account"
@@ -258,32 +269,67 @@ function RequestCard({
             </span>
           ) : (
             <>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => onReject(pickupId, request.id)}
-                disabled={isProcessing}
-                className="text-destructive hover:text-destructive"
-              >
-                {isProcessing ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <X className="size-4" />
-                )}
-                Reject
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => onAccept(pickupId, request.id)}
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Check className="size-4" />
-                )}
-                Accept
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger render={
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isProcessing}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    {isProcessing ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <X className="size-4" />
+                    )}
+                    Reject
+                  </Button>
+                } />
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reject this request?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to reject this request? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onReject(pickupId, request.id)}>
+                      Reject
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <AlertDialog>
+                <AlertDialogTrigger render={
+                  <Button
+                    size="sm"
+                    disabled={isProcessing || isAccepted}
+                  >
+                    {isProcessing ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Check className="size-4" />
+                    )}
+                    Accept
+                  </Button>
+                } />
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Accept this request?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to accept this request? This will automatically decline all other pending requests for this item.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onAccept(pickupId, request.id)}>
+                      Accept
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
         </div>

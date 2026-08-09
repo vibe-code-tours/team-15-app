@@ -162,10 +162,15 @@ def update_report_status(
     current_user: models.User = Depends(get_admin_user),
     db: Session = Depends(get_db),
 ):
+    try:
+        valid_status = models.ReportStatus(status_update)
+    except ValueError:
+        return JSONResponse(status_code=400, content=error_response(f"Invalid status: {status_update}"))
+
     report = db.query(models.Report).filter(models.Report.id == uuid.UUID(report_id)).first()
     if not report:
         return JSONResponse(status_code=404, content=error_response("Report not found"))
-    report.status = status_update
+    report.status = valid_status
     db.commit()
     db.refresh(report)
     return {

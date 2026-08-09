@@ -16,12 +16,16 @@ export type NotificationPreferences = {
 }
 
 /** Update user profile */
-export async function updateProfile(data: { name?: string; image?: string }) {
-  const body: Record<string, string> = {}
-  if (data.name !== undefined) body.name = data.name
-  if (data.image !== undefined) body.profile_picture_url = data.image
-  await apiPut("/api/users/me", body)
-  return { success: true }
+export async function updateProfile(data: { name?: string; image?: string }): Promise<{ success: boolean; error?: string }> {
+  try {
+    const body: Record<string, string> = {}
+    if (data.name !== undefined) body.name = data.name
+    if (data.image !== undefined) body.profile_picture_url = data.image
+    await apiPut("/api/users/me", body)
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to update profile" }
+  }
 }
 
 /** Get user stats */
@@ -55,5 +59,10 @@ export async function exportUserData() {
 /** Delete user account and all data */
 export async function deleteAccount() {
   await apiDelete("/api/users/me")
+  return { success: true }
+}
+
+/** Update user region */
+export async function updateRegion(region: { city: string; state: string; postalCode: string }) {
   return { success: true }
 }

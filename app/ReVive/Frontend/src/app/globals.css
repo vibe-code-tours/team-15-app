@@ -161,6 +161,7 @@
   }
   html {
     scroll-behavior: smooth;
+    font-size: 105%;
   }
   body {
     @apply bg-background text-foreground;

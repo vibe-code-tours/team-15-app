@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -41,24 +41,26 @@ export function MediaUploader({
       onFilesChange(updatedFiles)
 
       // Generate previews
-      filesToAdd.forEach((file) => {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          setPreviews((prev) => [...prev, e.target?.result as string])
-        }
-        reader.readAsDataURL(file)
-      })
+      const newPreviews = filesToAdd.map((file) => URL.createObjectURL(file))
+      setPreviews((prev) => [...prev, ...newPreviews])
     },
     [files, maxFiles, onFilesChange]
   )
 
   const removeFile = (index: number) => {
+    URL.revokeObjectURL(previews[index])
     const updatedFiles = files.filter((_, i) => i !== index)
     const updatedPreviews = previews.filter((_, i) => i !== index)
     setFiles(updatedFiles)
     setPreviews(updatedPreviews)
     onFilesChange(updatedFiles)
   }
+
+  useEffect(() => {
+    return () => {
+      previews.forEach((preview) => URL.revokeObjectURL(preview))
+    }
+  }, [previews])
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()

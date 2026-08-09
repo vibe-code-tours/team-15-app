@@ -116,6 +116,18 @@ def award_impact_points(db: Session, user_id: str, pickup_id: int) -> dict:
     if not pickup:
         return {"success": False, "reason": "Pickup not found"}
 
+    # Idempotency guard: Check if points were already awarded for this pickup
+    existing_event = (
+        db.query(models.ImpactEvent)
+        .filter(
+            models.ImpactEvent.pickup_id == pickup_id,
+            models.ImpactEvent.type == "donation",
+        )
+        .first()
+    )
+    if existing_event:
+        return {"success": False, "reason": "Points already awarded for this pickup"}
+
     co2_saved = 2.2 * (pickup.quantity or 1)
 
     # Award double points to referrer if applicable

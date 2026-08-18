@@ -1,5 +1,6 @@
 import { serverLogin, serverRegister, serverLogout } from "@/app/actions/auth"
 import { getToken } from "./cookies"
+import { apiGet } from "./client"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
@@ -39,21 +40,12 @@ export async function backendRegister(
 }
 
 export async function getBackendUser(): Promise<UserResponse | null> {
-  const token = await getToken()
-  if (!token) return null
-
-  const res = await fetch(`${API_BASE}/api/auth/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-
-  const json = await res.json()
-  if (!json.success) {
-    // If the token is invalid, we don't automatically delete the HttpOnly cookie here
-    // because this might be called on the client. If it's a Server Action, we could.
+  try {
+    const user = await apiGet<UserResponse>("/api/auth/me")
+    return user
+  } catch {
     return null
   }
-
-  return json.data
 }
 
 export async function backendLogout(): Promise<void> {
